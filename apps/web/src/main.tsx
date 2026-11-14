@@ -45,7 +45,7 @@ function App() {
   const importRef = useRef<HTMLInputElement>(null);
   const [theme, setTheme] = useState(() => {
     try {
-      return localStorage.getItem('theme') ?? 'dark';
+      return localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
     } catch {
       return 'dark';
     }
@@ -178,10 +178,16 @@ function App() {
     }
   }
   return (
-    <div className="shell">
+    <div className="shell gs-song-app">
       <nav className="rail" aria-label="Hoofdnavigatie">
-        <div className="mark" aria-label="Guitar Studio">
-          g
+        <div className="mark">
+          <img
+            className="gs-brand__mark"
+            src="/brand/gs-mark.png"
+            alt="Gitaar Studio"
+            width="42"
+            height="42"
+          />
         </div>
         {[
           ['dashboard', '⌂', 'Start'],
@@ -191,7 +197,8 @@ function App() {
           <button
             key={value}
             aria-label={label}
-            className={page === value ? 'active' : ''}
+            aria-current={page === value ? 'page' : undefined}
+            className={'gs-button ' + (page === value ? 'active' : '')}
             disabled={
               value === 'workspace' &&
               !records.some((r) => r.song.id === editor.song?.id)
@@ -204,13 +211,18 @@ function App() {
             {label}
           </button>
         ))}
-        <button aria-label="Nieuwe song" onClick={() => setWizard(true)}>
+        <button
+          className="gs-button"
+          aria-label="Nieuwe song"
+          onClick={() => setWizard(true)}
+        >
           <span className="icon" aria-hidden="true">
             ＋
           </span>
           Nieuw
         </button>
         <button
+          className="gs-button"
           aria-label="JSON importeren"
           onClick={() => importRef.current?.click()}
         >
@@ -220,8 +232,9 @@ function App() {
           Import
         </button>
         <button
-          className="bottom"
+          className="bottom gs-button"
           aria-label="Thema wisselen"
+          aria-pressed={theme === 'light'}
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
           <span className="icon" aria-hidden="true">
@@ -230,66 +243,79 @@ function App() {
           Thema
         </button>
       </nav>
-      <main className="main">
+      <div className="main">
         <header className="top">
-          <div className="brand">
-            GUITAR <span>STUDIO</span>
+          <div className="gs-brand">
+            <img
+              className="gs-brand__logo"
+              src="/brand/gs-logo-original.png"
+              alt="Gitaar Studio"
+              width="176"
+              height="59"
+            />
           </div>
           <div className="studio-header-details">
             <small>Jouw muziek. Jouw ontdekking.</small>
-            <span className="badge" role="status">
+            <span className="badge gs-badge" role="status">
               {apiStatus}
             </span>
           </div>
         </header>
-        {loadError && (
-          <div className="notice danger" role="alert">
-            {loadError}
-            <button onClick={() => void refresh()}>Opnieuw laden</button>
-          </div>
-        )}
-        {loading ? (
-          <div className="empty" role="status">
-            Je studio wordt geladen…
-          </div>
-        ) : page === 'dashboard' || page === 'library' ? (
-          <Library
-            records={records}
-            dashboard={page === 'dashboard'}
-            open={(r) => void open(r)}
-            newSong={() => setWizard(true)}
-            action={(r, a) => void action(r, a)}
-          />
-        ) : editor.song ? (
-          <Workspace
-            key={editor.song.id}
-            song={editor.song}
-            change={editor.change}
-            status={editor.status}
-            error={editor.error}
-            retry={() => void editor.flush()}
-            reload={async () => {
-              if (
-                confirm(
-                  'Niet opgeslagen wijzigingen vervangen door de serverversie? Exporteer ze eerst als je ze wilt bewaren.',
-                )
-              ) {
-                const rows = await refresh();
-                const record = rows?.find((r) => r.song.id === editor.song?.id);
-                if (record) editor.load(record);
-              }
-            }}
-            undo={editor.undo}
-            canUndo={editor.canUndo}
-            canRedo={editor.canRedo}
-            practice={page === 'practice'}
-            setPractice={(p) => setPage(p ? 'practice' : 'workspace')}
-            exportSong={exportSong}
-            report={setMessage}
-          />
-        ) : null}
-      </main>
+        <main id="studio-content">
+          {loadError && (
+            <div className="notice danger gs-notice gs-danger" role="alert">
+              {loadError}
+              <button className="gs-button" onClick={() => void refresh()}>
+                Opnieuw laden
+              </button>
+            </div>
+          )}
+          {loading ? (
+            <div className="empty" role="status">
+              Je studio wordt geladen…
+            </div>
+          ) : page === 'dashboard' || page === 'library' ? (
+            <Library
+              records={records}
+              dashboard={page === 'dashboard'}
+              open={(r) => void open(r)}
+              newSong={() => setWizard(true)}
+              action={(r, a) => void action(r, a)}
+            />
+          ) : editor.song ? (
+            <Workspace
+              key={editor.song.id}
+              song={editor.song}
+              change={editor.change}
+              status={editor.status}
+              error={editor.error}
+              retry={() => void editor.flush()}
+              reload={async () => {
+                if (
+                  confirm(
+                    'Niet opgeslagen wijzigingen vervangen door de serverversie? Exporteer ze eerst als je ze wilt bewaren.',
+                  )
+                ) {
+                  const rows = await refresh();
+                  const record = rows?.find(
+                    (r) => r.song.id === editor.song?.id,
+                  );
+                  if (record) editor.load(record);
+                }
+              }}
+              undo={editor.undo}
+              canUndo={editor.canUndo}
+              canRedo={editor.canRedo}
+              practice={page === 'practice'}
+              setPractice={(p) => setPage(p ? 'practice' : 'workspace')}
+              exportSong={exportSong}
+              report={setMessage}
+            />
+          ) : null}
+        </main>
+      </div>
       <input
+        className="gs-input"
         hidden
         type="file"
         accept="application/json,.json"
@@ -302,7 +328,11 @@ function App() {
       <div className={'toast ' + (message ? 'visible' : '')} role="status">
         {message}
         {message && (
-          <button aria-label="Melding sluiten" onClick={() => setMessage('')}>
+          <button
+            className="gs-button"
+            aria-label="Melding sluiten"
+            onClick={() => setMessage('')}
+          >
             ×
           </button>
         )}

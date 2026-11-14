@@ -1,0 +1,152 @@
+@layer components {
+  .gs-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--control-height);
+    border: 1px solid var(--color-border-interactive);
+    border-radius: var(--radius-control);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface-raised);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      background var(--motion-fast),
+      border-color var(--motion-fast);
+  }
+  .gs-button:hover {
+    background: var(--color-surface-interactive);
+    border-color: var(--color-accent-primary);
+  }
+  .gs-button:active {
+    box-shadow: inset 0 0 0 1px var(--color-focus);
+  }
+  .gs-button--primary {
+    background: var(--color-accent-primary);
+    color: var(--color-on-accent);
+    border-color: var(--color-accent-primary);
+    font-weight: 650;
+  }
+  .gs-button--primary:hover {
+    background: var(--color-accent-hover);
+    color: var(--color-on-accent);
+  }
+  .gs-button--quiet {
+    background: transparent;
+    border-color: transparent;
+  }
+  .gs-button[aria-pressed='true'],
+  .gs-button.is-selected {
+    background: var(--color-surface-interactive);
+    border-color: var(--color-accent-primary);
+  }
+  .gs-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .gs-panel {
+    min-width: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .gs-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gs-field {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-2);
+    color: var(--color-text-secondary);
+  }
+  .gs-input {
+    border: 1px solid var(--color-border-interactive);
+    border-radius: var(--radius-control);
+    padding: var(--space-2);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    max-width: 100%;
+  }
+  .gs-slider {
+    accent-color: var(--color-accent-primary);
+  }
+  .gs-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-caption);
+  }
+  .gs-notice {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid currentColor;
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+  }
+  .gs-notice--success {
+    color: var(--color-success);
+  }
+  .gs-notice--warning {
+    color: var(--color-warning);
+  }
+  .gs-notice--error {
+    color: var(--color-danger);
+  }
+  .gs-dialog {
+    border-radius: var(--radius-dialog);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-dialog);
+  }
+  .gs-brand {
+    display: flex;
+    align-items: center;
+    background: var(--color-brand-plate);
+    border-radius: var(--radius-control);
+    flex: none;
+    padding: 2px 7px;
+  }
+  .gs-brand__logo {
+    display: block;
+    width: 176px;
+    height: 59px;
+    object-fit: contain;
+  }
+  .gs-brand__mark {
+    width: 42px;
+    height: 42px;
+    display: block;
+  }
+  .gs-brand-hero {
+    width: min(92%, 430px);
+    height: auto;
+    display: block;
+    position: relative;
+    margin: auto;
+  }
+  .gs-state-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  @media (max-width: 650px) {
+    .gs-button,
+    .gs-input {
+      min-height: var(--touch-target);
+    }
+    .gs-brand__logo {
+      width: 150px;
+      height: 50px;
+    }
+  }
+}

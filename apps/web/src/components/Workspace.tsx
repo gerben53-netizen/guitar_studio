@@ -207,6 +207,7 @@ export function Workspace({
           {!practice && (
             <>
               <button
+                className="gs-button"
                 aria-label="Undo"
                 disabled={!canUndo}
                 onClick={() => undo()}
@@ -214,27 +215,39 @@ export function Workspace({
                 ↶
               </button>
               <button
+                className="gs-button"
                 aria-label="Redo"
                 disabled={!canRedo}
                 onClick={() => undo(true)}
               >
                 ↷
               </button>
-              <button onClick={() => setModal('metadata')}>Songgegevens</button>
+              <button
+                className="gs-button"
+                onClick={() => setModal('metadata')}
+              >
+                Songgegevens
+              </button>
             </>
           )}
           {practice && (
-            <button onClick={() => void fullscreen()}>Volledig scherm</button>
+            <button className="gs-button" onClick={() => void fullscreen()}>
+              Volledig scherm
+            </button>
           )}
-          <button className="primary" onClick={() => setPractice(!practice)}>
+          <button
+            className="primary gs-button gs-button--primary"
+            onClick={() => setPractice(!practice)}
+          >
             {practice ? '← Terug naar editor' : '▷ Oefenen'}
           </button>
         </div>
       </div>
       <div className="workspace-settings">
-        <label>
+        <label className="gs-field">
           Arrangement
           <select
+            className="gs-input"
             aria-label="Arrangement"
             value={arrangement.id}
             onChange={(e) => {
@@ -256,6 +269,7 @@ export function Workspace({
         {!practice && (
           <>
             <button
+              className="gs-button"
               aria-label="Arrangement dupliceren"
               onClick={() =>
                 change((s) => {
@@ -268,9 +282,10 @@ export function Workspace({
             >
               + Kopie
             </button>
-            <label>
+            <label className="gs-field">
               Instrument
               <select
+                className="gs-input"
                 aria-label="Instrument"
                 value={arrangement.instrument.type}
                 onChange={(e) =>
@@ -288,9 +303,10 @@ export function Workspace({
                 <option value="electric">Elektrisch</option>
               </select>
             </label>
-            <label>
+            <label className="gs-field">
               Stemming
               <select
+                className="gs-input"
                 aria-label="Stemming"
                 value={arrangement.instrument.tuning.name}
                 onChange={(e) =>
@@ -310,9 +326,10 @@ export function Workspace({
                 <option>Drop D</option>
               </select>
             </label>
-            <label>
+            <label className="gs-field">
               Capo
               <input
+                className="gs-input"
                 aria-label="Capo"
                 type="number"
                 min={0}
@@ -326,9 +343,10 @@ export function Workspace({
                 }
               />
             </label>
-            <label>
+            <label className="gs-field">
               BPM
               <input
+                className="gs-input"
                 aria-label="Tempo"
                 type="number"
                 min={20}
@@ -341,9 +359,10 @@ export function Workspace({
                 }
               />
             </label>
-            <label>
+            <label className="gs-field">
               Maat
               <select
+                className="gs-input"
                 aria-label="Maatsoort"
                 value={
                   arrangement.timeSignature.beats +
@@ -378,15 +397,21 @@ export function Workspace({
         </span>
       </div>
       {error && (
-        <div className="notice danger" role="alert">
+        <div className="notice danger gs-notice gs-danger" role="alert">
           <strong>
             {status === 'Niet opgeslagen' ? 'Niet opgeslagen. ' : ''}
           </strong>
           {error}
           <div className="workspace-actions">
-            <button onClick={retry}>Opnieuw opslaan</button>
-            <button onClick={exportSong}>Exporteer mijn wijzigingen</button>
-            <button onClick={reload}>Serverversie laden</button>
+            <button className="gs-button" onClick={retry}>
+              Opnieuw opslaan
+            </button>
+            <button className="gs-button" onClick={exportSong}>
+              Exporteer mijn wijzigingen
+            </button>
+            <button className="gs-button" onClick={reload}>
+              Serverversie laden
+            </button>
           </div>
         </div>
       )}
@@ -395,7 +420,8 @@ export function Workspace({
           {arrangement.sections.map((s) => (
             <button
               key={s.id}
-              className={s.id === section.id ? 'active' : ''}
+              aria-pressed={s.id === section.id}
+              className={'gs-button ' + (s.id === section.id ? 'active' : '')}
               onClick={() => chooseSection(s.id)}
             >
               {song.lyrics.find((l) => l.id === s.lyricsSectionId)!.name}
@@ -412,7 +438,8 @@ export function Workspace({
             ].map(([v, label]) => (
               <button
                 key={v}
-                className={view === v ? 'active' : ''}
+                aria-pressed={view === v}
+                className={'gs-button ' + (view === v ? 'active' : '')}
                 onClick={() => setView(v!)}
               >
                 {label}
@@ -436,7 +463,8 @@ export function Workspace({
         ].map(([v, label]) => (
           <button
             key={v}
-            className={mobile === v ? 'active' : ''}
+            aria-pressed={mobile === v}
+            className={'gs-button ' + (mobile === v ? 'active' : '')}
             onClick={() => setMobile(v!)}
           >
             {label}
@@ -444,8 +472,11 @@ export function Workspace({
         ))}
       </div>
       <div className="editor">
-        <section className="panel lyric-panel" aria-label="Lyrics en akkoorden">
-          <div className="panelhead section-manager-item">
+        <section
+          className="panel lyric-panel gs-panel"
+          aria-label="Lyrics en akkoorden"
+        >
+          <div className="panelhead section-manager-item gs-panel__header">
             <h2>Lyrics & akkoorden</h2>
             <small>Kies een woord → voeg een akkoord toe</small>
           </div>
@@ -462,7 +493,8 @@ export function Workspace({
                     <button
                       key={t.id}
                       className={
-                        'word ' + (selectedWord === t.id ? 'chosen' : '')
+                        'gs-button ' +
+                        ('word ' + (selectedWord === t.id ? 'chosen' : ''))
                       }
                       onClick={() => {
                         setSelectedWord(t.id);
@@ -500,10 +532,11 @@ export function Workspace({
             {section.chords
               .filter((c) => !c.tokenId)
               .map((c) => (
-                <div className="notice" key={c.id}>
+                <div className="notice gs-notice" key={c.id}>
                   Akkoord {c.grip.name} op “{c.originalText}” heeft geen zeker
                   tekstanker.
                   <button
+                    className="gs-button"
                     onClick={() => {
                       setReposition(c.id);
                       report('Kies het juiste woord voor ' + c.grip.name);
@@ -512,6 +545,7 @@ export function Workspace({
                     Opnieuw positioneren
                   </button>
                   <button
+                    className="gs-button"
                     onClick={() =>
                       changeArrangement((a) => {
                         const s = a.sections.find((s) => s.id === section.id)!;
@@ -532,13 +566,14 @@ export function Workspace({
           {!practice ? (
             <div className="lyrics-foot">
               <button
-                className="primary"
+                className="primary gs-button gs-button--primary"
                 disabled={!activeToken}
                 onClick={() => setModal('chord')}
               >
                 + Akkoord
               </button>
               <button
+                className="gs-button"
                 onClick={() => {
                   setText(sectionText(lyrics));
                   setModal('lyrics');
@@ -546,7 +581,10 @@ export function Workspace({
               >
                 Lyrics bewerken
               </button>
-              <button onClick={() => setModal('sections')}>
+              <button
+                className="gs-button"
+                onClick={() => setModal('sections')}
+              >
                 Secties indelen
               </button>
             </div>
@@ -628,9 +666,10 @@ export function Workspace({
       <div className="workspace-footer">
         <small>{song.source.attribution} · gebruik bevestigd</small>
         {practice ? (
-          <label>
+          <label className="gs-field">
             Handmatige voortgang {song.progress}%
             <input
+              className="gs-input"
               aria-label="Oefenvoortgang"
               type="range"
               min={0}
@@ -643,6 +682,7 @@ export function Workspace({
               }
             />
             <button
+              className="gs-button"
               aria-pressed={section.practiced}
               onClick={() =>
                 changeArrangement((a) => {
@@ -656,8 +696,11 @@ export function Workspace({
           </label>
         ) : (
           <div className="workspace-actions">
-            <button onClick={exportSong}>JSON exporteren</button>
+            <button className="gs-button" onClick={exportSong}>
+              JSON exporteren
+            </button>
             <button
+              className="gs-button"
               onClick={async () => {
                 try {
                   setVersions(
@@ -679,23 +722,26 @@ export function Workspace({
       {modal === 'lyrics' && (
         <Dialog title="Lyrics bewerken" onClose={() => setModal('')}>
           {error && <p role="alert">{error}</p>}
-          <label>
+          <label className="gs-field">
             Tekst van {lyrics.name}
             <textarea
+              className="gs-input"
               aria-label="Sectietekst"
               value={text}
               maxLength={20000}
               onChange={(e) => setText(e.target.value)}
             />
           </label>
-          <p className="notice">
+          <p className="notice gs-notice">
             Akkoorden blijven behouden. Bij een onzekere woordkoppeling vragen
             we je het bewaarde akkoord opnieuw te positioneren.
           </p>
           <footer className="dialog-actions">
-            <button onClick={() => setModal('')}>Annuleren</button>
+            <button className="gs-button" onClick={() => setModal('')}>
+              Annuleren
+            </button>
             <button
-              className="primary"
+              className="primary gs-button gs-button--primary"
               onClick={() => {
                 if (change((s) => editLyrics(s, lyrics.id, text))) setModal('');
               }}
@@ -713,6 +759,7 @@ export function Workspace({
                 <strong>{l.name}</strong>
                 <div className="workspace-actions">
                   <button
+                    className="gs-button"
                     aria-label={l.name + ' omhoog'}
                     disabled={i === 0}
                     onClick={() =>
@@ -737,6 +784,7 @@ export function Workspace({
                     ↑
                   </button>
                   <button
+                    className="gs-button"
                     aria-label={l.name + ' omlaag'}
                     disabled={i === song.lyrics.length - 1}
                     onClick={() =>
@@ -763,17 +811,19 @@ export function Workspace({
                 </div>
               </div>
             ))}
-            <label>
+            <label className="gs-field">
               Nieuwe sectienaam
               <input
+                className="gs-input"
                 value={sectionName}
                 maxLength={100}
                 onChange={(e) => setSectionName(e.target.value)}
               />
             </label>
-            <label>
+            <label className="gs-field">
               Lyrics voor deze sectie
               <textarea
+                className="gs-input"
                 value={newText}
                 onChange={(e) => setNewText(e.target.value)}
               />
@@ -781,6 +831,7 @@ export function Workspace({
           </div>
           <footer className="dialog-actions">
             <button
+              className="gs-button"
               disabled={!sectionName.trim()}
               onClick={() => {
                 change((s) => {
@@ -867,7 +918,7 @@ export function Workspace({
       )}
       {modal === 'history' && (
         <Dialog title="Herstelversies" onClose={() => setModal('')}>
-          <p className="notice">
+          <p className="notice gs-notice">
             Elke geslaagde opslag bewaart een herstelpunt (laatste 20).
             Herstellen maakt een nieuwe revisie; je kunt dit ongedaan maken.
           </p>
@@ -878,6 +929,7 @@ export function Workspace({
                 {new Date(v.updatedAt).toLocaleString('nl-NL')}
               </span>
               <button
+                className="gs-button"
                 onClick={() => {
                   if (
                     confirm(
@@ -936,39 +988,47 @@ function Metadata({
         }}
       >
         <div className="song-metadata-fields">
-          <label>
+          <label className="gs-field">
             Titel
             <input
+              className="gs-input"
               required
               maxLength={200}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
           </label>
-          <label>
+          <label className="gs-field">
             Artiest
             <input
+              className="gs-input"
               maxLength={200}
               value={artist}
               onChange={(e) => setArtist(e.target.value)}
             />
           </label>
-          <label>
+          <label className="gs-field">
             Arrangementnaam
             <input
+              className="gs-input"
               required
               maxLength={80}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </label>
-          <label>
+          <label className="gs-field">
             Tags (komma's)
-            <input value={tags} onChange={(e) => setTags(e.target.value)} />
+            <input
+              className="gs-input"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+            />
           </label>
-          <label>
+          <label className="gs-field">
             Niveau
             <select
+              className="gs-input"
               value={difficulty}
               onChange={(e) =>
                 setDifficulty(e.target.value as typeof difficulty)
@@ -979,9 +1039,10 @@ function Metadata({
               ))}
             </select>
           </label>
-          <label>
+          <label className="gs-field">
             Status
             <select
+              className="gs-input"
               value={status}
               onChange={(e) => setStatus(e.target.value as typeof status)}
             >
@@ -992,7 +1053,9 @@ function Metadata({
           </label>
         </div>
         <footer className="dialog-actions">
-          <button className="primary">Opslaan</button>
+          <button className="primary gs-button gs-button--primary">
+            Opslaan
+          </button>
         </footer>
       </form>
     </Dialog>

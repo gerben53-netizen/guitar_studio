@@ -5,12 +5,23 @@ export function Artwork({ variant = 0 }: { variant?: number }) {
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
     >
-      <circle cx="460" cy="65" r="28" fill="#d8c9a3" opacity=".55" />
+      <circle
+        cx="460"
+        cy="65"
+        r="28"
+        fill="var(--color-accent-primary)"
+        opacity=".55"
+      />
       <path
         d="M0 160Q120 60 250 155T600 135V240H0Z"
-        fill={['#516b56', '#8c7356', '#52677a'][variant % 3]}
+        fill={
+          variant % 2 ? 'var(--color-art-highlight)' : 'var(--color-art-start)'
+        }
       />
-      <path d="M0 210Q160 90 330 185T600 165V240H0Z" fill="#172a23" />
+      <path
+        d="M0 210Q160 90 330 185T600 165V240H0Z"
+        fill="var(--color-art-end)"
+      />
       {Array.from({ length: 6 }, (_, i) => (
         <path
           key={i}
@@ -25,7 +36,7 @@ export function Artwork({ variant = 0 }: { variant?: number }) {
             (190 + i * 9)
           }
           fill="none"
-          stroke="#e8b487"
+          stroke="var(--color-art-highlight)"
           opacity=".3"
         />
       ))}

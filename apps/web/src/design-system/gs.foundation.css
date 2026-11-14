@@ -1,0 +1,90 @@
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+  }
+  img,
+  svg {
+    max-width: 100%;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+@layer base {
+  body {
+    font: var(--font-size-body)/var(--line-height-body) var(--font-family-ui);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+  }
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+  a {
+    color: var(--color-accent-primary);
+    text-underline-offset: 3px;
+  }
+  .gs-heading {
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .gs-description,
+  small {
+    color: var(--color-text-secondary);
+  }
+  .gs-app-shell {
+    min-width: 0;
+  }
+  .gs-section {
+    padding: var(--space-6);
+  }
+  .gs-component-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: var(--space-4);
+  }
+  .gs-component-example {
+    padding: var(--space-5);
+    display: grid;
+    gap: var(--space-4);
+  }
+}
+@layer states {
+  :where(
+    button,
+    input,
+    select,
+    textarea,
+    a,
+    summary,
+    [tabindex]
+  ):focus-visible {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: var(--focus-offset);
+  }
+  [aria-invalid='true'] {
+    border-color: var(--color-danger);
+  }
+  [aria-busy='true'] {
+    cursor: progress;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

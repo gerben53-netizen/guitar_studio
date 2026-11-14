@@ -37,6 +37,7 @@ jobs:
           PGPORT: ${{ job.services.postgres.ports[5432] }}
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run design:check
       - run: npm run typecheck
       - run: npm test
       - name: Apply migrations twice (idempotency)
@@ -74,12 +75,12 @@ jobs:
       - name: Chromium functional, responsive and accessibility acceptance
         run: npm run test:browser
         env:
-          PLAYWRIGHT_SCREENSHOT_DIR: test-results/sprint-2a-screenshots
+          PLAYWRIGHT_SCREENSHOT_DIR: test-results/sprint-2b-screenshots
       - name: Upload browser evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: sprint-2a-browser-evidence
+          name: sprint-2b-browser-evidence
           path: |
             playwright-report/
             test-results/

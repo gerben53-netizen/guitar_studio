@@ -51,8 +51,8 @@ export function Fretboard({
       ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }, [cursor, event, arrangement.instrument.capo]);
   return (
-    <section className="panel neck">
-      <div className="panelhead fretboard-header">
+    <section className="panel neck gs-panel">
+      <div className="panelhead fretboard-header gs-panel__header">
         <h2>
           Interactieve gitaarhals{' '}
           <small>
@@ -60,16 +60,24 @@ export function Fretboard({
           </small>
         </h2>
         <div className="fretboard-controls">
-          <button aria-pressed={advance} onClick={() => setAdvance(!advance)}>
+          <button
+            className="gs-button"
+            aria-pressed={advance}
+            onClick={() => setAdvance(!advance)}
+          >
             Opeenvolgend
           </button>
           <button
+            className="gs-button"
             aria-pressed={showNames}
             onClick={() => setShowNames(!showNames)}
           >
             Nootnamen
           </button>
-          <button onClick={() => setCollapsed(!collapsed)}>
+          <button
+            className="gs-button"
+            onClick={() => setCollapsed(!collapsed)}
+          >
             {collapsed ? '⌃ Uitklappen' : '⌄ Inklappen'}
           </button>
         </div>
@@ -77,7 +85,7 @@ export function Fretboard({
       {!collapsed && (
         <>
           <div className="fret-scroll" ref={board}>
-            <div className="fretboard">
+            <div className="fretboard gs-fretboard">
               <span />
               {Array.from({ length: 25 }, (_, f) => (
                 <span
@@ -124,7 +132,8 @@ export function Fretboard({
                             : -1
                         }
                         className={
-                          (f === 0 ? 'open ' : '') + (selected ? 'lit' : '')
+                          'gs-button ' +
+                          ((f === 0 ? 'open ' : '') + (selected ? 'lit' : ''))
                         }
                         disabled={absolute > arrangement.instrument.maxFret}
                         aria-label={

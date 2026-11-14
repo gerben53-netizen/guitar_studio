@@ -61,7 +61,7 @@ export function ChordDiagram({ grip }: { grip: Grip }) {
             cx={12 + i * 13}
             cy={38 + Math.min(f - base, 4) * 13}
             r="4"
-            fill="var(--accent)"
+            fill="var(--color-note-selected)"
           />
         ),
       )}
@@ -112,9 +112,10 @@ export function ChordEditor({
           <ChordDiagram grip={grip} />
           <div className="grip-grid">
             {[6, 5, 4, 3, 2, 1].map((s) => (
-              <label key={s}>
+              <label className="gs-field" key={s}>
                 Snaar {s}
                 <select
+                  className="gs-input"
                   aria-label={'Greep snaar ' + s}
                   value={grip.frets[s - 1]}
                   onChange={(e) => {
@@ -135,9 +136,10 @@ export function ChordEditor({
           <small>× gedempt · ○ open ten opzichte van de capo</small>
         </div>
         <div>
-          <label>
+          <label className="gs-field">
             Akkoordnaam
             <input
+              className="gs-input"
               maxLength={60}
               value={grip.name}
               onChange={(e) => setGrip({ ...grip, name: e.target.value })}
@@ -146,6 +148,7 @@ export function ChordEditor({
           <div className="chord-actions">
             {[...presets, ...custom].map((p, i) => (
               <button
+                className="gs-button"
                 key={p.id + i}
                 onClick={() => setGrip(structuredClone(p))}
               >
@@ -154,6 +157,7 @@ export function ChordEditor({
             ))}
           </div>
           <button
+            className="gs-button"
             disabled={grip.frets.some((f) => f > 12)}
             onClick={() =>
               setGrip({
@@ -168,8 +172,9 @@ export function ChordEditor({
           >
             Alternatieve greep +12
           </button>
-          <label className="chord-actions">
+          <label className="chord-actions gs-field">
             <input
+              className="gs-input"
               type="checkbox"
               checked={library}
               onChange={(e) => setLibrary(e.target.checked)}
@@ -200,13 +205,15 @@ export function ChordEditor({
       )}
       <footer className="dialog-actions">
         {remove && (
-          <button className="danger" onClick={remove}>
+          <button className="danger gs-button gs-danger" onClick={remove}>
             Akkoord verwijderen
           </button>
         )}
-        <button onClick={() => toTab(grip)}>Greep → tab</button>
+        <button className="gs-button" onClick={() => toTab(grip)}>
+          Greep → tab
+        </button>
         <button
-          className="primary"
+          className="primary gs-button gs-button--primary"
           onClick={() => {
             if (!grip.name.trim()) {
               setError('Geef de greep een naam.');

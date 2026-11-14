@@ -1,6 +1,6 @@
 # Guitar Studio
 
-Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. Sprint 2A adds a typed Practice foundation, 18-exercise catalog, persistent settings/sessions/progress/mastery, music theory and a shared Web Audio metronome service. The full Practice Room UI is deferred to Sprint 2B. No microphone recognition, external lyrics provider, PDF export or deployment is implemented.
+Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. Sprint 2A adds a typed Practice foundation, 18-exercise catalog, persistent settings/sessions/progress/mastery, music theory and a shared Web Audio metronome service. The full Practice Room UI is deferred to Sprint 2C. No microphone recognition, external lyrics provider, PDF export or deployment is implemented.
 
 ## Requirements and installation
 
@@ -101,3 +101,9 @@ Protect backups as user data; move them outside the checkout and never commit th
 Read [domain and Sprint 2B components](docs/architecture/practice-domain.md), [API and examples](docs/architecture/practice-api.md), [database](docs/architecture/practice-database.md), [metronome lifecycle](docs/architecture/metronome-engine.md), [Song origins](docs/architecture/song-practice-integration.md) and [acceptance](docs/qa/sprint-2a-acceptance.md). Query `http://localhost:3000/api/v1/practice/exercises` after normal Compose startup. There is no new product route or CSS in 2A. `packages/audio` is the shared testable output engine; `apps/web/test-support/metronome.html` is an unstyled development test harness, not a production screen.
 
 Practice uses the server-owned local principal until account support exists. Before multi-user exposure, add trusted authentication plus Song ownership authorization. Existing semantic CSS and editors remain the basis for the separate Design System v2/Sprint 2B implementation. #6, #8, #14 and EPIC #18 stay open.
+
+## Design System v2 (Sprint 2B)
+
+The production screens use the accepted navy/cyan v2 token registry and original neon PNG. Existing theme preferences use `data-theme` on the root and the same localStorage key. Read [integration architecture](docs/architecture/design-system-v2-integration.md), [baseline/migration mapping](docs/sprints/sprint-2b-baseline.md) and [design acceptance](docs/qa/sprint-2b-design-system-acceptance.md).
+
+Run `npm run design:tokens` after changing the semantic registry, and `npm run design:check` to verify token CSS, brand hashes and 32 contrast pairs. These checks are part of CI. No new dependency, API/schema change or Practice Room Lab is introduced. New browser acceptance writes evidence under ignored test-results by default; set DESIGN_EVIDENCE_DIR to keep a separate evidence directory when comparing runs. Keep PLAYWRIGHT_SCREENSHOT_DIR set to avoid replacing historical Sprint 1 screenshots.

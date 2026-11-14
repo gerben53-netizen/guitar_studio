@@ -25,6 +25,10 @@ test('file import, explicit rights, retained/ambiguous chords, meter, profiles, 
     await page.getByRole('button', { name: 'Verder →' }).click();
     await page.getByRole('button', { name: 'Verder →' }).click();
     await expect(page.getByRole('alert')).toContainText('Bevestig');
+    await expect(page.getByRole('checkbox')).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    );
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Verder →' }).click();
     const response = page.waitForResponse(

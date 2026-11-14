@@ -1,0 +1,147 @@
+@layer base {
+  :root {
+    --split: 42%;
+  }
+  h1 {
+    font-size: var(--font-size-title);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  h3 {
+    font-size: 16px;
+  }
+  .muted {
+    color: var(--color-text-secondary);
+  }
+  .eyebrow {
+    color: var(--color-accent-primary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+}
+@layer components {
+  .gs-field {
+    display: block;
+    font-size: var(--font-size-caption);
+  }
+  .gs-field .gs-input {
+    display: block;
+    margin-top: var(--space-1);
+  }
+  .gs-input {
+    font: inherit;
+    min-height: var(--control-height);
+  }
+  textarea.gs-input {
+    width: 100%;
+    min-height: 180px;
+    resize: vertical;
+    line-height: 1.8;
+  }
+  input[type='checkbox'].gs-input {
+    width: 18px;
+    height: 18px;
+    min-height: 18px;
+    accent-color: var(--color-accent-primary);
+  }
+  .gs-danger {
+    color: var(--color-danger);
+  }
+  .gs-button:disabled {
+    opacity: 0.45;
+  }
+}
+@layer brand {
+  .gs-song-app {
+    .top {
+      height: 72px;
+      gap: var(--space-4);
+    }
+    .mark {
+      border: 0;
+      border-radius: 0;
+    }
+    .hero-art {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+      background: linear-gradient(
+        130deg,
+        var(--color-art-start),
+        var(--color-art-end)
+      );
+    }
+    .hero h2 {
+      font-family: var(--font-family-ui);
+      font-weight: 550;
+      letter-spacing: -0.04em;
+    }
+    .gs-brand-hero {
+      position: relative;
+    }
+    .gs-button.active,
+    .gs-button[aria-pressed='true'] {
+      border-color: var(--color-accent-primary);
+    }
+    .gs-button.primary:hover {
+      background: var(--color-accent-hover);
+      color: var(--color-on-accent);
+    }
+    .gs-button.stat {
+      text-align: left;
+      justify-content: flex-start;
+    }
+    .gs-button.song-title {
+      display: block;
+    }
+    .cover .fav {
+      border-color: var(--color-border-interactive);
+    }
+    .gs-dialog {
+      color: var(--color-text-primary);
+    }
+    .gs-dialog::backdrop {
+      background: var(--color-backdrop);
+    }
+    .tabgrid {
+      font-family: var(--font-family-music);
+    }
+    .word,
+    .lyric-lines {
+      font-family: var(--font-family-lyrics);
+    }
+    .gs-brand__logo {
+      width: 176px;
+      height: 59px;
+      object-fit: contain;
+    }
+    .gs-brand__mark {
+      object-fit: contain;
+    }
+    @media (max-width: 650px) {
+      .top {
+        height: 66px;
+        padding: 0 var(--space-3);
+      }
+      .gs-brand__logo {
+        width: 150px;
+        height: 50px;
+      }
+      .mark {
+        display: none;
+      }
+    }
+  }
+}
+@layer brand {
+  .gs-song-app .rail .gs-button {
+    flex-direction: column;
+    gap: 0;
+  }
+}

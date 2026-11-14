@@ -1,0 +1,164 @@
+[
+  {
+    "name": "dashboard",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "import",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "library",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "workspace",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "lyrics",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "chord",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "tab",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "fretboard",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "practice",
+    "theme": "dark",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "dashboard",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "import",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "library",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "workspace",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "lyrics",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "chord",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "tab",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "fretboard",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  },
+  {
+    "name": "practice",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "violations": []
+  }
+]
