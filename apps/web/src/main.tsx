@@ -12,7 +12,18 @@ import { Library, type SongAction } from './components/Library';
 import { ImportWizard } from './components/ImportWizard';
 import { Workspace } from './components/Workspace';
 import './style.css';
+import { PracticeRoom } from './practice/PracticeRoom';
+import type { PracticeGuard } from './practice/RhythmLab';
 function App() {
+  const practiceGuard = useRef<PracticeGuard>(() => true);
+  const registerPracticeGuard = useCallback((guard: PracticeGuard) => {
+    practiceGuard.current = guard;
+  }, []);
+  function navigate(next: string) {
+    if (next === page) return;
+    if (!practiceGuard.current()) return;
+    setPage(next);
+  }
   const [apiStatus, setApiStatus] = useState('API controleren…');
   useEffect(() => {
     const controller = new AbortController();
@@ -85,6 +96,7 @@ function App() {
     }
   }, [theme]);
   async function open(record: SongRecord) {
+    if (!practiceGuard.current()) return;
     if (!(await editor.flush())) return;
     const rows = await refresh();
     const latest = rows?.find((r) => r.song.id === record.song.id);
@@ -99,6 +111,8 @@ function App() {
     setPage('workspace');
   }
   async function create(song: StudioSong) {
+    if (!practiceGuard.current())
+      throw new Error('Je oefening is niet verlaten. Rond deze eerst af.');
     if (!(await editor.flush()))
       throw new Error('Sla je huidige wijzigingen eerst op of exporteer ze.');
     const record = await createSong(song);
@@ -193,6 +207,7 @@ function App() {
           ['dashboard', '⌂', 'Start'],
           ['library', '▤', 'Songs'],
           ['workspace', '♧', 'Studio'],
+          ['practice-room', '◎', 'Oefenen'],
         ].map(([value, icon, label]) => (
           <button
             key={value}
@@ -203,7 +218,7 @@ function App() {
               value === 'workspace' &&
               !records.some((r) => r.song.id === editor.song?.id)
             }
-            onClick={() => setPage(value!)}
+            onClick={() => navigate(value!)}
           >
             <span className="icon" aria-hidden="true">
               {icon}
@@ -274,6 +289,8 @@ function App() {
             <div className="empty" role="status">
               Je studio wordt geladen…
             </div>
+          ) : page === 'practice-room' ? (
+            <PracticeRoom registerGuard={registerPracticeGuard} />
           ) : page === 'dashboard' || page === 'library' ? (
             <Library
               records={records}

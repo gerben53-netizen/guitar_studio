@@ -3,10 +3,12 @@ export function Dialog({
   title,
   onClose,
   children,
+  dismissible = true,
 }: {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  dismissible?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
@@ -24,7 +26,10 @@ export function Dialog({
     <dialog
       className="gs-dialog"
       ref={ref}
-      onCancel={onClose}
+      onCancel={(event) => {
+        event.preventDefault();
+        if (dismissible) onClose();
+      }}
       aria-labelledby={titleId}
       onKeyDown={(event) => {
         if (event.key !== 'Tab') return;
@@ -33,6 +38,11 @@ export function Dialog({
             'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]',
           ),
         ).filter((el) => el.getClientRects().length && !el.hidden);
+        if (!items.length) {
+          event.preventDefault();
+          event.currentTarget.focus();
+          return;
+        }
         const first = items[0],
           last = items.at(-1);
         if (event.shiftKey && document.activeElement === first && last) {
@@ -50,7 +60,12 @@ export function Dialog({
     >
       <header className="dialog-head">
         <h2 id={titleId}>{title}</h2>
-        <button className="gs-button" aria-label="Sluiten" onClick={onClose}>
+        <button
+          className="gs-button"
+          aria-label="Sluiten"
+          disabled={!dismissible}
+          onClick={onClose}
+        >
           ×
         </button>
       </header>
