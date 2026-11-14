@@ -192,6 +192,14 @@ describe('personal LRCLIB PostgreSQL transactions and existing contracts', () =>
         })
       ).statusCode,
     ).toBe(400);
+    expect(
+      (
+        await call('POST', '/api/v1/imports', {
+          ...body,
+          input: { ...body.input, text: 'e|---\nEigen tekst' },
+        })
+      ).statusCode,
+    ).toBe(400);
     const created = (await call('POST', '/api/v1/imports', body)).json();
     expect(
       (await call('GET', '/api/v1/songs', undefined, other)).json(),

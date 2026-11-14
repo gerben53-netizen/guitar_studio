@@ -10,10 +10,13 @@ import { legacyFixture } from '../packages/music-domain/test-support/multitrack-
 import { toMultitrack } from '../packages/music-domain/src/multitrack';
 const output =
   process.env.PERSONAL_IMPORT_EVIDENCE_DIR ?? 'test-results/lrclib-personal';
-const owner = 'personal-browser-' + randomUUID();
+let owner: string;
 let pool: pg.Pool, app: ReturnType<typeof buildApp>, apiBase: string;
 test.beforeAll(async () => {
   pool = new pg.Pool({ connectionString: readConfig().databaseUrl });
+});
+test.beforeEach(async () => {
+  owner = 'personal-browser-' + randomUUID();
   app = buildApp(
     () => pool.query('SELECT 1'),
     false,
@@ -23,9 +26,11 @@ test.beforeAll(async () => {
   );
   apiBase = await app.listen({ host: '127.0.0.1', port: 0 });
 });
-test.afterAll(async () => {
+test.afterEach(async () => {
   await pool.query('DELETE FROM studio_songs WHERE owner_id=$1', [owner]);
   await app.close();
+});
+test.afterAll(async () => {
   await pool.end();
 });
 async function proxy(page: Page, loseFirstImport = false) {

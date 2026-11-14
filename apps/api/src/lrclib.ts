@@ -356,6 +356,8 @@ export function createLrclib(options: Options = {}): DiscoveryProvider {
       document.rawText =
         row.plainLyrics ||
         document.sections.map((s) => s.lines.join('\n')).join('\n\n');
+      document.title = row.trackName;
+      document.artist = row.artistName;
       document.status = document.warnings.length ? 'warnings' : 'valid';
       return {
         result: normalizeLrclib(row, 'v1'),

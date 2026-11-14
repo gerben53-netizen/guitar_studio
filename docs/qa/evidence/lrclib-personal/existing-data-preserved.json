@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T21:31:35.222Z",
+  "priorSprintSongs": 2,
+  "priorSprintHistoryVersions": 15,
+  "currentSongs": 2,
+  "currentHistoryVersions": 17,
+  "addedLastOpenedRevisionsSincePriorSprint": 2,
+  "allOriginalHistoryDigest": "3f57c3cb9050acaed256f0f56dc28d0e",
+  "originalHistoryIntact": true,
+  "existingContentUnchangedExceptLastOpened": true,
+  "noSchemaMigration": true,
+  "featureTestsUsedSeparateDatabase": true
+}

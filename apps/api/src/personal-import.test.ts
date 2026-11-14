@@ -4,6 +4,8 @@ import {
   originalText,
 } from '../test-support/personal-lyrics-fixtures.js';
 import { createPersonalImportReceipts } from './personal-import-receipts.js';
+import { createLrclib } from './lrclib.js';
+import { personalRecord } from '../test-support/personal-lyrics-fixtures.js';
 import {
   personalLyricsDocument,
   canStoreImport,
@@ -110,5 +112,24 @@ describe('personal lyrics policy and verified source preservation', () => {
         storage: 'personal-only',
       }).success,
     ).toBe(false);
+    expect(
+      personalLyricsDocument(
+        detail.document,
+        'Album',
+        { text: 'e|---\nEigen tekst', title: 'Eigen' },
+        new Date().toISOString(),
+      ).status,
+    ).toBe('correction-required');
+    const record = personalRecord();
+    const metadata = await createLrclib({
+      gapMs: 0,
+      fetch: async () =>
+        Response.json({
+          ...record,
+          plainLyrics: '{title: Andere titel}\nEigen tekst',
+        }),
+    }).get(String(record.id));
+    expect(metadata.document.title).toBe(record.trackName);
+    expect(metadata.document.artist).toBe(record.artistName);
   });
 });

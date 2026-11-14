@@ -67,6 +67,7 @@ export function personalLyricsDocument(
         : []),
     ]),
   ];
-  doc.status = doc.warnings.length ? 'warnings' : 'valid';
+  if (!['invalid', 'correction-required'].includes(doc.status))
+    doc.status = doc.warnings.length ? 'warnings' : 'valid';
   return ImportDocumentSchema.parse(doc);
 }
