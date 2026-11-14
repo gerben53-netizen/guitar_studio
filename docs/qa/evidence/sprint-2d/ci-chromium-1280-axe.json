@@ -1,0 +1,77 @@
+{
+  "browserName": "chromium",
+  "evidence": [
+    {
+      "name": "preview",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "tab",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "search",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "lyrics",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "preview",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "tab",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "search",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    },
+    {
+      "name": "lyrics",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "violations": []
+    }
+  ]
+}
