@@ -14,6 +14,8 @@ PostgreSQL 17 retains current/history JSONB and optimistic revisions. Additive m
 
 Before local DDL, a private pg_dump archive was restored into a newly created isolated database using single-transaction pg_restore. Existing 2 songs/15 versions had identical document, owner, revision and history digests after restore and after repeated migration. The temporary restore database was removed; the private archive remains ignored. Evidence contains counts/hashes only. Six original representative legacy fixtures cover multiple arrangements/sections, four meters, chords/polyphony/rests, capo and Drop D; conversion is not accepted from one demo song.
 
+An actual PostgreSQL restart followed by a new Chrome process/empty context preserved the full converted Song, revision, history, checksummed backup, hidden track and cross-bar link. Only the generated restart fixture was subsequently removed. Eight converted-Song screenshots and eight zero-violation axe scans are committed with the preservation/restart proof; full final regression/CI records live in the PR completion comment.
+
 ## Validation
 
 - 109 unit tests: existing 73 plus 36 foundation cases, including six representative round-trips, deterministic/idempotent conversion, grouping, exact timing, manual/repeated lyrics identities, links, references and compatibility safeguards.

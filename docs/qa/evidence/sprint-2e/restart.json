@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T20:42:35.250Z",
+  "actualPostgresRestart": true,
+  "newChromeProcess": true,
+  "newEmptyContext": true,
+  "browser": "157.0.8103.51",
+  "canonicalDocumentAndRevisionUnchanged": true,
+  "historyAndBackupsUnchanged": true,
+  "allTracksAndCrossBarLinksPreserved": true,
+  "backups": 1,
+  "checksums_valid": true,
+  "ownFixtureRemoved": true
+}

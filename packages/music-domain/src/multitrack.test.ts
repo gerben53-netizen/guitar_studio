@@ -380,6 +380,7 @@ describe('explicit syllable links and safe text editing', () => {
     );
     const removed = applyLyricsEdit(song, song.lyrics[0]!.id, 'la la', true);
     expect(removed.affectedLinks).toHaveLength(1);
+    expect(removed.affectedChordAnchors).toHaveLength(2);
     expect(removed.song.arrangements[0]!.tracks[0]!.events).toEqual(t.events);
   });
   it('moves repeated words by explicit identity and preserves link targets', () => {
@@ -429,6 +430,21 @@ describe('explicit syllable links and safe text editing', () => {
     expect(() =>
       splitWord(song, word.id, [{ id: word.syllables[0]!.id, text: 'wrong' }]),
     ).toThrow();
+    song.arrangements.forEach((a) => {
+      a.lyricsLinks = [];
+    });
+    const storedWord = song.lyrics[0]!.lines[0]!.tokens.find(
+      (t) => t.id === word.id,
+    )!;
+    storedWord.syllables[0]!.id = 's'.repeat(250);
+    expect(
+      applyMultitrackMutation(song, {
+        op: 'split-word',
+        wordId: word.id,
+        syllables: [{ id: storedWord.syllables[0]!.id, text: 'water' }],
+        confirmed: false,
+      }),
+    ).toEqual(song);
   });
 });
 describe('import and Practice seams reuse normalized contracts', () => {

@@ -111,7 +111,7 @@ export const MultitrackMutationSchema = z.discriminatedUnion('op', [
     syllables: z
       .array(
         z.strictObject({
-          id: id.optional(),
+          id: z.string().min(1).max(300).optional(),
           text: z.string().min(1).max(10000),
         }),
       )
@@ -339,8 +339,13 @@ export function planLyricsEdit(
         (w.syllables.length > 1 || s.id !== `syllable:${w.id}`),
     ),
   );
-  const requiresConfirmation =
+  let requiresConfirmation =
     affectedLinks.length > 0 || affectedSyllables.length > 0;
+  const affectedChordAnchors: {
+    arrangementId: string;
+    anchorId: string;
+    tokenId: string;
+  }[] = [];
   song.lyrics[song.lyrics.findIndex((s) => s.id === sectionId)] = next;
   for (const a of song.arrangements) {
     a.lyricsLinks = a.lyricsLinks.filter(
@@ -351,8 +356,15 @@ export function planLyricsEdit(
         c.tokenId &&
         oldMap.has(c.tokenId) &&
         !next.lines.some((l) => l.tokens.some((t) => t.id === c.tokenId))
-      )
+      ) {
+        affectedChordAnchors.push({
+          arrangementId: a.id,
+          anchorId: c.id,
+          tokenId: c.tokenId,
+        });
+        requiresConfirmation = true;
         c.tokenId = null;
+      }
     });
   }
   return {
@@ -363,6 +375,7 @@ export function planLyricsEdit(
     uncertainWordIds,
     affectedLinks: structuredClone(affectedLinks),
     affectedSyllables: structuredClone(affectedSyllables),
+    affectedChordAnchors,
     requiresConfirmation,
   };
 }
