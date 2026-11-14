@@ -601,3 +601,8 @@
     }
   }
 }
+@layer components {
+  .gs-practice-app input[type='checkbox'] {
+    accent-color: var(--color-accent-primary);
+  }
+}

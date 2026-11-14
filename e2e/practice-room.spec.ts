@@ -324,6 +324,13 @@ test('Practice Room real audio, rhythm editing, sessions, explicit mastery, goal
     await page.getByRole('button', { name: 'Overzicht', exact: true }).click();
     await page
       .getByLabel('Persoonlijke leerdoelen (maximaal 5, één per regel)')
+      .fill('x'.repeat(201));
+    await page
+      .getByRole('button', { name: 'Leerdoelen opslaan', exact: true })
+      .click();
+    await expect(page.getByRole('alert')).toContainText('maximaal 200 tekens');
+    await page
+      .getByLabel('Persoonlijke leerdoelen (maximaal 5, één per regel)')
       .fill(marker + ' rustig ritme');
     await page
       .getByRole('button', { name: 'Leerdoelen opslaan', exact: true })

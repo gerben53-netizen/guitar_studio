@@ -8,7 +8,10 @@ import type {
   Exercise,
   PracticeProgress,
 } from '../../../../packages/music-domain/src/practice';
-import type { PracticePreferences } from '../../../../packages/music-domain/src/practice-transport';
+import {
+  PracticePreferencesInputSchema,
+  type PracticePreferences,
+} from '../../../../packages/music-domain/src/practice-transport';
 import { request } from '../api';
 import { RhythmLab, type PracticeGuard } from './RhythmLab';
 import { elapsed } from './PracticeTransport';
@@ -179,13 +182,18 @@ export function PracticeRoom({
     selecting.current = true;
     setBusy(true);
     try {
-      const next = await client.savePreferences({
+      const input = PracticePreferencesInputSchema.safeParse({
         ...pref.current,
         goals: goals
           .split('\n')
           .map((s) => s.trim())
           .filter(Boolean),
       });
+      if (!input.success)
+        throw new Error(
+          'Gebruik maximaal 5 leerdoelen van maximaal 200 tekens per doel.',
+        );
+      const next = await client.savePreferences(input.data);
       setPreferences(next);
       pref.current = next;
       setGoals(next.goals.join('\n'));
