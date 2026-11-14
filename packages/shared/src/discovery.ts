@@ -46,6 +46,7 @@ export interface DiscoverySearch {
   pagination: false;
 }
 export interface DiscoveryDetail {
+  personalImportReceipt?: string;
   result: DiscoveryResult;
   document: ImportDocument;
   instrumental: boolean;

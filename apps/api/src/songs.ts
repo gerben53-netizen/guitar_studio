@@ -1,3 +1,4 @@
+import { canStoreImport } from '../../../packages/music-domain/src/lrclib-personal-import.js';
 import type { FastifyInstance } from 'fastify';
 import type pg from 'pg';
 import { z } from 'zod';
@@ -39,13 +40,7 @@ export function registerSongs(
   app.post('/api/v1/songs', async (request, reply) => {
     const song = parseStoredSong(request.body);
     const who = await owner(request);
-    if (
-      song.importDocuments?.some(
-        (d) =>
-          d.source.origin !== 'user' ||
-          d.source.storage !== 'user-confirmation',
-      )
-    )
+    if (song.importDocuments?.some((d) => !canStoreImport(d)))
       throw failure(403, 'Externe lyrics mogen niet worden opgeslagen.');
     const client = await pool.connect();
     try {
@@ -82,13 +77,7 @@ export function registerSongs(
   app.put<{ Params: { id: string } }>('/api/v1/songs/:id', async (request) => {
     const { song, revision } = input.parse(request.body);
     const who = await owner(request);
-    if (
-      song.importDocuments?.some(
-        (d) =>
-          d.source.origin !== 'user' ||
-          d.source.storage !== 'user-confirmation',
-      )
-    )
+    if (song.importDocuments?.some((d) => !canStoreImport(d)))
       throw failure(403, 'Externe lyrics mogen niet worden opgeslagen.');
     if (song.id !== request.params.id)
       throw failure(400, 'Song-ID komt niet overeen.');

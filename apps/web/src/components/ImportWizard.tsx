@@ -6,6 +6,7 @@ import type {
 } from '../../../../packages/music-domain/src/song-import-model';
 import { Dialog } from './Dialog';
 import { DiscoverySearch } from './DiscoverySearch';
+import type { DiscoveryDetail } from '../../../../packages/shared/src/discovery';
 import { request } from '../api';
 export function ImportWizard({
   close,
@@ -35,6 +36,7 @@ export function ImportWizard({
     [target, setTarget] = useState('new-song'),
     [songId, setSongId] = useState(''),
     [arrangementId, setArrangementId] = useState('');
+  const [personal, setPersonal] = useState<DiscoveryDetail | null>(null);
   function edited() {
     requestId.current = crypto.randomUUID();
     setPreview(null);
@@ -46,6 +48,9 @@ export function ImportWizard({
     sourceName: source,
     format,
     method: kind === 'text-file' ? ('file' as const) : ('paste' as const),
+    ...(personal?.personalImportReceipt
+      ? { personalReceipt: personal.personalImportReceipt }
+      : {}),
   });
   async function file(file?: File) {
     if (!file) return;
@@ -124,6 +129,7 @@ export function ImportWizard({
           requestId: requestId.current,
           confirmed: true,
           rightsConfirmed: true,
+          personalUseConfirmed: !!personal && rights,
           input: input(),
           target: destination,
         });
@@ -177,6 +183,14 @@ export function ImportWizard({
                   className={'gs-button ' + (kind === v ? 'active' : '')}
                   onClick={() => {
                     edited();
+                    setPersonal(null);
+                    if (personal) {
+                      setText('');
+                      setTitle('');
+                      setArtist('');
+                      setSource('Eigen tekst');
+                    }
+                    setRights(false);
                     setKind(v);
                   }}
                 >
@@ -185,7 +199,24 @@ export function ImportWizard({
               ))}
             </div>
             {kind === 'search' ? (
-              <DiscoverySearch />
+              <DiscoverySearch
+                onSelect={(detail) => {
+                  edited();
+                  setPersonal(detail);
+                  setRights(false);
+                  setFormat('lyrics');
+                  setTitle(detail.result.title);
+                  setArtist(detail.result.artist);
+                  setSource('LRCLIB');
+                  setText(
+                    detail.document.sections
+                      .map((s) => s.lines.join('\n'))
+                      .join('\n\n'),
+                  );
+                  setStep(1);
+                  setError('');
+                }}
+              />
             ) : (
               <>
                 <div className="import-metadata-fields">
@@ -267,10 +298,70 @@ export function ImportWizard({
         ) : step === 1 ? (
           <>
             <p className="notice gs-notice">
+              {personal
+                ? 'Songtekst uit LRCLIB. Deze communitytekst kan fouten bevatten. Controleer de inhoud voor je persoonlijke bibliotheek. '
+                : ''}
               Controleer tekst en metadata vóór opslag. Sectiekoppen, lege
               regels, akkoordkolommen en onzekere tabnotatie blijven behouden.
               Ga terug om titel, artiest of formaat te corrigeren.
             </p>
+            {personal && (
+              <>
+                <div className="import-metadata-fields">
+                  <label className="gs-field">
+                    Titel
+                    <input
+                      className="gs-input"
+                      aria-label="Songtitel"
+                      maxLength={200}
+                      value={title}
+                      onChange={(e) => {
+                        edited();
+                        setTitle(e.target.value);
+                      }}
+                    />
+                  </label>
+                  <label className="gs-field">
+                    Artiest
+                    <input
+                      className="gs-input"
+                      maxLength={200}
+                      value={artist}
+                      onChange={(e) => {
+                        edited();
+                        setArtist(e.target.value);
+                      }}
+                    />
+                  </label>
+                </div>
+                <p>
+                  <a
+                    href={personal.result.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Bron: LRCLIB #{personal.result.id}
+                  </a>{' '}
+                  · {personal.result.album || 'Geen album'}
+                </p>
+                {personal.document.synchronization && (
+                  <details>
+                    <summary>Synchronisatiegegevens (milliseconden)</summary>
+                    <pre className="import-source-text">
+                      {JSON.stringify(
+                        personal.document.synchronization,
+                        null,
+                        2,
+                      )}
+                    </pre>
+                    <p className="muted">
+                      Timing blijft bij de oorspronkelijke tekst; geen
+                      automatische koppeling aan maten of gecorrigeerde woorden.
+                    </p>
+                  </details>
+                )}
+              </>
+            )}
             <label className="gs-field">
               Controleer de lyrics
               <textarea
@@ -289,6 +380,7 @@ export function ImportWizard({
               <input
                 className="gs-input"
                 maxLength={300}
+                readOnly={!!personal}
                 value={source}
                 onChange={(e) => {
                   edited();
@@ -308,7 +400,9 @@ export function ImportWizard({
                   setRights(e.target.checked);
                 }}
               />
-              Ik mag deze tekst opslaan en gebruiken (of voeg geen lyrics toe).
+              {personal
+                ? 'Ik voeg deze communitytekst uitsluitend toe aan mijn persoonlijke bibliotheek.'
+                : 'Ik mag deze tekst opslaan en gebruiken (of voeg geen lyrics toe).'}
             </label>
           </>
         ) : (
@@ -467,7 +561,7 @@ export function ImportWizard({
           className="primary gs-button gs-button--primary"
           disabled={
             busy ||
-            kind === 'search' ||
+            (kind === 'search' && step === 0) ||
             (step === 2 && target === 'append' && !arrangementId)
           }
           aria-busy={busy}
@@ -476,9 +570,11 @@ export function ImportWizard({
           {busy
             ? 'Aanmaken…'
             : step === 2
-              ? target === 'new-song'
-                ? 'Song aanmaken →'
-                : 'Import bevestigen →'
+              ? personal
+                ? 'Toevoegen aan mijn bibliotheek'
+                : target === 'new-song'
+                  ? 'Song aanmaken →'
+                  : 'Import bevestigen →'
               : 'Verder →'}
         </button>
       </footer>

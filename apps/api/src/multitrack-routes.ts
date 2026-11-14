@@ -1,3 +1,4 @@
+import { canStoreImport } from '../../../packages/music-domain/src/lrclib-personal-import.js';
 import type pg from 'pg';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
@@ -223,13 +224,7 @@ export function registerMultitrack(
         document = input.document;
       }
       if (document.id !== songId) throw fail(400, 'Cross-song document');
-      if (
-        document.importDocuments?.some(
-          (d) =>
-            d.source.origin !== 'user' ||
-            d.source.storage !== 'user-confirmation',
-        )
-      )
+      if (document.importDocuments?.some((d) => !canStoreImport(d)))
         throw fail(403, 'Preview-only bron mag niet worden opgeslagen.');
       if (
         original.schemaVersion !== document.schemaVersion ||

@@ -118,11 +118,13 @@ Sessions, goals, progress, ramp and last settings persist in PostgreSQL; no prac
 
 ## Song Discovery and Import (Sprint 2D)
 
-Use **Nieuwe song** in the existing wizard: explicit LRCLIB search, temporary lyric/sync preview, paste or UTF-8 `.txt`/`.cho`/`.chordpro`/`.pro` import. Review/correct source and metadata, confirm your storage rights and choose a new song, new arrangement or append-only sections. ASCII-tab source includes frets/bar positions but no invented rhythmic playback; open the Workspace import-source panel for later manual timing. LRCLIB lyrics cannot be permanently imported while content-storage rights remain unverified.
+Use **Nieuwe song** in the existing wizard: explicit LRCLIB search, temporary lyric/sync preview, paste or UTF-8 `.txt`/`.cho`/`.chordpro`/`.pro` import. Review/correct source and metadata, confirm your storage rights and choose a new song, new arrangement or append-only sections. ASCII-tab source includes frets/bar positions but no invented rhythmic playback; open the Workspace import-source panel for later manual timing. Selected LRCLIB lyrics can be corrected and explicitly added to the personal library with source/timing retained. Community texts may contain errors; no public distribution or blanket lyric copyright release is claimed. See the [personal import policy](docs/architecture/lrclib-personal-import-policy.md).
 
 Migration 005 is additive; normal migration/Compose startup applies it. Existing songs remain owned by the existing local principal. No new authentication is added. Optional LRCLIB_APP_ID and LRCLIB_API_KEY are server-only environment variables; no key is required for basic use. Never expose them through VITE variables. Regular tests mock the provider network; live LRCLIB is not a CI dependency. Set IMPORT_EVIDENCE_DIR and PLAYWRIGHT_SCREENSHOT_DIR to ignored test-results paths when running acceptance against an isolated test database.
 
 [Providers](docs/architecture/song-discovery-providers.md), [LRCLIB adapter](docs/architecture/lrclib-provider.md), [import model/Work handoff](docs/architecture/song-import-model.md), [Sprint report](docs/sprints/sprint-2d-report.md), [acceptance](docs/qa/sprint-2d-acceptance.md).
+
+The personal LRCLIB flow adds **Tekst controleren voor import** and **Toevoegen aan mijn bibliotheek**, with correction, original source/timing, private scope and safe existing destinations. [Current policy](docs/architecture/lrclib-personal-import-policy.md), [implementation report](docs/sprints/lrclib-personal-import-report.md), [acceptance](docs/qa/lrclib-personal-import-acceptance.md). No migration is required. Full browser tests additionally need a host database URL selecting the same disposable database as the browser API; in test mode also provide the distinct TEST_DATABASE_URL. CI supplies these. PERSONAL_IMPORT_EVIDENCE_DIR selects the new evidence directory.
 
 ## Multi-track foundation (Sprint 2E)
 

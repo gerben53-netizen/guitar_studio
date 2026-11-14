@@ -230,7 +230,7 @@ export function createLrclib(options: Options = {}): DiscoveryProvider {
       pagination: false,
       maxResults: 20,
       restrictions:
-        'Metadata en tijdelijke lyrics-preview. Geen permanente import: opslagrechten niet vastgesteld. Geen chords of tablatuur.',
+        'Communityteksten: controleer op fouten. Expliciete import voor je persoonlijke bibliotheek; geen publieke verspreiding. Geen chords of tablatuur.',
     },
     async search(
       query: DiscoveryQuery,
@@ -321,7 +321,10 @@ export function createLrclib(options: Options = {}): DiscoveryProvider {
       if (row.lyricsfile) {
         try {
           const parsed = parseLyricsfile(row.lyricsfile, row.hasWordSync);
-          document.synchronization = parsed.synchronization;
+          document.synchronization = {
+            ...parsed.synchronization,
+            rawLrc: row.syncedLyrics || null,
+          };
           document.warnings.push(...parsed.warnings);
           if (!row.plainLyrics && !row.syncedLyrics)
             document.sections[0]!.lines = (
@@ -350,13 +353,18 @@ export function createLrclib(options: Options = {}): DiscoveryProvider {
         );
       else if (!row.plainLyrics && !row.syncedLyrics && !row.lyricsfile)
         document.warnings.push('Geen lyrics beschikbaar.');
+      document.rawText =
+        row.plainLyrics ||
+        document.sections.map((s) => s.lines.join('\n')).join('\n\n');
+      document.title = row.trackName;
+      document.artist = row.artistName;
       document.status = document.warnings.length ? 'warnings' : 'valid';
       return {
         result: normalizeLrclib(row, 'v1'),
         document,
         instrumental: row.instrumental,
         storageReason:
-          'LRCLIB biedt API-toegang, maar een algemene licentie voor permanente opslag of herpublicatie is niet vastgesteld. Gebruik voor import je eigen tekst.',
+          'Deze songtekst is door de community aangeleverd en kan fouten bevatten. Controleer de inhoud voordat je deze toevoegt aan je persoonlijke bibliotheek. Publieke verspreiding wordt niet ondersteund.',
       };
     },
   };

@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T21:21:03.399Z",
+  "actualPostgresRestart": true,
+  "newApiProcessAndSigningKey": true,
+  "newChromeProcess": true,
+  "newEmptyContext": true,
+  "browser": "157.0.8103.51",
+  "documentRevisionAndHistoryUnchanged": true,
+  "originalSourceAndCorrectedLyricsRetained": true,
+  "wordAndRawLrcTimingPreserved": true,
+  "oldReceiptCommittedRequestReplayedWithoutDuplicate": true,
+  "ownFixtureRemoved": true
+}

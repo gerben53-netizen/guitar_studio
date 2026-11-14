@@ -1,0 +1,41 @@
+{
+  "browser": "157.0.8103.51",
+  "scans": [
+    {
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "stage": "correction",
+      "violations": []
+    },
+    {
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "stage": "destination",
+      "violations": []
+    },
+    {
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "stage": "correction",
+      "violations": []
+    },
+    {
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "stage": "destination",
+      "violations": []
+    }
+  ]
+}

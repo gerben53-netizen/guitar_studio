@@ -5,12 +5,16 @@ import {
   type DiscoveryProvider,
 } from '../../../packages/shared/src/discovery.js';
 import { createLrclib, DiscoveryError } from './lrclib.js';
+import type { PracticeAccess } from './practice-routes.js';
+import type { PersonalImportReceipts } from './personal-import-receipts.js';
 export interface DiscoveryAccess {
   providers?: DiscoveryProvider[];
 }
 export function registerDiscovery(
   app: FastifyInstance,
   options: DiscoveryAccess = {},
+  access: PracticeAccess = {},
+  receipts?: PersonalImportReceipts,
 ) {
   const providers = options.providers ?? [
     createLrclib({
@@ -90,7 +94,17 @@ export function registerDiscovery(
       const provider = providers.find((p) => p.info.id === params.providerId);
       if (!provider)
         throw new DiscoveryError(503, 'Provider niet beschikbaar.');
-      return provider.get(params.resultId, signal);
+      const detail = await provider.get(params.resultId, signal);
+      const who = z
+        .string()
+        .min(1)
+        .max(200)
+        .parse(await (access.resolveOwner?.(request) ?? 'local'));
+      const receipt = receipts?.issue(detail, who);
+      return {
+        ...detail,
+        ...(receipt ? { personalImportReceipt: receipt } : {}),
+      };
     }),
   );
 }

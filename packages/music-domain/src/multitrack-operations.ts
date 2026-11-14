@@ -1,3 +1,4 @@
+import { canStoreImport } from './lrclib-personal-import.js';
 import { z } from 'zod';
 import { pitchAt, NoteEventSchema, type NoteEvent } from './index.js';
 import { uid, reconcileTokens, type StudioSong } from './workspace.js';
@@ -463,11 +464,7 @@ export function attachImportTrack(
   const song = MultitrackSongSchema.parse(structuredClone(input)),
     a = arrangement(song, arrangementId),
     doc = song.importDocuments?.[documentIndex];
-  if (
-    !doc ||
-    doc.source.origin !== 'user' ||
-    doc.source.storage !== 'user-confirmation'
-  )
+  if (!doc || !canStoreImport(doc))
     throw new Error('Import source is absent or preview-only');
   if (blockIndices.some((i) => !doc.tabBlocks[i]))
     throw new Error('Unknown source block');
