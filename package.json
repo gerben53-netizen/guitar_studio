@@ -21,7 +21,9 @@
     "build": "npm run build --workspaces --if-present",
     "migrate": "tsx apps/api/src/migrate.ts",
     "test:browser": "playwright test",
-    "seed:demo": "tsx apps/api/src/seed-demo.ts"
+    "seed:demo": "tsx apps/api/src/seed-demo.ts",
+    "design:tokens": "node scripts/design-system.mjs --write",
+    "design:check": "node scripts/design-system.mjs"
   },
   "dependencies": {
     "fastify": "5.12.8",
