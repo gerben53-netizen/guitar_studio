@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import {
+  PracticeTransportOptionsSchema,
+  defaultTransportOptions,
+} from './practice-transport.js';
+import {
   InstrumentProfileSchema,
   RationalSchema,
   NoteEventSchema,
@@ -62,6 +66,7 @@ export const ConfigurationSchema = z
     exerciseVersion: z.number().int().positive(),
     instrument: InstrumentProfileSchema,
     bpm: z.number().int().min(20).max(300),
+    transport: PracticeTransportOptionsSchema.optional(),
     meter: PracticeMeterSchema,
     difficulty: LevelSchema,
     position: z
@@ -148,6 +153,7 @@ export function canonical(value: unknown): string {
 }
 export function configurationIdentity(input: ExerciseConfiguration) {
   const c = ConfigurationSchema.parse(input);
+  const { transport, ...base } = c;
   const { id: _id, tuning, ...profile } = c.instrument;
   void _id;
   const specific = structuredClone(c.specific);
@@ -174,7 +180,11 @@ export function configurationIdentity(input: ExerciseConfiguration) {
   return (
     'practice-configuration:v1:' +
     canonical({
-      ...c,
+      ...base,
+      ...(transport &&
+      canonical(transport) !== canonical(defaultTransportOptions)
+        ? { transport }
+        : {}),
       instrument: { ...profile, tuning: { pitches: tuning.pitches } },
       specific,
     })

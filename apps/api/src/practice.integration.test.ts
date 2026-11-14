@@ -537,3 +537,164 @@ it('retains historical sessions/settings/mastery when a new catalog version is s
     await f.close();
   }
 });
+
+it('persists revision-checked personal goals and last exercise behind the existing trusted owner boundary', async () => {
+  const f = await fixture();
+  try {
+    expect((await f.call('GET', '/preferences')).json()).toEqual({
+      goals: [],
+      lastExerciseId: null,
+      revision: 0,
+    });
+    const input = {
+      goals: ['Rustig oefenen', 'Syncopen'],
+      lastExerciseId: 'r2',
+      revision: 0,
+    };
+    expect((await f.call('PUT', '/preferences', input)).json()).toEqual({
+      ...input,
+      revision: 1,
+    });
+    expect((await f.call('PUT', '/preferences', input)).statusCode).toBe(409);
+    expect(
+      (await f.call('GET', '/preferences', undefined, f.b)).json(),
+    ).toEqual({ goals: [], lastExerciseId: null, revision: 0 });
+    expect(
+      (
+        await f.call('PUT', '/preferences', {
+          ...input,
+          revision: 1,
+          lastExerciseId: 'missing',
+        })
+      ).statusCode,
+    ).toBe(404);
+    expect(
+      (
+        await f.call('PUT', '/preferences', {
+          ...input,
+          revision: 1,
+          ownerId: f.b,
+        })
+      ).statusCode,
+    ).toBe(400);
+    expect((await f.call('GET', '/preferences?ownerId=other')).statusCode).toBe(
+      400,
+    );
+    expect((await f.call('GET', '/preferences')).json().goals).toEqual(
+      input.goals,
+    );
+    const restarted = buildApp(() => f.pool.query('SELECT 1'), false, f.pool, {
+      resolveOwner: () => f.a,
+    });
+    try {
+      expect((await restarted.inject(base + '/preferences')).json()).toEqual({
+        ...input,
+        revision: 1,
+      });
+    } finally {
+      await restarted.close();
+    }
+  } finally {
+    await f.close();
+  }
+});
+it('persists 6/8 pattern, transport and ramp snapshots and validates the same rhythm bounds on API writes', async () => {
+  const f = await fixture();
+  try {
+    const initial = (await f.call('GET', '/exercises/r1/settings')).json();
+    const configuration = structuredClone(initial.configuration);
+    configuration.meter = { beats: 6, beatUnit: 8 };
+    configuration.specific.pattern = { meter: configuration.meter, events: [] };
+    configuration.transport = {
+      subdivision: 'eighth',
+      mute: true,
+      volume: 0.3,
+      ramp: { enabled: true, start: 60, target: 80, step: 5, everyBars: 2 },
+    };
+    const settings = (
+      await f.call('PUT', '/exercises/r1/settings', {
+        configuration,
+        revision: 0,
+      })
+    ).json();
+    expect(settings.configuration).toEqual(configuration);
+    const body = f.session(settings, {
+      result: 'Beheerst',
+      masteryConfirmed: true,
+    });
+    expect((await f.call('POST', '/sessions', body)).statusCode).toBe(201);
+    expect((await f.call('POST', '/sessions', body)).statusCode).toBe(409);
+    expect(
+      (await f.call('GET', '/sessions/' + body.id)).json().snapshot.transport,
+    ).toEqual(configuration.transport);
+    expect((await f.call('GET', '/progress/r1')).json()).toMatchObject({
+      sessionCount: 1,
+      mastered: false,
+      masteredConfigurations: 1,
+    });
+    configuration.specific.pattern.events = [
+      {
+        id: 'bad',
+        start: { numerator: 11, denominator: 16 },
+        duration: { numerator: 1, denominator: 8 },
+        kind: 'note',
+        stroke: 'up',
+        accent: true,
+      },
+    ];
+    expect(
+      (
+        await f.call('PUT', '/exercises/r1/settings', {
+          configuration,
+          revision: 1,
+        })
+      ).statusCode,
+    ).toBe(400);
+    expect(
+      (await f.call('GET', '/exercises/r1/settings')).json().revision,
+    ).toBe(1);
+  } finally {
+    await f.close();
+  }
+});
+
+it('retains pre-2C configuration identity and explicit mastery when adding only default playback controls', async () => {
+  const f = await fixture();
+  try {
+    const initial = await f.save('r1');
+    await f.call('PUT', '/mastery', {
+      exerciseId: 'r1',
+      exerciseVersion: 1,
+      scope: 'configuration',
+      configurationKey: initial.key,
+      mastered: true,
+      confirmed: true,
+    });
+    const configuration = {
+      ...initial.configuration,
+      transport: {
+        subdivision: 'none',
+        volume: 0.45,
+        mute: false,
+        ramp: { enabled: false, start: 60, target: 100, step: 5, everyBars: 4 },
+      },
+    };
+    const response = await f.call('PUT', '/exercises/r1/settings', {
+      configuration,
+      revision: initial.revision,
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toMatchObject({
+      key: initial.key,
+      mastery: { configuration: true },
+    });
+    const input = f.session({ key: initial.key, configuration });
+    expect((await f.call('POST', '/sessions', input)).statusCode).toBe(201);
+    expect(
+      (await f.call('GET', '/sessions/' + input.id)).json().snapshot.transport
+        .volume,
+    ).toBe(0.45);
+  } finally {
+    await f.close();
+  }
+});

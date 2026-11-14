@@ -1,3 +1,4 @@
+import type { PracticePreferences } from '../../music-domain/src/practice-transport.js';
 import type {
   Exercise,
   ExerciseConfiguration,
@@ -37,6 +38,12 @@ export function createPracticeClient(request: PracticeTransport) {
   };
   const json = (body: unknown) => JSON.stringify(body);
   return {
+    preferences: () => request<PracticePreferences>('/practice/preferences'),
+    savePreferences: (input: PracticePreferences) =>
+      request<PracticePreferences>('/practice/preferences', {
+        method: 'PUT',
+        body: json(input),
+      }),
     exercises: (
       filters: {
         lab?: Exercise['lab'];

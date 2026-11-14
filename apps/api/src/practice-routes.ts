@@ -1,3 +1,4 @@
+import { PracticePreferencesInputSchema } from '../../../packages/music-domain/src/practice-transport.js';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type pg from 'pg';
 import { randomUUID } from 'node:crypto';
@@ -63,6 +64,49 @@ export function registerPractice(
       .parse(await (access.resolveOwner?.(request) ?? LOCAL_PRACTICE_OWNER));
   const mayReadSong =
     access.canReadSong ?? ((who: string) => who === LOCAL_PRACTICE_OWNER);
+  app.get(prefix + '/preferences', async (request) => {
+    const who = await owner(request);
+    const result = await pool.query(
+      'SELECT goals,last_exercise_id AS "lastExerciseId",revision FROM practice_preferences WHERE owner_id=$1',
+      [who],
+    );
+    return result.rows[0] ?? { goals: [], lastExerciseId: null, revision: 0 };
+  });
+  app.put(prefix + '/preferences', async (request) => {
+    const who = await owner(request),
+      input = PracticePreferencesInputSchema.parse(request.body);
+    if (input.lastExerciseId) await exercise(pool, input.lastExerciseId);
+    return practiceTransaction(pool, who, 'preferences', async (db) => {
+      const inserted = await db.query(
+        'INSERT INTO practice_preferences(owner_id,goals,last_exercise_id,revision) SELECT $1,$2,$3,1 WHERE $4::int=0 ON CONFLICT DO NOTHING RETURNING revision',
+        [
+          who,
+          JSON.stringify(input.goals),
+          input.lastExerciseId,
+          input.revision,
+        ],
+      );
+      let revision = inserted.rows[0]?.revision;
+      if (!revision) {
+        const updated = await db.query(
+          'UPDATE practice_preferences SET goals=$2,last_exercise_id=$3,revision=revision+1 WHERE owner_id=$1 AND revision=$4 RETURNING revision',
+          [
+            who,
+            JSON.stringify(input.goals),
+            input.lastExerciseId,
+            input.revision,
+          ],
+        );
+        revision = updated.rows[0]?.revision;
+      }
+      if (!revision)
+        throw fail(
+          409,
+          'Voorkeuren gewijzigd; laad opnieuw voordat je opslaat',
+        );
+      return { ...input, revision };
+    });
+  });
   const params = z.strictObject({ id: ExerciseIdSchema });
   const query = z.strictObject({
     lab: LabSchema.optional(),
