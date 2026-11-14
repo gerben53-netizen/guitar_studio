@@ -21,8 +21,7 @@ jobs:
           --health-cmd "pg_isready -U ci -d guitar_test"
           --health-interval 5s --health-timeout 3s --health-retries 20
     env:
-      DATABASE_URL: postgres://ci:ci-ephemeral-only@localhost:${{ job.services.postgres.ports[5432] }}/guitar_dev
-      TEST_DATABASE_URL: postgres://ci:ci-ephemeral-only@localhost:${{ job.services.postgres.ports[5432] }}/guitar_test
+      DATABASE_URL: postgres://ci:ci-ephemeral-only@localhost:5432/guitar_dev
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,6 +31,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Configure isolated test database
+        run: echo "TEST_DATABASE_URL=postgres://ci:ci-ephemeral-only@localhost:$PGPORT/guitar_test" >> "$GITHUB_ENV"
+        env:
+          PGPORT: ${{ job.services.postgres.ports[5432] }}
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
