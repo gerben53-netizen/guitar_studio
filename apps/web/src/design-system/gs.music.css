@@ -1,0 +1,37 @@
+@layer music {
+  .gs-fretboard {
+    background: var(--color-fretboard);
+  }
+  .gs-note {
+    color: var(--color-text-primary);
+  }
+  .gs-note--selected {
+    background: var(--color-note-selected);
+    color: var(--color-on-accent);
+    outline: 2px solid var(--color-focus);
+  }
+  .gs-note--root {
+    border-radius: 50%;
+    background: var(--color-accent-primary);
+    color: var(--color-on-accent);
+  }
+  .gs-note--third {
+    border-radius: 6px;
+    background: var(--color-degree-third);
+    color: var(--color-on-degree);
+  }
+  .gs-note--fifth {
+    border-radius: 10px 2px;
+    background: var(--color-degree-fifth);
+    color: var(--color-on-degree);
+  }
+  .gs-tab-note {
+    font-family: var(--font-family-music);
+  }
+  .gs-chord--active {
+    background: var(--color-chord-active);
+  }
+  .gs-rhythm-cell[aria-current='true'] {
+    outline: 2px solid var(--color-focus);
+  }
+}
