@@ -417,6 +417,38 @@ for (const viewport of [
           .getByRole('button', { name: 'Nieuwe song', exact: true })
           .click();
         async function audit(name: string) {
+          if (name === 'preview') {
+            const colors = await page
+              .locator('dialog .gs-button--primary')
+              .evaluate(async (button) => {
+                const root = document.documentElement,
+                  original = root.dataset.theme;
+                const results: { actual: string; expected: string }[] = [];
+                for (const next of ['dark', 'light', original ?? 'dark']) {
+                  root.dataset.theme = next;
+                  await new Promise<void>((resolve) =>
+                    requestAnimationFrame(() => resolve()),
+                  );
+                  const reference = document.createElement('span');
+                  reference.style.display = 'none';
+                  reference.style.color = button.matches(':hover')
+                    ? 'var(--color-accent-hover)'
+                    : 'var(--color-accent-primary)';
+                  document.body.append(reference);
+                  results.push({
+                    actual: getComputedStyle(button).backgroundColor,
+                    expected: getComputedStyle(reference).color,
+                  });
+                  reference.remove();
+                }
+                return results;
+              });
+            for (const color of colors)
+              expect(
+                color.actual,
+                'Primary background must switch atomically with text theme',
+              ).toBe(color.expected);
+          }
           const result = await new AxeBuilder({ page })
             .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
             .analyze();

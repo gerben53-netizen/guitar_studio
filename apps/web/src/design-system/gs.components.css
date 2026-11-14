@@ -12,9 +12,9 @@
     color: var(--color-text-primary);
     cursor: pointer;
     text-decoration: none;
-    transition:
-      background var(--motion-fast),
-      border-color var(--motion-fast);
+    /* Text/theme tokens switch instantly: background must not interpolate
+       through a low-contrast dark-to-light intermediate color. */
+    transition: border-color var(--motion-fast);
   }
   .gs-button:hover {
     background: var(--color-surface-interactive);
