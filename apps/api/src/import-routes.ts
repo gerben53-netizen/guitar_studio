@@ -8,7 +8,12 @@ import {
 import { legacyView } from '../../../packages/music-domain/src/multitrack.js';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
-import { ImportCommitSchema } from '../../../packages/music-domain/src/song-import-model.js';
+import {
+  ImportCommitSchema,
+  ImportRequestInputSchema,
+} from '../../../packages/music-domain/src/song-import-model.js';
+import { personalLyricsDocument } from '../../../packages/music-domain/src/lrclib-personal-import.js';
+import type { PersonalImportReceipts } from './personal-import-receipts.js';
 import { parseSongImport } from '../../../packages/music-domain/src/song-import.js';
 import {
   importToSong,
@@ -22,30 +27,40 @@ export function registerImports(
   app: FastifyInstance,
   pool: pg.Pool,
   access: PracticeAccess,
+  receipts: PersonalImportReceipts,
 ) {
+  const owner = async (request: import('fastify').FastifyRequest) =>
+    z
+      .string()
+      .min(1)
+      .max(200)
+      .parse(await (access.resolveOwner?.(request) ?? 'local'));
+  const prepare = (value: unknown, who: string) => {
+    const { personalReceipt, ...input } = ImportRequestInputSchema.parse(value);
+    if (!personalReceipt) return parseSongImport(input);
+    const original = receipts.verify(personalReceipt, who);
+    try {
+      return personalLyricsDocument(
+        original.document,
+        original.album,
+        input,
+        new Date().toISOString(),
+      );
+    } catch {
+      throw fail(400, 'Corrigeer de songtekst vóór persoonlijke import.');
+    }
+  };
   app.post('/api/v1/imports/preview', async (request) => {
     z.strictObject({}).parse(request.query);
-    return parseSongImport(request.body);
+    return prepare(request.body, await owner(request));
   });
   app.post('/api/v1/imports', async (request, reply) => {
     z.strictObject({}).parse(request.query);
     const input = ImportCommitSchema.parse(request.body),
-      who = z
-        .string()
-        .min(1)
-        .max(200)
-        .parse(await (access.resolveOwner?.(request) ?? 'local'));
-    const doc = parseSongImport(input.input);
-    if (
-      ['invalid', 'correction-required'].includes(doc.status) ||
-      !doc.title.trim()
-    )
-      throw fail(400, 'Corrigeer de import vóór opslag.');
-    // Reparse only user input. No client-supplied provider policy/document is trusted.
-    const imported = importToSong(doc),
-      hash = createHash('sha256')
-        .update(canonical({ input: input.input, target: input.target }))
-        .digest('hex');
+      who = await owner(request);
+    const hash = createHash('sha256')
+      .update(canonical({ input: input.input, target: input.target }))
+      .digest('hex');
     const db = await pool.connect();
     try {
       await db.query('BEGIN');
@@ -67,6 +82,13 @@ export function registerImports(
         await db.query('COMMIT');
         return legacyRecord(existing.rows[0]);
       }
+      const doc = prepare(input.input, who);
+      if (
+        ['invalid', 'correction-required'].includes(doc.status) ||
+        !doc.title.trim()
+      )
+        throw fail(400, 'Corrigeer de import vóór opslag.');
+      const imported = importToSong(doc);
       let song: StoredSong = imported,
         revision = 1;
       if (input.target.kind !== 'new-song') {
@@ -76,7 +98,10 @@ export function registerImports(
         );
         if (!existing.rowCount) throw fail(404, 'Song niet gevonden.');
         if (existing.rows[0].revision !== input.target.revision)
-          throw fail(409, 'Song gewijzigd. Herlaad vóór import.');
+          throw Object.assign(
+            fail(409, 'Song gewijzigd. Herlaad vóór import.'),
+            { currentRevision: existing.rows[0].revision },
+          );
         try {
           song = mergeWorkspaceWrite(
             existing.rows[0].document,
@@ -124,6 +149,9 @@ export function registerImports(
             title: doc.title,
             artist: doc.artist,
             format: doc.format,
+            importedAt:
+              doc.source.personalImport?.importedAt ?? new Date().toISOString(),
+            timingFormat: doc.synchronization?.kind ?? 'plain',
           }),
         ],
       );

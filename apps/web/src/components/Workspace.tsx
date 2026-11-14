@@ -206,6 +206,39 @@ export function Workspace({
                   : doc.source.provider}{' '}
                 · {doc.source.method}
               </p>
+              {doc.source.personalImport && (
+                <>
+                  <p>
+                    Persoonlijke LRCLIB-import ·{' '}
+                    <a href={doc.source.url!} target="_blank" rel="noreferrer">
+                      LRCLIB #{doc.source.recordId}
+                    </a>
+                  </p>
+                  <p>
+                    {doc.source.personalImport.title} ·{' '}
+                    {doc.source.personalImport.artist} ·{' '}
+                    {doc.source.personalImport.album || 'Geen album'} ·{' '}
+                    {new Date(
+                      doc.source.personalImport.importedAt,
+                    ).toLocaleDateString('nl-NL')}{' '}
+                    · {doc.source.personalImport.timingFormat}
+                  </p>
+                  <p className="muted">
+                    Oorspronkelijke bron hieronder; jouw bewerkte songtekst
+                    staat in de lyricseditor.
+                  </p>
+                  {doc.synchronization && (
+                    <details>
+                      <summary>
+                        Oorspronkelijke synchronisatie (milliseconden)
+                      </summary>
+                      <pre className="import-source-text">
+                        {JSON.stringify(doc.synchronization, null, 2)}
+                      </pre>
+                    </details>
+                  )}
+                </>
+              )}
               <pre className="import-source-text">{doc.rawText}</pre>
               {doc.tabBlocks.map((b, j) => (
                 <div key={j}>

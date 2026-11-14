@@ -302,7 +302,7 @@ test('real discovery UI supports metadata, selection, formats, instrumental, err
     page.getByRole('region', { name: 'Lyrics-preview' }),
   ).toContainText('Eigen testwoorden');
   await expect(
-    page.getByRole('button', { name: 'Permanente import niet toegestaan' }),
+    page.getByRole('button', { name: 'Geen importeerbare songtekst' }),
   ).toBeDisabled();
   await page
     .getByText('Synchronisatiegegevens (milliseconden)', { exact: true })
@@ -501,7 +501,7 @@ for (const viewport of [
           page.getByRole('region', { name: 'Lyrics-preview' }),
         ).toBeVisible();
         await page
-          .getByRole('button', { name: 'Permanente import niet toegestaan' })
+          .getByRole('button', { name: 'Geen importeerbare songtekst' })
           .scrollIntoViewIfNeeded();
         await audit('lyrics');
         await page

@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-14T21:19:42.900Z",
+  "provider": "lrclib",
+  "apiVersion": "v2",
+  "searchStatus": 200,
+  "detailStatus": 200,
+  "previewStatus": 200,
+  "recordId": "388146",
+  "availableCharacters": 1417,
+  "timing": "line",
+  "signedPersonalPreview": true,
+  "noDatabaseWrites": true,
+  "noExternalLyricsRetainedInEvidence": true
+}

@@ -5,7 +5,11 @@ import type {
   DiscoverySearch as SearchResponse,
 } from '../../../../packages/shared/src/discovery';
 import { request } from '../api';
-export function DiscoverySearch() {
+export function DiscoverySearch({
+  onSelect,
+}: {
+  onSelect: (detail: DiscoveryDetail) => void;
+}) {
   const [providers, setProviders] = useState<DiscoveryProviderInfo[]>([]),
     [provider, setProvider] = useState('lrclib'),
     [q, setQ] = useState(''),
@@ -300,8 +304,14 @@ export function DiscoverySearch() {
             </p>
           ))}
           <p className="notice gs-notice">{detail.storageReason}</p>
-          <button className="gs-button" disabled>
-            Permanente import niet toegestaan
+          <button
+            className="gs-button"
+            disabled={!detail.personalImportReceipt || detail.instrumental}
+            onClick={() => onSelect(detail)}
+          >
+            {detail.personalImportReceipt && !detail.instrumental
+              ? 'Tekst controleren voor import'
+              : 'Geen importeerbare songtekst'}
           </button>
         </section>
       )}

@@ -1,3 +1,4 @@
+import { canStoreImport } from './lrclib-personal-import.js';
 import { z } from 'zod';
 import {
   InstrumentProfileSchema,
@@ -277,8 +278,7 @@ export function validateMultitrack(song: MultitrackSong) {
         const doc = song.importDocuments?.[t.importSource.documentIndex];
         if (
           !doc ||
-          doc.source.storage !== 'user-confirmation' ||
-          doc.source.origin !== 'user' ||
+          !canStoreImport(doc) ||
           t.importSource.blockIndices.some((i) => !doc.tabBlocks[i])
         )
           throw new Error('Unknown or forbidden import source');

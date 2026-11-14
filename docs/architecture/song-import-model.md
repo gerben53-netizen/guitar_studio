@@ -29,3 +29,7 @@ One transaction and advisory lock cover replay check, locked target/revision, so
 ## Multi-track and synchronization seam
 
 Future track objects can reference a source document/block index and map source note columns to existing rational musical events once a human supplies timing. No current column is a track, onset or duration. Multiple blocks preserve order/section/source positions without destructively migrating arrangements. Lyrics synchronization uses millisecond line/word timestamps independently of tempo/meter and never becomes tab notes. A future mapping can connect source sync-line/word indices and track/event IDs while retaining original timing/source. No new multi-track UI/model is shipped.
+
+## LRCLIB personal import extension
+
+Selected usable LRCLIB detail now supplies a short-lived owner-bound signed receipt. Preview/commit input may include personalReceipt; commit additionally requires personalUseConfirmed:true. Existing destinations, parser, transactions, UUID/hash replay, revisions and history remain authoritative. Personal source metadata, original raw/timing and corrected sections persist in the same ImportDocument; no DDL is needed. See [personal policy and exact contract](lrclib-personal-import-policy.md). Preview-only sources remain non-persistable; no public publication route is added.

@@ -22,19 +22,46 @@ export const ImportFormatSchema = z.enum([
   'chordpro',
   'ascii',
 ]);
-export const ImportSourceSchema = z.strictObject({
-  origin: z.enum(['user', 'external']),
-  provider: z.string().max(80).nullable(),
-  recordId: z.string().max(100).nullable(),
-  name: z.string().max(300),
-  url: z
-    .url()
-    .max(2000)
-    .refine((v) => v.startsWith('https://'))
-    .nullable(),
-  method: z.enum(['paste', 'file', 'provider']),
-  storage: z.enum(['user-confirmation', 'preview-only']),
-});
+export const ImportSourceSchema = z
+  .strictObject({
+    origin: z.enum(['user', 'external']),
+    provider: z.string().max(80).nullable(),
+    recordId: z.string().max(100).nullable(),
+    name: z.string().max(300),
+    url: z
+      .url()
+      .max(2000)
+      .refine((v) => v.startsWith('https://'))
+      .nullable(),
+    method: z.enum(['paste', 'file', 'provider']),
+    storage: z.enum(['user-confirmation', 'preview-only', 'personal-only']),
+    personalImport: z
+      .strictObject({
+        scope: z.literal('personal'),
+        importedAt: z.iso.datetime(),
+        method: z.literal('lrclib-personal-import'),
+        title: z.string().max(200),
+        artist: z.string().max(200),
+        album: z.string().max(300),
+        timingFormat: z.enum(['plain', 'line', 'word']),
+        textCorrected: z.boolean(),
+        metadataCorrected: z.boolean(),
+      })
+      .optional(),
+  })
+  .refine(
+    (s) =>
+      s.storage === 'personal-only'
+        ? s.origin === 'external' &&
+          s.provider === 'lrclib' &&
+          !!s.recordId &&
+          /^[1-9]\d{0,14}$/.test(s.recordId) &&
+          s.url === `https://lrclib.net/record/${s.recordId}` &&
+          s.method === 'provider' &&
+          !!s.personalImport
+        : !s.personalImport,
+    'Invalid personal source policy',
+  );
 export const SyncWordSchema = z
   .strictObject({
     text: z.string().max(10000),
@@ -151,24 +178,33 @@ export const ParseImportInputSchema = z.strictObject({
   sourceName: z.string().max(300).default('Eigen tekst'),
   method: z.enum(['paste', 'file']).default('paste'),
 });
-export const ImportCommitSchema = z.strictObject({
-  requestId: z.uuid(),
-  confirmed: z.literal(true),
-  rightsConfirmed: z.literal(true),
-  input: ParseImportInputSchema,
-  target: z.discriminatedUnion('kind', [
-    z.strictObject({ kind: z.literal('new-song') }),
-    z.strictObject({
-      kind: z.literal('new-arrangement'),
-      songId: z.string().min(1).max(100),
-      revision: z.number().int().positive(),
-    }),
-    z.strictObject({
-      kind: z.literal('append'),
-      songId: z.string().min(1).max(100),
-      arrangementId: z.string().min(1).max(100),
-      revision: z.number().int().positive(),
-    }),
-  ]),
+export const ImportRequestInputSchema = ParseImportInputSchema.extend({
+  personalReceipt: z.string().min(1).max(1_500_000).optional(),
 });
+export const ImportCommitSchema = z
+  .strictObject({
+    requestId: z.uuid(),
+    confirmed: z.literal(true),
+    rightsConfirmed: z.literal(true),
+    personalUseConfirmed: z.boolean().default(false),
+    input: ImportRequestInputSchema,
+    target: z.discriminatedUnion('kind', [
+      z.strictObject({ kind: z.literal('new-song') }),
+      z.strictObject({
+        kind: z.literal('new-arrangement'),
+        songId: z.string().min(1).max(100),
+        revision: z.number().int().positive(),
+      }),
+      z.strictObject({
+        kind: z.literal('append'),
+        songId: z.string().min(1).max(100),
+        arrangementId: z.string().min(1).max(100),
+        revision: z.number().int().positive(),
+      }),
+    ]),
+  })
+  .refine(
+    (v) => !v.input.personalReceipt || v.personalUseConfirmed,
+    'Confirm personal library use',
+  );
 export type ImportCommit = z.infer<typeof ImportCommitSchema>;
