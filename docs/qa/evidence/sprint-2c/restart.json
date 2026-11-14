@@ -1,0 +1,12 @@
+{
+  "pass": true,
+  "date": "2026-11-14T17:31:31.535Z",
+  "resources": [
+    "/preferences",
+    "/exercises/r1/settings",
+    "/sessions/c04c7611-1169-4e98-af42-a9ff47394ffc",
+    "/progress/r1",
+    "/origins/835045c1-f638-481d-b516-abf7af211745"
+  ],
+  "cleanup": true
+}

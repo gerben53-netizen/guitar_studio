@@ -101,6 +101,12 @@ export function RhythmLab({
       window.removeEventListener('beforeunload', leave);
     };
   }, [guard, audio.engine]);
+  useEffect(() => {
+    if (error)
+      root.current
+        ?.querySelector('[role=alert]')
+        ?.scrollIntoView({ block: 'nearest' });
+  }, [error]);
   function change(next: ExerciseConfiguration, remember = false) {
     const valid = ConfigurationSchema.safeParse(next);
     if (!valid.success) {
