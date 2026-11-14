@@ -33,7 +33,7 @@ test('file import, explicit rights, retained/ambiguous chords, meter, profiles, 
     await page.getByRole('button', { name: 'Verder →' }).click();
     const response = page.waitForResponse(
       (r) =>
-        r.url().endsWith('/api/v1/songs') && r.request().method() === 'POST',
+        r.url().endsWith('/api/v1/imports') && r.request().method() === 'POST',
     );
     await page.getByRole('button', { name: 'Song aanmaken →' }).click();
     id = ((await (await response).json()) as SongRecord).song.id;

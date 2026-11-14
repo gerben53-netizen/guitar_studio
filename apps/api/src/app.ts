@@ -2,6 +2,8 @@ import Fastify from 'fastify';
 import type pg from 'pg';
 import { ZodError } from 'zod';
 import { registerSongs } from './songs.js';
+import { registerDiscovery, type DiscoveryAccess } from './discovery-routes.js';
+import { registerImports } from './import-routes.js';
 import { registerPractice, type PracticeAccess } from './practice-routes.js';
 import type { HealthResponse } from '../../../packages/shared/src/index.js';
 export function buildApp(
@@ -9,11 +11,17 @@ export function buildApp(
   logger = false,
   pool?: pg.Pool,
   practiceAccess: PracticeAccess = {},
+  discoveryAccess: DiscoveryAccess = {},
 ) {
   const app = Fastify({ logger, bodyLimit: 2_000_000 });
   app.setErrorHandler<import('fastify').FastifyError>(
     (error, request, reply) => {
-      request.log.error(error);
+      if (/^\/api\/v1\/(imports|discovery)/.test(request.url))
+        request.log.warn(
+          { code: error.code },
+          'Import/discovery request failed (payload omitted)',
+        );
+      else request.log.error(error);
       const status =
         error instanceof ZodError
           ? 400
@@ -46,9 +54,11 @@ export function buildApp(
     },
   );
   if (pool) {
-    registerSongs(app, pool);
+    registerSongs(app, pool, practiceAccess);
+    registerImports(app, pool, practiceAccess);
     registerPractice(app, pool, practiceAccess);
   }
+  registerDiscovery(app, discoveryAccess);
   app.get('/health/live', async () => ({ status: 'ok' }));
   app.get('/health', async (_request, reply): Promise<HealthResponse> => {
     try {

@@ -192,6 +192,39 @@ export function Workspace({
       }
       style={{ '--split': split + '%' } as React.CSSProperties}
     >
+      {song.importDocuments?.length ? (
+        <details className="workspace-import-source">
+          <summary>Importbron, akkoorden en ongetimede tablatuur</summary>
+          {song.importDocuments.map((doc, i) => (
+            <section key={i}>
+              <h3>
+                {doc.source.name} · {doc.contentType}
+              </h3>
+              <p>
+                {doc.source.origin === 'user'
+                  ? 'Gebruikersinhoud'
+                  : doc.source.provider}{' '}
+                · {doc.source.method}
+              </p>
+              <pre className="import-source-text">{doc.rawText}</pre>
+              {doc.tabBlocks.map((b, j) => (
+                <div key={j}>
+                  <pre className="import-tab-source">{b.raw}</pre>
+                  <p>
+                    {b.notes.length} noten · ritme onzeker; nog niet naar het
+                    speelraster omgezet.
+                  </p>
+                </div>
+              ))}
+              {doc.warnings.map((w, j) => (
+                <p key={j} className="notice gs-notice">
+                  {w}
+                </p>
+              ))}
+            </section>
+          ))}
+        </details>
+      ) : null}
       <div className="workspace-heading">
         <div>
           <div className="eyebrow">

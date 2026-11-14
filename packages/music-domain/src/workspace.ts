@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ImportDocumentSchema } from './song-import-model.js';
 import {
   InstrumentProfileSchema,
   NoteEventSchema,
@@ -82,6 +83,7 @@ export const SongSchema = z
       .max(100),
     arrangements: z.array(ArrangementSchema).min(1).max(30),
     customChords: z.array(GripSchema).max(200),
+    importDocuments: z.array(ImportDocumentSchema).max(30).optional(),
   })
   .superRefine((song, ctx) => {
     try {

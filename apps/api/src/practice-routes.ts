@@ -63,7 +63,14 @@ export function registerPractice(
       .max(200)
       .parse(await (access.resolveOwner?.(request) ?? LOCAL_PRACTICE_OWNER));
   const mayReadSong =
-    access.canReadSong ?? ((who: string) => who === LOCAL_PRACTICE_OWNER);
+    access.canReadSong ??
+    (async (who: string, songId: string, db: pg.PoolClient | pg.Pool) =>
+      !!(
+        await db.query(
+          'SELECT 1 FROM studio_songs WHERE id=$1 AND owner_id=$2',
+          [songId, who],
+        )
+      ).rowCount);
   app.get(prefix + '/preferences', async (request) => {
     const who = await owner(request);
     const result = await pool.query(

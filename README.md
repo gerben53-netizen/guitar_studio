@@ -115,3 +115,11 @@ After normal Compose startup/migration, choose **Oefenen** in primary navigation
 Sessions, goals, progress, ramp and last settings persist in PostgreSQL; no practice localStorage is used. Drafts and unfinished sessions prompt before discard; saved sessions survive browser/DB restarts. New GET/PUT preferences endpoint uses the same trusted local owner boundary. Migration 004 is additive and applies with normal `npm run migrate`; old applied SQL files remain unchanged.
 
 [Architecture](docs/architecture/practice-room-rhythm.md), [report](docs/sprints/sprint-2c-report.md), [acceptance/screenshots](docs/qa/sprint-2c-acceptance.md). Browser acceptance includes real writes: use a disposable test database/CI environment rather than user data. New evidence defaults to test-results/sprint-2c; PRACTICE_EVIDENCE_DIR can select a separate directory. Preserve historical screenshots with PLAYWRIGHT_SCREENSHOT_DIR. #6/#8/#14/#18 remain open for their separate scopes.
+
+## Song Discovery and Import (Sprint 2D)
+
+Use **Nieuwe song** in the existing wizard: explicit LRCLIB search, temporary lyric/sync preview, paste or UTF-8 `.txt`/`.cho`/`.chordpro`/`.pro` import. Review/correct source and metadata, confirm your storage rights and choose a new song, new arrangement or append-only sections. ASCII-tab source includes frets/bar positions but no invented rhythmic playback; open the Workspace import-source panel for later manual timing. LRCLIB lyrics cannot be permanently imported while content-storage rights remain unverified.
+
+Migration 005 is additive; normal migration/Compose startup applies it. Existing songs remain owned by the existing local principal. No new authentication is added. Optional LRCLIB_APP_ID and LRCLIB_API_KEY are server-only environment variables; no key is required for basic use. Never expose them through VITE variables. Regular tests mock the provider network; live LRCLIB is not a CI dependency. Set IMPORT_EVIDENCE_DIR and PLAYWRIGHT_SCREENSHOT_DIR to ignored test-results paths when running acceptance against an isolated test database.
+
+[Providers](docs/architecture/song-discovery-providers.md), [LRCLIB adapter](docs/architecture/lrclib-provider.md), [import model/Work handoff](docs/architecture/song-import-model.md), [Sprint report](docs/sprints/sprint-2d-report.md), [acceptance](docs/qa/sprint-2d-acceptance.md).

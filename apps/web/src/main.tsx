@@ -7,6 +7,7 @@ import {
   type StudioSong,
 } from '../../../packages/music-domain/src/workspace';
 import { request, createSong, listSongs } from './api';
+import type { ImportCommit } from '../../../packages/music-domain/src/song-import-model';
 import { useSong } from './useSong';
 import { Library, type SongAction } from './components/Library';
 import { ImportWizard } from './components/ImportWizard';
@@ -108,6 +109,17 @@ function App() {
     editor.change((s) => {
       s.lastOpened = new Date().toISOString();
     });
+    setPage('workspace');
+  }
+  async function importSong(input: ImportCommit) {
+    if (!practiceGuard.current() || !(await editor.flush()))
+      throw new Error('Sla je huidige wijzigingen eerst op.');
+    const record = await request<SongRecord>('/imports', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+    await refresh();
+    editor.load(record);
     setPage('workspace');
   }
   async function create(song: StudioSong) {
@@ -340,7 +352,11 @@ function App() {
         onChange={(e) => void importFile(e.target.files?.[0])}
       />
       {wizard && (
-        <ImportWizard close={() => setWizard(false)} create={create} />
+        <ImportWizard
+          close={() => setWizard(false)}
+          commit={importSong}
+          records={records}
+        />
       )}
       <div className={'toast ' + (message ? 'visible' : '')} role="status">
         {message}
