@@ -274,7 +274,10 @@ export function parseSongImport(value: unknown): ImportDocument {
   while (
     doc.sections.length > 1 &&
     !doc.sections.at(-1)!.lines.length &&
-    !doc.sections.at(-1)!.chords.length
+    !doc.sections.at(-1)!.chords.length &&
+    !doc.tabBlocks.some(
+      (block) => block.sectionIndex === doc.sections.length - 1,
+    )
   )
     doc.sections.pop();
   const chordCount = doc.sections.reduce((n, s) => n + s.chords.length, 0);

@@ -62,6 +62,12 @@ describe('loss-aware user import', () => {
     expect(d.sections[0]!.name).toBe('Refrein');
     expect(d.unrecognized).toHaveLength(2);
     expect(d.rawText).toContain('{unknown: retain}');
+    const withTab = parseSongImport({
+      title: 'Mixed',
+      text: '{soc}\n[Am]Own words\n{eoc}\n' + ownTab,
+    });
+    expect(withTab.sections[withTab.tabBlocks[0]!.sectionIndex]).toBeDefined();
+    expect(withTab.sections).toHaveLength(2);
   });
   it('parses simultaneous open/double-digit frets, multiple blocks and bar columns without timing', () => {
     const d = parseSongImport({
