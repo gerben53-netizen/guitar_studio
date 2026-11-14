@@ -1,0 +1,21 @@
+{
+  "browser": "157.0.8103.51",
+  "evidence": [
+    {
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "violations": []
+    },
+    {
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "violations": []
+    }
+  ]
+}

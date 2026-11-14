@@ -2,6 +2,12 @@ import type { FastifyInstance } from 'fastify';
 import type pg from 'pg';
 import { z } from 'zod';
 import type { PracticeAccess } from './practice-routes.js';
+import {
+  legacyRecord,
+  isMultitrack,
+  mergeWorkspaceWrite,
+  parseStoredSong,
+} from './song-documents.js';
 import { SongSchema } from '../../../packages/music-domain/src/workspace.js';
 
 function failure(statusCode: number, message: string) {
@@ -28,10 +34,10 @@ export function registerSongs(
       'SELECT document AS song,revision,updated_at AS "updatedAt" FROM studio_songs WHERE owner_id=$1 ORDER BY updated_at DESC',
       [who],
     );
-    return result.rows;
+    return result.rows.map(legacyRecord);
   });
   app.post('/api/v1/songs', async (request, reply) => {
-    const song = SongSchema.parse(request.body);
+    const song = parseStoredSong(request.body);
     const who = await owner(request);
     if (
       song.importDocuments?.some(
@@ -54,7 +60,7 @@ export function registerSongs(
         [song.id, JSON.stringify(song)],
       );
       await client.query('COMMIT');
-      return reply.code(201).send(result.rows[0]);
+      return reply.code(201).send(legacyRecord(result.rows[0]));
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;
@@ -70,7 +76,7 @@ export function registerSongs(
         'SELECT document AS song,revision,created_at AS "updatedAt" FROM studio_song_versions WHERE song_id=$1 AND EXISTS(SELECT 1 FROM studio_songs WHERE id=$1 AND owner_id=$2) ORDER BY revision DESC LIMIT 20',
         [request.params.id, who],
       );
-      return result.rows;
+      return result.rows.map(legacyRecord);
     },
   );
   app.put<{ Params: { id: string } }>('/api/v1/songs/:id', async (request) => {
@@ -89,9 +95,30 @@ export function registerSongs(
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      const current = await client.query(
+        'SELECT document,revision FROM studio_songs WHERE id=$1 AND owner_id=$2 FOR UPDATE',
+        [song.id, who],
+      );
+      if (!current.rowCount || current.rows[0].revision !== revision)
+        throw Object.assign(
+          failure(409, 'Nieuwere versie beschikbaar. Herlaad de serverversie.'),
+          current.rowCount ? { currentRevision: current.rows[0].revision } : {},
+        );
+      let document;
+      try {
+        document = mergeWorkspaceWrite(current.rows[0].document, song);
+      } catch {
+        throw Object.assign(
+          failure(
+            409,
+            'Deze bewerking raakt multi-trackgegevens of lyricskoppelingen. Review via de multi-track API; er is niets overschreven.',
+          ),
+          { currentRevision: revision },
+        );
+      }
       const result = await client.query(
         'UPDATE studio_songs SET document=$1,revision=revision+1,updated_at=now() WHERE id=$2 AND revision=$3 AND owner_id=$4 RETURNING document AS song,revision,updated_at AS "updatedAt"',
-        [JSON.stringify(song), song.id, revision, who],
+        [JSON.stringify(document), song.id, revision, who],
       );
       if (!result.rowCount)
         throw failure(
@@ -100,14 +127,15 @@ export function registerSongs(
         );
       await client.query(
         'INSERT INTO studio_song_versions(song_id,revision,document) VALUES($1,$2,$3)',
-        [song.id, result.rows[0].revision, JSON.stringify(song)],
+        [song.id, result.rows[0].revision, JSON.stringify(document)],
       );
-      await client.query(
-        'DELETE FROM studio_song_versions WHERE song_id=$1 AND revision <= $2',
-        [song.id, result.rows[0].revision - 20],
-      );
+      if (!isMultitrack(document))
+        await client.query(
+          'DELETE FROM studio_song_versions WHERE song_id=$1 AND revision <= $2 AND NOT EXISTS(SELECT 1 FROM studio_song_schema_backups WHERE song_id=$1)',
+          [song.id, result.rows[0].revision - 20],
+        );
       await client.query('COMMIT');
-      return result.rows[0];
+      return legacyRecord(result.rows[0]);
     } catch (error) {
       await client.query('ROLLBACK');
       throw error;

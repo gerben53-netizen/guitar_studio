@@ -23,7 +23,7 @@ export const GripSchema = z.strictObject({
   frets: z.array(z.number().int().min(-1).max(24)).length(6),
 });
 export type Grip = z.infer<typeof GripSchema>;
-const AnchorSchema = z.strictObject({
+export const AnchorSchema = z.strictObject({
   id,
   tokenId: id.nullable(),
   originalText: z.string().max(1000),
@@ -51,90 +51,90 @@ export const ArrangementSchema = z.strictObject({
   sections: z.array(sectionSchema).min(1).max(100),
 });
 export type StudioArrangement = z.infer<typeof ArrangementSchema>;
-export const SongSchema = z
-  .strictObject({
-    schemaVersion: z.literal(1),
-    id,
-    title: z.string().trim().min(1).max(200),
-    artist: z.string().max(200),
-    status: z.enum(['In bewerking', 'Oefenen', 'Beheerst']),
-    difficulty: z.enum(['Beginner', 'Gemiddeld', 'Gevorderd']),
-    tags: z.array(z.string().trim().min(1).max(40)).max(20),
-    favorite: z.boolean(),
-    archived: z.boolean(),
-    progress: z.number().int().min(0).max(100),
-    lastOpened: z.iso.datetime().nullable(),
-    lastArrangementId: id.nullable(),
-    source: z.strictObject({
-      kind: z.enum(['manual', 'text-file']),
-      attribution: z.string().max(300),
-      storagePermission: z.literal('allowed'),
-      confirmedAt: z.iso.datetime(),
-    }),
-    lyrics: z
-      .array(
-        z.strictObject({
-          id,
-          name: z.string().trim().min(1).max(100),
-          tokens: z.array(TokenSchema).max(10000),
-        }),
-      )
-      .min(1)
-      .max(100),
-    arrangements: z.array(ArrangementSchema).min(1).max(30),
-    customChords: z.array(GripSchema).max(200),
-    importDocuments: z.array(ImportDocumentSchema).max(30).optional(),
-  })
-  .superRefine((song, ctx) => {
-    try {
-      const ids = new Set<string>();
-      const unique = (value: string) => {
-        if (ids.has(value)) throw new Error('Duplicate entity ID');
-        ids.add(value);
-      };
-      const lyrics = new Map(song.lyrics.map((s) => [s.id, s]));
-      for (const s of song.lyrics) {
+export const SongDocumentBaseSchema = z.strictObject({
+  schemaVersion: z.literal(1),
+  id,
+  title: z.string().trim().min(1).max(200),
+  artist: z.string().max(200),
+  status: z.enum(['In bewerking', 'Oefenen', 'Beheerst']),
+  difficulty: z.enum(['Beginner', 'Gemiddeld', 'Gevorderd']),
+  tags: z.array(z.string().trim().min(1).max(40)).max(20),
+  favorite: z.boolean(),
+  archived: z.boolean(),
+  progress: z.number().int().min(0).max(100),
+  lastOpened: z.iso.datetime().nullable(),
+  lastArrangementId: id.nullable(),
+  source: z.strictObject({
+    kind: z.enum(['manual', 'text-file']),
+    attribution: z.string().max(300),
+    storagePermission: z.literal('allowed'),
+    confirmedAt: z.iso.datetime(),
+  }),
+  lyrics: z
+    .array(
+      z.strictObject({
+        id,
+        name: z.string().trim().min(1).max(100),
+        tokens: z.array(TokenSchema).max(10000),
+      }),
+    )
+    .min(1)
+    .max(100),
+  arrangements: z.array(ArrangementSchema).min(1).max(30),
+  customChords: z.array(GripSchema).max(200),
+  importDocuments: z.array(ImportDocumentSchema).max(30).optional(),
+});
+export const SongSchema = SongDocumentBaseSchema.superRefine((song, ctx) => {
+  try {
+    const ids = new Set<string>();
+    const unique = (value: string) => {
+      if (ids.has(value)) throw new Error('Duplicate entity ID');
+      ids.add(value);
+    };
+    const lyrics = new Map(song.lyrics.map((s) => [s.id, s]));
+    for (const s of song.lyrics) {
+      unique(s.id);
+      for (const t of s.tokens) unique(t.id);
+    }
+    for (const a of song.arrangements) {
+      unique(a.id);
+      for (const s of a.sections) {
         unique(s.id);
-        for (const t of s.tokens) unique(t.id);
-      }
-      for (const a of song.arrangements) {
-        unique(a.id);
-        for (const s of a.sections) {
-          unique(s.id);
-          const text = lyrics.get(s.lyricsSectionId);
-          if (!text) throw new Error('Unknown lyrics section');
-          const tokenIds = new Set(text.tokens.map((t) => t.id));
-          for (const m of s.measures) {
-            unique(m.id);
-            validateMeasure(m, a.instrument);
-            for (const e of m.events) unique(e.id);
-          }
-          for (const c of s.chords) {
-            unique(c.id);
-            if (c.tokenId && !tokenIds.has(c.tokenId))
-              throw new Error('Unknown text anchor');
-            if (!s.measures.some((m) => m.id === c.measureId))
-              throw new Error('Unknown chord measure');
-          }
+        const text = lyrics.get(s.lyricsSectionId);
+        if (!text) throw new Error('Unknown lyrics section');
+        const tokenIds = new Set(text.tokens.map((t) => t.id));
+        for (const m of s.measures) {
+          unique(m.id);
+          validateMeasure(m, a.instrument);
+          for (const e of m.events) unique(e.id);
+        }
+        for (const c of s.chords) {
+          unique(c.id);
+          if (c.tokenId && !tokenIds.has(c.tokenId))
+            throw new Error('Unknown text anchor');
+          if (!s.measures.some((m) => m.id === c.measureId))
+            throw new Error('Unknown chord measure');
         }
       }
-      if (
-        song.lastArrangementId &&
-        !song.arrangements.some((a) => a.id === song.lastArrangementId)
-      )
-        throw new Error('Unknown last arrangement');
-    } catch (error) {
-      ctx.addIssue({
-        code: 'custom',
-        message: error instanceof Error ? error.message : 'Invalid song',
-      });
     }
-  });
+    if (
+      song.lastArrangementId &&
+      !song.arrangements.some((a) => a.id === song.lastArrangementId)
+    )
+      throw new Error('Unknown last arrangement');
+  } catch (error) {
+    ctx.addIssue({
+      code: 'custom',
+      message: error instanceof Error ? error.message : 'Invalid song',
+    });
+  }
+});
 export type StudioSong = z.infer<typeof SongSchema>;
 export interface SongRecord {
   song: StudioSong;
   revision: number;
   updatedAt: string;
+  storageSchemaVersion?: 1 | 2;
 }
 export const ExportSchema = z.strictObject({
   format: z.literal('guitar-studio'),

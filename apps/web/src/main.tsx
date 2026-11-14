@@ -1,3 +1,9 @@
+import {
+  MultitrackExportSchema,
+  cloneMultitrackSong,
+  mergeLegacyWrite,
+  type MultitrackSong,
+} from '../../../packages/music-domain/src/multitrack';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -70,6 +76,24 @@ function App() {
     [],
   );
   const editor = useSong(saved);
+  const fullSongCache = useRef(new Map<string, MultitrackSong>());
+  async function loadRecord(record: SongRecord) {
+    try {
+      if (record.storageSchemaVersion === 2) {
+        const full = await request<{ document: MultitrackSong }>(
+          '/songs/' + encodeURIComponent(record.song.id) + '/multitrack',
+        );
+        fullSongCache.current.set(record.song.id, full.document);
+      } else fullSongCache.current.delete(record.song.id);
+      editor.load(record);
+      return true;
+    } catch {
+      setMessage(
+        'Volledige song kon niet worden geladen. Probeer opnieuw; er is niets gewijzigd.',
+      );
+      return false;
+    }
+  }
   const refresh = useCallback(async () => {
     try {
       const rows = await listSongs();
@@ -105,7 +129,7 @@ function App() {
       setMessage('Deze song is niet beschikbaar.');
       return;
     }
-    editor.load(latest);
+    if (!(await loadRecord(latest))) return;
     editor.change((s) => {
       s.lastOpened = new Date().toISOString();
     });
@@ -119,17 +143,23 @@ function App() {
       body: JSON.stringify(input),
     });
     await refresh();
-    editor.load(record);
+    if (!(await loadRecord(record)))
+      throw new Error(
+        'Song is opgeslagen maar kon niet volledig worden geopend. Open opnieuw vanuit de bibliotheek.',
+      );
     setPage('workspace');
   }
-  async function create(song: StudioSong) {
+  async function create(song: StudioSong | MultitrackSong) {
     if (!practiceGuard.current())
       throw new Error('Je oefening is niet verlaten. Rond deze eerst af.');
     if (!(await editor.flush()))
       throw new Error('Sla je huidige wijzigingen eerst op of exporteer ze.');
     const record = await createSong(song);
     setRecords((rows) => [record, ...rows]);
-    editor.load(record);
+    if (!(await loadRecord(record)))
+      throw new Error(
+        'Song is opgeslagen maar kon niet volledig worden geopend. Open opnieuw vanuit de bibliotheek.',
+      );
     setPage('workspace');
   }
   async function action(record: SongRecord, action: SongAction) {
@@ -140,7 +170,12 @@ function App() {
       );
       if (!current) throw new Error('Song niet gevonden.');
       if (action === 'duplicate') {
-        await createSong(cloneSong(current.song));
+        if (current.storageSchemaVersion === 2) {
+          const full = await request<{ document: MultitrackSong }>(
+            '/songs/' + encodeURIComponent(current.song.id) + '/multitrack',
+          );
+          await createSong(cloneMultitrackSong(full.document));
+        } else await createSong(cloneSong(current.song));
       } else if (action === 'delete') {
         if (
           !confirm(
@@ -162,7 +197,7 @@ function App() {
           method: 'PUT',
           body: JSON.stringify({ song, revision: current.revision }),
         });
-        if (editor.song?.id === song.id) editor.load(updated);
+        if (editor.song?.id === song.id) await loadRecord(updated);
       }
       await refresh();
     } catch (error) {
@@ -171,11 +206,32 @@ function App() {
   }
   function exportSong() {
     if (!editor.song) return;
-    const content = JSON.stringify(
-      { format: 'guitar-studio', version: 1, song: editor.song },
-      null,
-      2,
-    );
+    let data: unknown = {
+      format: 'guitar-studio',
+      version: 1,
+      song: editor.song,
+    };
+    const full = fullSongCache.current.get(editor.song.id);
+    if (full) {
+      try {
+        data = {
+          format: 'guitar-studio',
+          version: 2,
+          song: mergeLegacyWrite(full, editor.song),
+        };
+      } catch {
+        data = {
+          format: 'guitar-studio-recovery',
+          version: 1,
+          canonicalBase: full,
+          legacyDraft: editor.song,
+        };
+        setMessage(
+          'Herstelbestand bevat alle sporen en je onopgeslagen tekst. Review de koppelingen vóór herstel.',
+        );
+      }
+    }
+    const content = JSON.stringify(data, null, 2);
     const url = URL.createObjectURL(
       new Blob([content], { type: 'application/json' }),
     );
@@ -189,10 +245,19 @@ function App() {
   async function importFile(file?: File) {
     if (!file) return;
     try {
-      if (file.size > 2_000_000)
-        throw new Error('JSON-bestand is groter dan 2 MB.');
-      const data = ExportSchema.parse(JSON.parse(await file.text()));
-      await create(cloneSong(data.song));
+      if (file.size > 8_000_000)
+        throw new Error('JSON-bestand is groter dan 8 MB.');
+      const parsed = JSON.parse(await file.text());
+      if (parsed?.format === 'guitar-studio' && parsed?.version === 2)
+        await create(
+          cloneMultitrackSong(MultitrackExportSchema.parse(parsed).song),
+        );
+      else {
+        if (file.size > 2_000_000)
+          throw new Error('Versie-1 JSON-bestand is groter dan 2 MB.');
+        const data = ExportSchema.parse(parsed);
+        await create(cloneSong(data.song));
+      }
       setMessage('Eigen arrangementen geïmporteerd als onafhankelijke song.');
     } catch (error) {
       setMessage(
@@ -329,7 +394,7 @@ function App() {
                   const record = rows?.find(
                     (r) => r.song.id === editor.song?.id,
                   );
-                  if (record) editor.load(record);
+                  if (record) await loadRecord(record);
                 }
               }}
               undo={editor.undo}

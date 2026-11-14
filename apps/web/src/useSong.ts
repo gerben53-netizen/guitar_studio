@@ -63,7 +63,11 @@ export function useSong(onSaved: (record: SongRecord) => void) {
     }
   }, []);
   useEffect(() => {
-    if (!song || !dirty()) return;
+    if (!song) return;
+    if (!dirty()) {
+      setStatus('Opgeslagen');
+      return;
+    }
     setStatus('Wijzigingen wachten');
     const timer = setTimeout(() => void flush(), 600);
     return () => clearTimeout(timer);

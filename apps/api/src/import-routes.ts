@@ -1,5 +1,11 @@
 import type { FastifyInstance } from 'fastify';
 import type pg from 'pg';
+import {
+  legacyRecord,
+  mergeWorkspaceWrite,
+  type StoredSong,
+} from './song-documents.js';
+import { legacyView } from '../../../packages/music-domain/src/multitrack.js';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { ImportCommitSchema } from '../../../packages/music-domain/src/song-import-model.js';
@@ -8,10 +14,6 @@ import {
   importToSong,
   mergeImport,
 } from '../../../packages/music-domain/src/import-to-song.js';
-import {
-  SongSchema,
-  type StudioSong,
-} from '../../../packages/music-domain/src/workspace.js';
 import { canonical } from '../../../packages/music-domain/src/practice.js';
 import type { PracticeAccess } from './practice-routes.js';
 const fail = (statusCode: number, message: string) =>
@@ -63,9 +65,9 @@ export function registerImports(
         );
         if (!existing.rowCount) throw fail(404, 'Song niet gevonden.');
         await db.query('COMMIT');
-        return existing.rows[0];
+        return legacyRecord(existing.rows[0]);
       }
-      let song: StudioSong = imported,
+      let song: StoredSong = imported,
         revision = 1;
       if (input.target.kind !== 'new-song') {
         const existing = await db.query(
@@ -76,12 +78,15 @@ export function registerImports(
         if (existing.rows[0].revision !== input.target.revision)
           throw fail(409, 'Song gewijzigd. Herlaad vóór import.');
         try {
-          song = mergeImport(
-            SongSchema.parse(existing.rows[0].document),
-            imported,
-            input.target.kind === 'append'
-              ? input.target.arrangementId
-              : undefined,
+          song = mergeWorkspaceWrite(
+            existing.rows[0].document,
+            mergeImport(
+              legacyView(existing.rows[0].document),
+              imported,
+              input.target.kind === 'append'
+                ? input.target.arrangementId
+                : undefined,
+            ),
           );
         } catch {
           throw fail(
@@ -123,7 +128,7 @@ export function registerImports(
         ],
       );
       await db.query('COMMIT');
-      return reply.code(201).send(result.rows[0]);
+      return reply.code(201).send(legacyRecord(result.rows[0]));
     } catch (error) {
       await db.query('ROLLBACK');
       throw error;

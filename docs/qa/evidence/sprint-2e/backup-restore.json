@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-14T20:31:19.492Z",
+  "phase": "restore",
+  "postgres": 17,
+  "before": {
+    "songs": 2,
+    "song_digest": "0e3c4c681554d237d2fecfa49aeac8cd",
+    "versions": 15,
+    "history_digest": "3f57c3cb9050acaed256f0f56dc28d0e",
+    "legacy_songs": 2
+  },
+  "after": {
+    "songs": 2,
+    "song_digest": "0e3c4c681554d237d2fecfa49aeac8cd",
+    "versions": 15,
+    "history_digest": "3f57c3cb9050acaed256f0f56dc28d0e",
+    "legacy_songs": 2
+  },
+  "identical": true,
+  "privateDumpExcludedFromGit": true,
+  "noEagerSongConversion": true
+}
