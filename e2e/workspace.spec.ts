@@ -10,7 +10,8 @@ import {
   newSong,
   type SongRecord,
 } from '../packages/music-domain/src/workspace';
-const screenshots = 'docs/qa/screenshots/sprint-1';
+const screenshots =
+  process.env.PLAYWRIGHT_SCREENSHOT_DIR ?? 'docs/qa/screenshots/sprint-1';
 const text =
   '[Couplet 1]\nLangs het water wordt de ochtend licht\nIk zoek de zon in een open gezicht\n\n[Refrein]\nHier begint mijn eigen lied';
 async function shot(page: Page, name: string) {

@@ -2,6 +2,7 @@ import pg from 'pg';
 import { readFile, readdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { readConfig } from './config.js';
+import { seedPractice } from './practice-seed.js';
 const client = new pg.Client({ connectionString: readConfig().databaseUrl });
 await client.connect();
 try {
@@ -31,6 +32,7 @@ try {
       [name, hash],
     );
   }
+  await seedPractice(client);
   await client.query('COMMIT');
 } catch (error) {
   await client.query('ROLLBACK');

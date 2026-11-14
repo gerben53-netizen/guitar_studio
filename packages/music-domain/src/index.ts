@@ -251,13 +251,8 @@ export interface ChordPlacement {
   fingering?: ChordFingering;
   lyricsLink?: LyricsLink;
 }
-export interface PracticeSession {
-  id: string;
-  arrangementId: string;
-  startedAt: string;
-  endedAt?: string;
-  tempoBpm: number;
-}
+/** Exercise sessions supersede the unused Sprint 0 placeholder. */
+export type { PracticeSession } from './practice.js';
 /** Derived view only; displayFret is relative to capo. */
 export interface TabDisplayCell {
   eventId: string;
