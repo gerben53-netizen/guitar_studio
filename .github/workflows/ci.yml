@@ -73,11 +73,13 @@ jobs:
           DATABASE_URL: postgres://ci:ci-ephemeral-only@db:5432/guitar_dev
       - name: Chromium functional, responsive and accessibility acceptance
         run: npm run test:browser
+        env:
+          PLAYWRIGHT_SCREENSHOT_DIR: test-results/sprint-2a-screenshots
       - name: Upload browser evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: sprint-1-browser-evidence
+          name: sprint-2a-browser-evidence
           path: |
             playwright-report/
             test-results/

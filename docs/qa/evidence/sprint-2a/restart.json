@@ -1,0 +1,11 @@
+{
+  "pass": true,
+  "date": "2026-11-14T15:25:24.627Z",
+  "resources": [
+    "/exercises/s3/settings",
+    "/sessions/1c58e10d-2e53-4265-81e2-3d3b7d5c1369",
+    "/progress/s3",
+    "/origins/efac4b3a-aa90-443c-b4ed-d793a6a490b0"
+  ],
+  "cleanup": true
+}

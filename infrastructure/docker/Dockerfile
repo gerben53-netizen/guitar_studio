@@ -6,6 +6,7 @@ COPY apps/api/package.json apps/api/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/music-domain/package.json packages/music-domain/package.json
 COPY packages/ui/package.json packages/ui/package.json
+COPY packages/audio/package.json packages/audio/package.json
 RUN npm ci
 COPY . .
 RUN npm run build

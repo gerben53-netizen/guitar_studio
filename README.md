@@ -1,6 +1,6 @@
 # Guitar Studio
 
-Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. No microphone/audio processing, metronome, external lyrics provider, PDF export or deployment is implemented.
+Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. Sprint 2A adds a typed Practice foundation, 18-exercise catalog, persistent settings/sessions/progress/mastery, music theory and a shared Web Audio metronome service. The full Practice Room UI is deferred to Sprint 2B. No microphone recognition, external lyrics provider, PDF export or deployment is implemented.
 
 ## Requirements and installation
 
@@ -51,7 +51,7 @@ npm audit --audit-level=moderate
 docker compose run --rm migrate
 ```
 
-Migrations are ordered SQL files in `apps/api/migrations`. A transaction and advisory lock serialize execution; checksums reject edits to applied migrations. Add a new migration rather than rewriting history. Migration 001 preserves the Sprint 0 foundation; 002 adds song documents, optimistic revisions and transactional recovery history.
+Migrations are ordered SQL files in `apps/api/migrations`. A transaction and advisory lock serialize execution; checksums reject edits to applied migrations. Add a new migration rather than rewriting history. Migration 001 preserves the Sprint 0 foundation; 002 adds song documents, optimistic revisions and transactional recovery history. Additive migration 003 adds Practice tables; the migration transaction seeds/checks all 18 immutable original exercise versions automatically, without fake session/mastery data.
 
 For integration tests in containers, use the separate TEST_DATABASE_URL from `.env`:
 
@@ -66,7 +66,12 @@ For Chromium acceptance against the running Compose application:
 
 ```powershell
 npx playwright install chromium
+$env:PLAYWRIGHT_SCREENSHOT_DIR = 'test-results/sprint-2a-screenshots'
 npm run test:browser
+# Official Sprint 2A target: installed Google Chrome on Windows 11
+$env:PLAYWRIGHT_CHANNEL = 'chrome'
+npm run test:browser
+Remove-Item Env:PLAYWRIGHT_CHANNEL
 ```
 
 Tests create and clean up their own song IDs; do not run against a production database. Screenshots are written to `docs/qa/screenshots/sprint-1`, and failures retain traces in ignored `test-results/`. CI additionally installs browser OS dependencies, runs the same tests and uploads the evidence. When using a different preview port set `PLAYWRIGHT_BASE_URL`; start a custom Vite port with `npm run dev -w @guitar/web -- --port 5174` and set `API_PROXY_TARGET` for a custom API port.
@@ -90,3 +95,9 @@ Protect backups as user data; move them outside the checkout and never commit th
 `apps/web`: typed React screens and semantic component/state CSS; `apps/api`: Fastify REST service/migrations; `packages/shared`: HTTP contract; `packages/music-domain`: pure types, validated workspace aggregate, explicit prototype converter and tests; `packages/ui`: shared UI foundation; `infrastructure/docker`: local infrastructure; `docs`: architecture, ADRs, product and sprint evidence. Read [Song Workspace](docs/architecture/song-workspace.md), [tab editor](docs/architecture/tab-editor.md) and [Sprint 1 acceptance](docs/qa/sprint-1-acceptance.md).
 
 `main` is stable, `develop` integrates, `feature/*` branches target develop. `release/*` is for stabilization; `hotfix/*` starts at main and is later reconciled into develop. Changes reach develop through reviewed green PRs. Sprint 0 does not merge to main, create release tags or deploy. See [system overview](docs/architecture/system-overview.md), [decisions](docs/decisions/0001-foundation.md) and [sprint report](docs/sprints/sprint-0-report.md).
+
+## Practice Room foundation (Sprint 2A)
+
+Read [domain and Sprint 2B components](docs/architecture/practice-domain.md), [API and examples](docs/architecture/practice-api.md), [database](docs/architecture/practice-database.md), [metronome lifecycle](docs/architecture/metronome-engine.md), [Song origins](docs/architecture/song-practice-integration.md) and [acceptance](docs/qa/sprint-2a-acceptance.md). Query `http://localhost:3000/api/v1/practice/exercises` after normal Compose startup. There is no new product route or CSS in 2A. `packages/audio` is the shared testable output engine; `apps/web/test-support/metronome.html` is an unstyled development test harness, not a production screen.
+
+Practice uses the server-owned local principal until account support exists. Before multi-user exposure, add trusted authentication plus Song ownership authorization. Existing semantic CSS and editors remain the basis for the separate Design System v2/Sprint 2B implementation. #6, #8, #14 and EPIC #18 stay open.

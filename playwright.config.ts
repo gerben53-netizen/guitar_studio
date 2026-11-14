@@ -10,6 +10,9 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:5173',
     browserName: 'chromium',
+    ...(process.env.PLAYWRIGHT_CHANNEL === 'chrome'
+      ? { channel: 'chrome' }
+      : {}),
     viewport: { width: 1440, height: 900 },
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
