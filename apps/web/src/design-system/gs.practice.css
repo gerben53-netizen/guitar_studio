@@ -1,0 +1,608 @@
+@layer screens {
+  .gs-practice-app {
+    min-width: 0;
+    .practice-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--color-border);
+      overflow-x: auto;
+    }
+    .practice-nav > * {
+      flex: none;
+    }
+    .practice-nav [aria-current='page'] {
+      border-color: var(--color-accent-primary);
+      background: var(--color-surface-interactive);
+    }
+    .practice-future-nav {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-caption);
+      padding: var(--space-2);
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-control);
+    }
+    .practice-future-nav small {
+      display: block;
+    }
+    .practice-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      margin: var(--space-6) 0 var(--space-4);
+    }
+    .practice-heading h1 {
+      font-size: 1.8rem;
+      margin: var(--space-1) 0;
+    }
+    .practice-heading h1,
+    .practice-exercise h3 {
+      overflow-wrap: anywhere;
+    }
+    .practice-heading p {
+      margin-top: var(--space-1);
+    }
+    .practice-heading .gs-field {
+      min-width: min(260px, 100%);
+    }
+    .practice-heading .gs-input {
+      width: 100%;
+    }
+    .practice-welcome {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-6);
+      padding: var(--space-6);
+      margin-bottom: var(--space-5);
+    }
+    .practice-welcome h2 {
+      font-size: 1.8rem;
+      margin: var(--space-3) 0;
+    }
+    .practice-welcome p {
+      margin-bottom: var(--space-3);
+    }
+    .practice-welcome-art {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-5);
+      background: linear-gradient(
+        130deg,
+        var(--color-art-start),
+        var(--color-art-end)
+      );
+      border-radius: var(--radius-panel);
+    }
+    .practice-welcome-art img {
+      width: min(100%, 430px);
+      height: auto;
+      object-fit: contain;
+    }
+    .practice-lab-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    .practice-lab-card {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .practice-lab-card svg {
+      width: 150px;
+      height: 70px;
+      stroke: var(--color-accent-primary);
+      fill: none;
+      stroke-width: 1.5;
+    }
+    .practice-lab-card .gs-button,
+    .practice-lab-card .practice-future {
+      margin-top: auto;
+    }
+    progress {
+      width: 100%;
+      accent-color: var(--color-accent-primary);
+    }
+    .practice-home-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+    }
+    .practice-home-panel {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .practice-home-panel .gs-input {
+      width: 100%;
+    }
+    .practice-exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-4) 0;
+    }
+    .practice-exercise {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+    .practice-exercise .gs-button {
+      margin-top: auto;
+    }
+    .practice-future {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-caption);
+      border-top: 1px dashed var(--color-border);
+      padding-top: var(--space-3);
+    }
+    .practice-controls,
+    .practice-transport-actions,
+    .practice-transport-options,
+    .rhythm-editor-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .practice-controls .gs-input {
+      width: 100%;
+    }
+    .practice-controls .gs-field {
+      min-width: 0;
+    }
+    .practice-level {
+      margin: var(--space-6) 0;
+    }
+    .practice-journal {
+      display: grid;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .practice-session {
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-2);
+    }
+    .practice-session-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+    .practice-session-note {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .practice-session .gs-button {
+      justify-self: start;
+    }
+    .rhythm-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: var(--space-4);
+      align-items: start;
+    }
+    .rhythm-workspace {
+      display: grid;
+      gap: var(--space-4);
+      min-width: 0;
+    }
+    .rhythm-workspace > .gs-panel > .practice-controls {
+      padding: var(--space-3);
+    }
+    .rhythm-pulses {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .rhythm-pulse {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--color-border-interactive);
+      border-radius: var(--radius-pill);
+      font-size: 1.2rem;
+    }
+    .rhythm-pulse.is-playing {
+      background: var(--color-accent-primary);
+      color: var(--color-on-accent);
+      border-color: var(--color-accent-primary);
+      font-weight: 700;
+    }
+    .rhythm-position {
+      padding: 0 var(--space-4);
+      font-size: var(--font-size-caption);
+      color: var(--color-text-secondary);
+    }
+    .rhythm-scroll {
+      overflow-x: auto;
+      padding: var(--space-3);
+    }
+    .rhythm-timeline {
+      display: grid;
+      grid-template-columns: repeat(var(--rhythm-slots), minmax(48px, 1fr));
+      gap: var(--space-1);
+      min-width: calc(var(--rhythm-slots) * 52px);
+    }
+    .rhythm-column {
+      text-align: center;
+      color: var(--color-text-secondary);
+      font-family: var(--font-family-music);
+      font-size: var(--font-size-caption);
+    }
+    .gs-rhythm-cell {
+      width: 100%;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-2) var(--space-1);
+      margin-top: var(--space-2);
+      background: var(--color-bg);
+    }
+    .gs-rhythm-cell strong {
+      font-size: 1.7rem;
+      color: var(--color-text-primary);
+    }
+    .gs-rhythm-cell[aria-pressed='true'] {
+      border-color: var(--color-accent-primary);
+      background: var(--color-surface-interactive);
+    }
+    .gs-rhythm-cell[aria-current='true'] {
+      outline: 2px solid var(--color-focus);
+      outline-offset: -3px;
+    }
+    .rhythm-accent {
+      font-size: 10px;
+      color: var(--color-accent-primary);
+    }
+    .rhythm-editor-controls {
+      padding: var(--space-3);
+      border-top: 1px solid var(--color-border);
+    }
+    .practice-hint {
+      padding: var(--space-3);
+      font-size: var(--font-size-caption);
+      color: var(--color-text-secondary);
+    }
+    .practice-instructions {
+      padding: var(--space-5);
+      display: grid;
+      gap: var(--space-4);
+    }
+    .practice-instructions dl {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-3);
+      margin: 0;
+    }
+    .practice-instructions dd {
+      margin: 0;
+      font-weight: 600;
+    }
+    .practice-ramp {
+      padding: var(--space-4);
+    }
+    .practice-ramp summary {
+      cursor: pointer;
+      min-height: var(--control-height);
+    }
+    .practice-ramp .practice-controls {
+      padding: var(--space-3) 0;
+    }
+    .practice-transport {
+      padding: var(--space-4);
+      overflow: visible;
+      position: sticky;
+      bottom: var(--space-2);
+      z-index: var(--z-transport);
+      box-shadow: var(--shadow-floating);
+    }
+    .practice-transport-actions {
+      margin-bottom: var(--space-3);
+    }
+    .practice-transport .gs-field:has(input[type='number']) {
+      width: 80px;
+    }
+    .practice-transport input[type='number'] {
+      width: 100%;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .practice-transport-options {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-caption);
+    }
+    .practice-transport-options input[type='range'] {
+      width: 120px;
+    }
+    .practice-transport output {
+      font-family: var(--font-family-music);
+      font-weight: 700;
+    }
+    .practice-confirm {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .practice-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+    .gs-notice {
+      margin: var(--space-3) 0;
+      overflow-wrap: anywhere;
+    }
+    .rhythm-lab > .gs-notice {
+      position: relative;
+      z-index: var(--z-transport);
+    }
+    @media (max-width: 1150px) {
+      .rhythm-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .practice-instructions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .practice-lab-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .practice-exercise-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 850px) {
+      .practice-home-grid {
+        grid-template-columns: 1fr;
+      }
+      .practice-welcome {
+        grid-template-columns: 1fr;
+      }
+      .practice-welcome-art {
+        display: none;
+      }
+      .practice-transport {
+        position: static;
+      }
+    }
+    @media (max-width: 650px) {
+      .practice-nav {
+        padding: var(--space-2);
+      }
+      .practice-lab-grid,
+      .practice-exercise-grid,
+      .practice-instructions,
+      .practice-form-grid {
+        grid-template-columns: 1fr;
+      }
+      .practice-heading h1 {
+        font-size: 1.5rem;
+      }
+      .practice-heading {
+        margin-top: var(--space-4);
+      }
+      .practice-welcome {
+        padding: var(--space-4);
+      }
+      .practice-welcome h2 {
+        font-size: 1.5rem;
+      }
+      .practice-transport,
+      .practice-instructions {
+        padding: var(--space-3);
+      }
+      .practice-controls > .gs-field,
+      .rhythm-editor-controls > .gs-field {
+        max-width: 100%;
+      }
+      .rhythm-pulse {
+        width: 44px;
+        height: 44px;
+      }
+      .practice-session-heading {
+        flex-wrap: wrap;
+      }
+      .practice-nav .gs-button {
+        min-height: var(--touch-target);
+      }
+      .practice-instructions p {
+        margin: 0;
+      }
+    }
+  }
+  .gs-practice-app.practice-room > .practice-heading,
+  .gs-practice-app.practice-room > .practice-welcome,
+  .gs-practice-app.practice-room > .practice-lab-grid,
+  .gs-practice-app.practice-room > .practice-home-grid,
+  .gs-practice-app.practice-room > .practice-controls,
+  .gs-practice-app.practice-room > .practice-level,
+  .gs-practice-app.practice-room > section,
+  .gs-practice-app.practice-room > .gs-notice,
+  .gs-practice-app.practice-room > div:has(> .rhythm-lab) {
+    margin-left: var(--space-5);
+    margin-right: var(--space-5);
+  }
+  @media (max-width: 650px) {
+    .gs-practice-app.practice-room > .practice-heading,
+    .gs-practice-app.practice-room > .practice-welcome,
+    .gs-practice-app.practice-room > .practice-lab-grid,
+    .gs-practice-app.practice-room > .practice-home-grid,
+    .gs-practice-app.practice-room > .practice-controls,
+    .gs-practice-app.practice-room > .practice-level,
+    .gs-practice-app.practice-room > section,
+    .gs-practice-app.practice-room > .gs-notice,
+    .gs-practice-app.practice-room > div:has(> .rhythm-lab) {
+      margin-left: var(--space-2);
+      margin-right: var(--space-2);
+    }
+  }
+}
+@layer screens {
+  .gs-practice-app {
+    .practice-nav {
+      padding-block: var(--space-2);
+    }
+    .rhythm-lab .practice-heading {
+      margin-top: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+    .rhythm-lab .practice-heading h1 {
+      font-size: 1.65rem;
+    }
+    .rhythm-layout {
+      grid-template-columns: minmax(0, 1fr) 230px;
+    }
+    .rhythm-workspace > .gs-panel > .gs-panel__header {
+      padding: var(--space-2) var(--space-4);
+    }
+    .rhythm-workspace h2 {
+      font-size: 1rem;
+    }
+    .rhythm-workspace > .gs-panel > .practice-controls .gs-field,
+    .rhythm-editor-controls .gs-field {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .rhythm-workspace > .gs-panel > .practice-controls .gs-input,
+    .rhythm-editor-controls .gs-input {
+      margin: 0;
+    }
+    .rhythm-pulses {
+      margin: var(--space-2) 0;
+    }
+    .rhythm-pulse {
+      width: 40px;
+      height: 40px;
+    }
+    .gs-rhythm-cell {
+      height: 80px;
+    }
+    .rhythm-column {
+      font-size: 11px;
+    }
+    .rhythm-editor-controls {
+      padding-block: var(--space-2);
+    }
+    .practice-hint {
+      padding-block: var(--space-2);
+    }
+    .practice-transport-actions > .gs-field,
+    .practice-transport-options > .gs-field {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .practice-transport-actions > .gs-field:has(input[type='number']) {
+      width: 110px;
+    }
+    .practice-transport-actions input[type='number'] {
+      width: 70px;
+      margin: 0;
+    }
+    .practice-transport-options .gs-input {
+      margin: 0;
+    }
+    .practice-ramp {
+      padding-block: var(--space-2);
+    }
+    .rhythm-workspace:has(details[open]) .practice-transport {
+      position: static;
+    }
+    @media (max-width: 1150px) {
+      .rhythm-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    @media (max-height: 820px) and (min-width: 851px) {
+      .rhythm-lab .practice-heading {
+        margin-top: var(--space-2);
+      }
+      .rhythm-pulses {
+        margin: var(--space-1) 0;
+      }
+      .rhythm-pulse {
+        width: 32px;
+        height: 32px;
+      }
+      .gs-rhythm-cell {
+        height: 64px;
+      }
+      .practice-transport {
+        padding: var(--space-3);
+      }
+    }
+    @media (max-width: 850px) {
+      .practice-transport {
+        position: static;
+      }
+    }
+    @media (max-width: 650px) {
+      .rhythm-layout {
+        gap: var(--space-3);
+      }
+      .rhythm-workspace > .gs-panel > .practice-controls .gs-field,
+      .rhythm-editor-controls .gs-field {
+        display: block;
+      }
+      .rhythm-pulse {
+        width: 44px;
+        height: 44px;
+      }
+      .practice-transport-actions {
+        gap: var(--space-2);
+      }
+    }
+  }
+}
+@layer components {
+  .practice-session-fields {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+}
+@layer screens {
+  .gs-practice-app {
+    .rhythm-timeline {
+      grid-template-columns: repeat(var(--rhythm-slots), minmax(56px, 1fr));
+      min-width: calc(var(--rhythm-slots) * 60px);
+    }
+    .gs-rhythm-cell {
+      gap: 2px;
+      padding-block: var(--space-1);
+    }
+    .gs-rhythm-cell strong {
+      font-size: 24px;
+      line-height: 1;
+    }
+    .gs-rhythm-cell small {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .rhythm-accent {
+      white-space: nowrap;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+  }
+}
+@layer components {
+  .gs-practice-app input[type='checkbox'] {
+    accent-color: var(--color-accent-primary);
+  }
+}

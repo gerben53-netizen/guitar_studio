@@ -1,0 +1,20 @@
+{
+  "browser": "157.0.8103.51",
+  "channel": "chrome",
+  "notes": [
+    "practice-accept-77574203-8bf5-4c72-98d1-8f8582442643-uitgevoerd",
+    "practice-accept-77574203-8bf5-4c72-98d1-8f8582442643-beheerst"
+  ],
+  "sessionIds": [
+    "24716514-32ed-4b06-9998-a00e0805945b",
+    "62ea0c9a-03ee-464e-a9dd-b96f78b7a9a5"
+  ],
+  "duplicateProtected": true,
+  "contextCount": 1,
+  "contextStates": ["suspended"],
+  "rampObservedAtBarBoundary": true,
+  "visibilityPauseVerified": true,
+  "browserRestartVerified": true,
+  "lostResponseRecovered": true,
+  "errors": []
+}

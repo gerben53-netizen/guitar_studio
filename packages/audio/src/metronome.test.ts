@@ -249,3 +249,18 @@ it('cancels a native resume promise that has not settled, without leaking a sche
   expect(audio.closed).toBe(true);
   expect(audio.clicks).toHaveLength(0);
 });
+
+it('retains the actual played position while paused for the shared UI and background accounting', async () => {
+  const f = fixture();
+  await f.engine.start();
+  f.advance(4.06);
+  const played = f.engine.position;
+  expect(played?.bar).toBe(1);
+  await f.engine.pause();
+  expect(f.engine.position).toEqual(played);
+  f.advance(2);
+  expect(f.engine.position).toEqual(played);
+  await f.engine.stop();
+  expect(f.engine.position).toBeNull();
+  await f.engine.dispose();
+});

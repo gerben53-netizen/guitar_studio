@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PracticeTransportOptionsSchema } from '../../music-domain/src/practice-transport.js';
 import {
   PracticeMeterSchema,
   sixteenthSeconds,
@@ -6,18 +7,7 @@ import {
 export const MetronomeSettingsSchema = z.strictObject({
   bpm: z.number().int().min(20).max(300),
   meter: PracticeMeterSchema,
-  subdivision: z.enum(['none', 'eighth', 'sixteenth']),
-  volume: z.number().min(0).max(1),
-  mute: z.boolean(),
-  ramp: z
-    .strictObject({
-      enabled: z.boolean(),
-      start: z.number().int().min(20).max(300),
-      target: z.number().int().min(20).max(300),
-      step: z.number().int().min(1).max(40),
-      everyBars: z.number().int().min(1).max(100),
-    })
-    .refine((r) => r.target >= r.start, 'Ramp target must be at least start'),
+  ...PracticeTransportOptionsSchema.shape,
 });
 export type MetronomeSettings = z.infer<typeof MetronomeSettingsSchema>;
 export const defaultMetronomeSettings: MetronomeSettings = {
@@ -66,6 +56,7 @@ export class MetronomeEngine {
   private nextIndex = 0;
   private resumeFraction = 0;
   private scheduled: ScheduledTick[] = [];
+  private pausedPosition: ScheduledTick | null = null;
   private options: MetronomeSettings;
   private tempo: number;
   private taps: number[] = [];
@@ -95,7 +86,8 @@ export class MetronomeEngine {
   }
   get position() {
     return (
-      [...this.scheduled].reverse().find((t) => t.at <= this.audioTime) ?? null
+      [...this.scheduled].reverse().find((t) => t.at <= this.audioTime) ??
+      this.pausedPosition
     );
   }
   outputPeak() {
@@ -137,6 +129,8 @@ export class MetronomeEngine {
     );
   }
   private halt(preserve: boolean) {
+    const played = this.position;
+    this.pausedPosition = preserve ? played : null;
     const point = this.point();
     if (preserve && this.backend) {
       this.resumeFraction = Math.max(

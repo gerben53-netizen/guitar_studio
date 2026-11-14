@@ -1,6 +1,6 @@
 # Guitar Studio
 
-Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. Sprint 2A adds a typed Practice foundation, 18-exercise catalog, persistent settings/sessions/progress/mastery, music theory and a shared Web Audio metronome service. The full Practice Room UI is deferred to Sprint 2C. No microphone recognition, external lyrics provider, PDF export or deployment is implemented.
+Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. Sprint 2A adds a typed Practice foundation, 18-exercise catalog, persistent settings/sessions/progress/mastery, music theory and a shared Web Audio metronome service. Practice Room Home and Rhythm Lab are available in Sprint 2C; other Labs follow later. No microphone recognition, external lyrics provider, PDF export or deployment is implemented.
 
 ## Requirements and installation
 
@@ -107,3 +107,11 @@ Practice uses the server-owned local principal until account support exists. Bef
 The production screens use the accepted navy/cyan v2 token registry and original neon PNG. Existing theme preferences use `data-theme` on the root and the same localStorage key. Read [integration architecture](docs/architecture/design-system-v2-integration.md), [baseline/migration mapping](docs/sprints/sprint-2b-baseline.md) and [design acceptance](docs/qa/sprint-2b-design-system-acceptance.md).
 
 Run `npm run design:tokens` after changing the semantic registry, and `npm run design:check` to verify token CSS, brand hashes and 32 contrast pairs. These checks are part of CI. No new dependency, API/schema change or Practice Room Lab is introduced. New browser acceptance writes evidence under ignored test-results by default; set DESIGN_EVIDENCE_DIR to keep a separate evidence directory when comparing runs. Keep PLAYWRIGHT_SCREENSHOT_DIR set to avoid replacing historical Sprint 1 screenshots.
+
+## Practice Room Home and Rhythm Lab (Sprint 2C)
+
+After normal Compose startup/migration, choose **Oefenen** in primary navigation. Home opens a Rhythm exercise in at most two further actions. All18 API exercises are discoverable in the library and four-level path; Scale/Chord/Technique explicitly remain future modules. Edit rational strokes/rests/accents/durations, save settings, start the shared metronome and finish with a personal reflection. In 6/8 BPM is a dotted quarter. Manual tempo overrides disable ramp. Explicit confirmed mastery applies only to that configuration.
+
+Sessions, goals, progress, ramp and last settings persist in PostgreSQL; no practice localStorage is used. Drafts and unfinished sessions prompt before discard; saved sessions survive browser/DB restarts. New GET/PUT preferences endpoint uses the same trusted local owner boundary. Migration 004 is additive and applies with normal `npm run migrate`; old applied SQL files remain unchanged.
+
+[Architecture](docs/architecture/practice-room-rhythm.md), [report](docs/sprints/sprint-2c-report.md), [acceptance/screenshots](docs/qa/sprint-2c-acceptance.md). Browser acceptance includes real writes: use a disposable test database/CI environment rather than user data. New evidence defaults to test-results/sprint-2c; PRACTICE_EVIDENCE_DIR can select a separate directory. Preserve historical screenshots with PLAYWRIGHT_SCREENSHOT_DIR. #6/#8/#14/#18 remain open for their separate scopes.
