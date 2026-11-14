@@ -188,11 +188,11 @@ export function TabEditor({
     }
   }
   return (
-    <section className="panel tab-panel" aria-label="Tablatuureditor">
-      <div className="panelhead tab-panel-heading">
+    <section className="panel tab-panel gs-panel" aria-label="Tablatuureditor">
+      <div className="panelhead tab-panel-heading gs-panel__header">
         <h2>
           Tablatuur{' '}
-          <span className="badge">
+          <span className="badge gs-badge">
             {arrangement.timeSignature.beats}/
             {arrangement.timeSignature.beatUnit}
           </span>
@@ -202,6 +202,7 @@ export function TabEditor({
       {!practice && (
         <div className="tabtools">
           <select
+            className="gs-input"
             aria-label="Nootduur"
             value={duration.denominator / duration.numerator}
             onChange={(e) => {
@@ -230,6 +231,7 @@ export function TabEditor({
             ))}
           </select>
           <button
+            className="gs-button"
             onClick={() =>
               modify((m) => {
                 m.events = m.events.filter(
@@ -247,9 +249,14 @@ export function TabEditor({
           >
             Rust
           </button>
-          <button onClick={remove}>Wis noot</button>
-          <button onClick={() => advance(1)}>→</button>
+          <button className="gs-button" onClick={remove}>
+            Wis noot
+          </button>
+          <button className="gs-button" onClick={() => advance(1)}>
+            →
+          </button>
           <button
+            className="gs-button"
             onClick={() =>
               change((a) =>
                 sectionDraft(a).measures.push(emptyMeasure(a.timeSignature)),
@@ -259,6 +266,7 @@ export function TabEditor({
             + Maat
           </button>
           <button
+            className="gs-button"
             onClick={() =>
               change((a) => {
                 const m = structuredClone(sectionDraft(a).measures[index]!);
@@ -270,11 +278,14 @@ export function TabEditor({
           >
             Dupliceer maat
           </button>
-          <button onClick={copy}>Kopieer</button>
-          <button disabled={!clipboard} onClick={paste}>
+          <button className="gs-button" onClick={copy}>
+            Kopieer
+          </button>
+          <button className="gs-button" disabled={!clipboard} onClick={paste}>
             Plak
           </button>
           <select
+            className="gs-input"
             aria-label="Ritmeraster"
             value={resolution}
             onChange={(e) => setResolution(Number(e.target.value))}
@@ -307,6 +318,7 @@ export function TabEditor({
               >
                 <div className="measure-title">
                   <button
+                    className="gs-button"
                     aria-label={'Selecteer maat ' + (mi + 1)}
                     onClick={(e) => {
                       setRangeStart(
@@ -351,7 +363,10 @@ export function TabEditor({
                           <button
                             key={ti}
                             data-active={active}
-                            className={'tabcell ' + (active ? 'sel' : '')}
+                            className={
+                              'gs-button ' +
+                              ('tabcell ' + (active ? 'sel' : ''))
+                            }
                             tabIndex={active ? 0 : -1}
                             aria-label={
                               'Maat ' +

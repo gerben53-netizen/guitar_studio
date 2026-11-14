@@ -44,6 +44,7 @@ export function Library({
             .toLowerCase()
             .includes(search.toLowerCase()),
       );
+  const SongHeading = dashboard ? 'h3' : 'h2';
   return (
     <div className="content">
       <div className="library-header">
@@ -62,7 +63,10 @@ export function Library({
               : 'Van eerste idee tot een arrangement dat bij je past.'}
           </p>
         </div>
-        <button className="primary" onClick={newSong}>
+        <button
+          className="primary gs-button gs-button--primary"
+          onClick={newSong}
+        >
           + Nieuwe song
         </button>
       </div>
@@ -81,22 +85,28 @@ export function Library({
                 gebleven bent.
               </p>
               <button
-                className="primary"
+                className="primary gs-button gs-button--primary"
                 onClick={() => (recent[0] ? open(recent[0]) : newSong())}
               >
                 {recent[0] ? 'Verder in de studio →' : 'Begin je eerste song →'}
               </button>
             </div>
             <div className="hero-art">
-              <Artwork />
-              <span className="art-caption">JOUW MUZIEK. JOUW ONTDEKKING.</span>
+              <img
+                className="gs-brand-hero"
+                src="/brand/gs-logo-original.png"
+                alt=""
+              />
             </div>
           </div>
           <div className="stats">
             <div className="stat">
               <strong>{active.length}</strong> songs
             </div>
-            <button className="stat" onClick={() => setFavorites(!favorites)}>
+            <button
+              className="stat gs-button"
+              onClick={() => setFavorites(!favorites)}
+            >
               <strong>{active.filter((r) => r.song.favorite).length}</strong>{' '}
               favorieten
             </button>
@@ -119,12 +129,14 @@ export function Library({
       {!dashboard && (
         <div className="library-filters">
           <input
+            className="gs-input"
             aria-label="Zoeken op titel en artiest"
             placeholder="Zoek op titel of artiest…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <select
+            className="gs-input"
             aria-label="Statusfilter"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -135,6 +147,7 @@ export function Library({
             ))}
           </select>
           <select
+            className="gs-input"
             aria-label="Moeilijkheidsfilter"
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
@@ -145,6 +158,7 @@ export function Library({
             ))}
           </select>
           <select
+            className="gs-input"
             aria-label="Tagfilter"
             value={tag}
             onChange={(e) => setTag(e.target.value)}
@@ -155,15 +169,24 @@ export function Library({
             ))}
           </select>
           <button
+            className="gs-button"
             aria-pressed={favorites}
             onClick={() => setFavorites(!favorites)}
           >
             ☆ Favorieten
           </button>
-          <button aria-pressed={archive} onClick={() => setArchive(!archive)}>
+          <button
+            className="gs-button"
+            aria-pressed={archive}
+            onClick={() => setArchive(!archive)}
+          >
             Archief
           </button>
-          <button onClick={() => setList(!list)}>
+          <button
+            className="gs-button"
+            aria-pressed={list}
+            onClick={() => setList(!list)}
+          >
             {list ? 'Kaarten' : 'Lijst'}
           </button>
         </div>
@@ -176,7 +199,7 @@ export function Library({
               <div className={'cover c' + (i % 3)}>
                 <Artwork variant={i} />
                 <button
-                  className="fav"
+                  className="fav gs-button"
                   aria-label={'Favoriet ' + r.song.title}
                   aria-pressed={r.song.favorite}
                   onClick={() => action(r, 'favorite')}
@@ -185,14 +208,17 @@ export function Library({
                 </button>
               </div>
               <div className="song-body">
-                <span className="badge">
+                <span className="badge gs-badge">
                   {r.song.difficulty} · {r.song.status}
                 </span>
-                <h3>
-                  <button className="song-title" onClick={() => open(r)}>
+                <SongHeading>
+                  <button
+                    className="song-title gs-button"
+                    onClick={() => open(r)}
+                  >
                     {r.song.title}
                   </button>
-                </h3>
+                </SongHeading>
                 <p className="muted">
                   {r.song.artist || 'Eigen song'} · {r.song.arrangements.length}{' '}
                   arrangementen
@@ -209,12 +235,25 @@ export function Library({
                 </small>
               </div>
               <div className="song-actions">
-                <button onClick={() => open(r)}>Openen →</button>
-                <button onClick={() => action(r, 'duplicate')}>Kopie</button>
-                <button onClick={() => action(r, 'archive')}>
+                <button className="gs-button" onClick={() => open(r)}>
+                  Openen →
+                </button>
+                <button
+                  className="gs-button"
+                  onClick={() => action(r, 'duplicate')}
+                >
+                  Kopie
+                </button>
+                <button
+                  className="gs-button"
+                  onClick={() => action(r, 'archive')}
+                >
                   {r.song.archived ? 'Herstellen' : 'Archiveren'}
                 </button>
-                <button className="danger" onClick={() => action(r, 'delete')}>
+                <button
+                  className="danger gs-button gs-danger"
+                  onClick={() => action(r, 'delete')}
+                >
                   Verwijderen
                 </button>
               </div>
@@ -225,7 +264,9 @@ export function Library({
         <div className="empty">
           <h2>Nog geen songs gevonden</h2>
           <p>Pas je filters aan of begin met een eigen tekst.</p>
-          <button onClick={newSong}>+ Nieuwe song</button>
+          <button className="gs-button" onClick={newSong}>
+            + Nieuwe song
+          </button>
         </div>
       )}
     </div>

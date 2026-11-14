@@ -52,7 +52,7 @@ export function ImportWizard({
         )}
       </div>
       {error && (
-        <p role="alert" className="notice danger">
+        <p role="alert" className="notice danger gs-notice gs-danger">
           {error}
         </p>
       )}
@@ -60,37 +60,40 @@ export function ImportWizard({
         <>
           <div className="seg">
             <button
+              className="gs-button"
               disabled
               title="Geen toegestane externe provider aangesloten"
             >
               Zoeken · niet beschikbaar
             </button>
             <button
-              className={kind === 'manual' ? 'active' : ''}
+              className={'gs-button ' + (kind === 'manual' ? 'active' : '')}
               onClick={() => setKind('manual')}
             >
               Plakken
             </button>
             <button
-              className={kind === 'text-file' ? 'active' : ''}
+              className={'gs-button ' + (kind === 'text-file' ? 'active' : '')}
               onClick={() => setKind('text-file')}
             >
               Tekstbestand
             </button>
           </div>
           <div className="import-metadata-fields">
-            <label>
+            <label className="gs-field">
               Titel
               <input
+                className="gs-input"
                 aria-label="Songtitel"
                 maxLength={200}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </label>
-            <label>
+            <label className="gs-field">
               Artiest
               <input
+                className="gs-input"
                 value={artist}
                 maxLength={200}
                 onChange={(e) => setArtist(e.target.value)}
@@ -98,18 +101,20 @@ export function ImportWizard({
             </label>
           </div>
           {kind === 'text-file' && (
-            <label>
+            <label className="gs-field">
               Lokaal UTF-8 tekstbestand
               <input
+                className="gs-input"
                 type="file"
                 accept=".txt,text/plain"
                 onChange={(e) => void file(e.target.files?.[0])}
               />
             </label>
           )}
-          <label>
+          <label className="gs-field">
             Eigen lyrics (optioneel)
             <textarea
+              className="gs-input"
               value={text}
               maxLength={60000}
               onChange={(e) => setText(e.target.value)}
@@ -118,30 +123,33 @@ export function ImportWizard({
         </>
       ) : step === 1 ? (
         <>
-          <p className="notice">
+          <p className="notice gs-notice">
             Geen zoekdienst of scraping. Zonder lyrics kun je gewoon verder.
             Gebruik [Couplet 1] en [Refrein] voor sectievoorstellen; lege regels
             blijven tekstregels.
           </p>
-          <label>
+          <label className="gs-field">
             Controleer de lyrics
             <textarea
+              className="gs-input"
               aria-label="Lyrics controleren"
               value={text}
               maxLength={60000}
               onChange={(e) => setText(e.target.value)}
             />
           </label>
-          <label>
+          <label className="gs-field">
             Bronvermelding
             <input
+              className="gs-input"
               value={source}
               maxLength={300}
               onChange={(e) => setSource(e.target.value)}
             />
           </label>
-          <label className="rights-confirmation">
+          <label className="rights-confirmation gs-field">
             <input
+              className="gs-input"
               type="checkbox"
               checked={rights}
               onChange={(e) => setRights(e.target.checked)}
@@ -151,7 +159,7 @@ export function ImportWizard({
         </>
       ) : (
         <>
-          <p className="notice">
+          <p className="notice gs-notice">
             {title} · {artist || 'Eigen song'} · {source}
           </p>
           {parseLyrics(text).map((s, i) => (
@@ -169,11 +177,14 @@ export function ImportWizard({
         </>
       )}
       <footer className="dialog-actions">
-        <button onClick={() => (step ? setStep(step - 1) : close())}>
+        <button
+          className="gs-button"
+          onClick={() => (step ? setStep(step - 1) : close())}
+        >
           {step ? '← Terug' : 'Annuleren'}
         </button>
         <button
-          className="primary"
+          className="primary gs-button gs-button--primary"
           disabled={busy}
           onClick={async () => {
             if (!title.trim()) {
