@@ -1,0 +1,11 @@
+# Sprint 2E baseline
+
+Current develop is `47941f3864176e4ac7c24950fd6234d2ba8f47d8`: Sprint 2D PR #52 plus contrast fix #53. Baseline: 73 unit, 17 PostgreSQL and 27 browser scenarios; v2 tokens, assets, themes, Song Workspace, import/LRCLIB and Practice Room are integrated. Existing product issues #6/#7/#8/#14/#18 remain untouched. One checkout, no worktrees.
+
+Inspected workspace/index/theory, NoteEvent/tones/validateMeasure/MusicalTime, Song JSONB/revision/history routes and migrations 001–005, imports, syllable-free token/LCS editing, Practice origins, v3 design review/acceptance/screenshots and prototype ZIP README/model tests. Prototype tests cover one legacy fixture, not a production migration. Prototype JavaScript will not be imported into production.
+
+Existing persisted schemaVersion 1 has arrangement.instrument and section.measures/events/chords, stable lyric token IDs, six strings, physical MIDI/fret values and exact rational validation. No persisted independent tracks/syllables/LyricsLinks. Generic interface names in index.ts are not the authoritative Workspace storage contract. Current v1 editor expects one track and full-document saves; simply adding a parallel sidecar would risk divergent timing/data.
+
+Plan: explicit opt-in schemaVersion 2 with shared section/measure IDs, per-track existing NoteEvents, typed syllables/links and pure mutations. Existing metadata/source/import schemas reused. Deterministic legacy conversion and a guarded v1 compatibility projection/merge keep the current editor working without dropping hidden tracks or linked notes. No v3 editor or CSS redesign. Same JSONB/revision/history architecture, additive preconversion backup table, no eager batch rewrite; original history retained. Dedicated versioned document view/mutations are justified because v1 cannot represent multiple tracks. Import and Practice contracts will consume this shared conversion, not duplicate parsers or music logic.
+
+Acceptance requires representative multi-arrangement/polyphonic/rest/capo/tuning/meter/history fixtures, rollback/restore/concurrency/isolation, real database reload/restart, current browser regression at four viewports/both themes and exact-head CI before a single PR merge. No main, release or deployment changes.

@@ -1,3 +1,4 @@
+import { TrackEventSchema } from './multitrack.js';
 import { z } from 'zod';
 import {
   PracticeTransportOptionsSchema,
@@ -283,6 +284,22 @@ export const OriginInputSchema = z.strictObject({
   position: RationalSchema,
   stringSelection: z.array(z.number().int().min(1).max(6)).max(6),
   exerciseType: LabSchema,
+  trackIds: z.array(z.string().min(1).max(200)).min(1).max(32).optional(),
+  measureRange: z
+    .strictObject({
+      fromMeasureId: z.string().min(1),
+      toMeasureId: z.string().min(1),
+    })
+    .optional(),
+  eventIds: z.array(z.string().min(1)).min(1).max(10000).optional(),
+  returnCursor: z
+    .strictObject({
+      trackId: z.string().min(1).max(200),
+      measureId: z.string().min(1),
+      position: RationalSchema,
+      string: z.number().int().min(1).max(6),
+    })
+    .optional(),
 });
 export type PracticeOriginInput = z.infer<typeof OriginInputSchema>;
 export const SourceSnapshotSchema = z.strictObject({
@@ -291,6 +308,25 @@ export const SourceSnapshotSchema = z.strictObject({
   meter: TimeSignatureSchema,
   events: z.array(NoteEventSchema),
   songRevision: z.number().int().positive(),
+  tracks: z
+    .array(
+      z.strictObject({
+        id: z.string(),
+        instrument: InstrumentProfileSchema,
+        events: z.array(TrackEventSchema),
+      }),
+    )
+    .optional(),
+  timeline: z
+    .array(
+      z.strictObject({
+        id: z.string(),
+        sectionId: z.string(),
+        measureIndex: z.number().int().nonnegative(),
+        timeSignature: TimeSignatureSchema,
+      }),
+    )
+    .optional(),
 });
 export interface PracticeOrigin extends PracticeOriginInput {
   id: string;
@@ -307,7 +343,17 @@ export type OriginResolution =
   | {
       status: 'missing-source';
       origin: PracticeOrigin;
-      reason: 'song' | 'arrangement' | 'section' | 'measure' | 'position';
+      reason:
+        | 'song'
+        | 'arrangement'
+        | 'section'
+        | 'measure'
+        | 'position'
+        | 'track'
+        | 'event'
+        | 'range'
+        | 'return-cursor'
+        | 'changed-source';
       fallback: 'library';
       snapshot: z.infer<typeof SourceSnapshotSchema>;
     };

@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import type pg from 'pg';
 import { ZodError } from 'zod';
 import { registerSongs } from './songs.js';
+import { registerMultitrack } from './multitrack-routes.js';
 import { registerDiscovery, type DiscoveryAccess } from './discovery-routes.js';
 import { registerImports } from './import-routes.js';
 import { registerPractice, type PracticeAccess } from './practice-routes.js';
@@ -16,7 +17,10 @@ export function buildApp(
   const app = Fastify({ logger, bodyLimit: 2_000_000 });
   app.setErrorHandler<import('fastify').FastifyError>(
     (error, request, reply) => {
-      if (/^\/api\/v1\/(imports|discovery)/.test(request.url))
+      if (
+        /^\/api\/v1\/(imports|discovery)/.test(request.url) ||
+        /\/multitrack(?:\?|$)/.test(request.url)
+      )
         request.log.warn(
           { code: error.code },
           'Import/discovery request failed (payload omitted)',
@@ -50,11 +54,16 @@ export function buildApp(
                   : 'Opslag niet bereikbaar. Je wijzigingen zijn nog niet opgeslagen.',
           requestId: request.id,
         },
+        ...('currentRevision' in error &&
+        Number.isInteger(error.currentRevision)
+          ? { currentRevision: error.currentRevision }
+          : {}),
       });
     },
   );
   if (pool) {
     registerSongs(app, pool, practiceAccess);
+    registerMultitrack(app, pool, practiceAccess);
     registerImports(app, pool, practiceAccess);
     registerPractice(app, pool, practiceAccess);
   }

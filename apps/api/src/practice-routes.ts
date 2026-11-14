@@ -19,7 +19,7 @@ import {
   findPassage,
   resolveOrigin,
 } from '../../../packages/music-domain/src/practice-origin.js';
-import { SongSchema } from '../../../packages/music-domain/src/workspace.js';
+import { parseStoredSong } from './song-documents.js';
 import {
   LOCAL_PRACTICE_OWNER,
   configurationKey,
@@ -421,7 +421,7 @@ export function registerPractice(
           [input.songId],
         );
         if (!row.rowCount) throw fail(404, 'Source not found');
-        const song = SongSchema.parse(row.rows[0].document),
+        const song = parseStoredSong(row.rows[0].document),
           found = findPassage(song, input);
         if ('reason' in found) throw fail(404, 'Source passage not found');
         const origin: PracticeOrigin = {
@@ -461,7 +461,7 @@ export function registerPractice(
       : null;
     return resolveOrigin(
       origin,
-      row?.rowCount ? SongSchema.parse(row.rows[0].document) : null,
+      row?.rowCount ? parseStoredSong(row.rows[0].document) : null,
     );
   });
 }

@@ -95,6 +95,17 @@ export const NoteEventSchema = z
       (v) => v.numerator > 0,
       'Duration must be positive',
     ),
+    technique: z
+      .enum([
+        'normal',
+        'hammer-on',
+        'pull-off',
+        'slide',
+        'bend',
+        'vibrato',
+        'mute',
+      ])
+      .optional(),
     tones: z.array(
       z.strictObject({
         pitch: PitchSchema,
