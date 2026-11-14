@@ -9,6 +9,6 @@ COPY packages/ui/package.json packages/ui/package.json
 RUN npm ci
 COPY . .
 RUN npm run build
-RUN mkdir -p node_modules/.vite-temp node_modules/.vitest-cache && chown node:node node_modules/.vite-temp node_modules/.vitest-cache
+RUN mkdir -p node_modules/.vite-temp node_modules/.vitest-cache apps/web/node_modules/.vite-temp && chown node:node node_modules/.vite-temp node_modules/.vitest-cache apps/web/node_modules/.vite-temp
 USER node
 CMD ["npm", "run", "start", "-w", "@guitar/api"]

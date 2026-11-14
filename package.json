@@ -17,9 +17,11 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude \"**/*.integration.test.ts\"",
-    "test:integration": "vitest run apps/api/src/app.integration.test.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "build": "npm run build --workspaces --if-present",
-    "migrate": "tsx apps/api/src/migrate.ts"
+    "migrate": "tsx apps/api/src/migrate.ts",
+    "test:browser": "playwright test",
+    "seed:demo": "tsx apps/api/src/seed-demo.ts"
   },
   "dependencies": {
     "fastify": "5.12.8",
@@ -29,7 +31,9 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
     "@types/node": "24.10.1",
     "@types/pg": "8.15.6",
     "@types/react": "19.2.7",

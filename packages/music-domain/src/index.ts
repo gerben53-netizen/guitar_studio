@@ -3,13 +3,13 @@ const id = z.string().min(1);
 const integer = z.number().int().nonnegative();
 export const PitchSchema = z.number().int().min(0).max(127);
 export type Pitch = z.infer<typeof PitchSchema>;
-export const RationalSchema = z.object({
+export const RationalSchema = z.strictObject({
   numerator: integer,
   denominator: z.number().int().positive(),
 });
 /** Whole-note fractions, independent of tempo and wall-clock time. */
 export type MusicalTime = z.infer<typeof RationalSchema>;
-export const TuningSchema = z.object({
+export const TuningSchema = z.strictObject({
   name: id,
   pitches: z.array(PitchSchema).min(1),
 });
@@ -20,7 +20,7 @@ export const standardTuning: GuitarTuning = {
   pitches: [64, 59, 55, 50, 45, 40],
 };
 export const InstrumentProfileSchema = z
-  .object({
+  .strictObject({
     id,
     type: z.enum(['acoustic', 'electric']),
     stringCount: z.literal(6),
@@ -82,12 +82,12 @@ export function possiblePositions(
       : [];
   });
 }
-const PositionSchema = z.object({
+const PositionSchema = z.strictObject({
   string: z.number().int().positive(),
   fret: integer,
 });
 export const NoteEventSchema = z
-  .object({
+  .strictObject({
     id,
     kind: z.enum(['note', 'rest']),
     start: RationalSchema,
@@ -96,7 +96,10 @@ export const NoteEventSchema = z
       'Duration must be positive',
     ),
     tones: z.array(
-      z.object({ pitch: PitchSchema, position: PositionSchema.optional() }),
+      z.strictObject({
+        pitch: PitchSchema,
+        position: PositionSchema.optional(),
+      }),
     ),
   })
   .superRefine((v, ctx) => {
@@ -118,7 +121,7 @@ export const NoteEventSchema = z
       });
   });
 export type NoteEvent = z.infer<typeof NoteEventSchema>;
-export const TimeSignatureSchema = z.object({
+export const TimeSignatureSchema = z.strictObject({
   beats: z.number().int().positive().max(32),
   beatUnit: z.union([
     z.literal(1),

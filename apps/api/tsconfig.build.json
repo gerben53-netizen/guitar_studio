@@ -8,6 +8,10 @@
     "moduleResolution": "NodeNext",
     "declaration": true
   },
-  "include": ["src/**/*.ts", "../../packages/shared/src/**/*.ts"],
-  "exclude": ["src/**/*.test.ts"]
+  "include": [
+    "src/**/*.ts",
+    "../../packages/shared/src/**/*.ts",
+    "../../packages/music-domain/src/**/*.ts"
+  ],
+  "exclude": ["**/*.test.ts", "../../packages/**/*.test.ts"]
 }
