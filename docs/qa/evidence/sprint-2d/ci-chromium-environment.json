@@ -1,0 +1,17 @@
+{
+  "fullBrowserTests": 27,
+  "newAxeScans": 32,
+  "run": "https://github.com/gerben53-netizen/guitar_studio/actions/runs/43629381936",
+  "sourceCommit": "8621d42674e220e29a1c9c136c2aadc315ab6735",
+  "environment": {
+    "browser": "159.0.8154.6",
+    "channel": "chromium",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "errors": []
+  },
+  "violations": 0,
+  "fixtureBoundary": "Original test-owned text; application discovery API intercepted in browser, provider HTTP separately mocked and live-smoked"
+}

@@ -1,0 +1,14 @@
+{
+  "os": "Microsoft Windows 11 Home",
+  "osVersion": "10.0.26200",
+  "violations": 0,
+  "screenshots": 32,
+  "newAxeScans": 32,
+  "browser": "Google Chrome",
+  "themes": ["dark", "light"],
+  "viewports": ["1440x900", "1280x800", "1024x768", "390x844"],
+  "version": "157.0.8103.51",
+  "fullSuiteSourceCommit": "8621d42674e220e29a1c9c136c2aadc315ab6735",
+  "postAuditTargetedTests": 7,
+  "postAuditParserGitBlob": "462762f6172b90511b4bdd75d049c62ba9baea05"
+}

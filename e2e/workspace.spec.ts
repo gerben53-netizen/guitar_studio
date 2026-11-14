@@ -68,6 +68,7 @@ test('integrated authoring, persistence, safe anchors, keyboard, chords, arrange
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Verder →' }).click();
     await page.getByRole('button', { name: 'Song aanmaken →' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(
       page.getByRole('heading', { name: 'Waar de morgen begint' }),
     ).toBeVisible();

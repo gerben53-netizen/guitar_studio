@@ -6,3 +6,41 @@
 @import './design-system/gs.song.css';
 @import './design-system/gs.brand.css';
 @import './design-system/gs.practice.css';
+
+/* Import foundation: existing v2 components and semantic layout only. */
+.import-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.import-source-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 24rem;
+  overflow: auto;
+  font: inherit;
+}
+.import-tab-source {
+  white-space: pre;
+  overflow: auto;
+  max-width: 100%;
+}
+.discovery-results {
+  list-style: none;
+  padding: 0;
+}
+.discovery-results li {
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  overflow-wrap: anywhere;
+}
+.import-preview,
+.song-discovery {
+  min-width: 0;
+}
+.workspace-import-source {
+  grid-column: 1 / -1;
+  padding: var(--space-4);
+  min-width: 0;
+}

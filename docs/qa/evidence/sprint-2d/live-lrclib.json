@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-14T18:39:31.853Z",
+  "searchHttp": 200,
+  "detailHttp": 200,
+  "apiVersion": "v2",
+  "results": [
+    {
+      "provider": "lrclib",
+      "id": "7621759",
+      "title": "I Want to Live",
+      "artist": "Borislav Slavov",
+      "album": ".",
+      "duration": 233,
+      "instrumental": false,
+      "hasWordSync": false,
+      "hasPlainLyrics": true,
+      "hasSyncedLyrics": true,
+      "hasLyricsfile": true,
+      "sourceUrl": "https://lrclib.net/record/7621759",
+      "availability": "preview",
+      "storage": "preview-only"
+    },
+    {
+      "provider": "lrclib",
+      "id": "5385030",
+      "title": "I Want to Live",
+      "artist": "Borislav Slavov",
+      "album": "a",
+      "duration": 233,
+      "instrumental": false,
+      "hasWordSync": false,
+      "hasPlainLyrics": true,
+      "hasSyncedLyrics": true,
+      "hasLyricsfile": true,
+      "sourceUrl": "https://lrclib.net/record/5385030",
+      "availability": "preview",
+      "storage": "preview-only"
+    }
+  ],
+  "selected": {
+    "id": "7621759",
+    "plainLineCount": 46,
+    "syncKind": "line",
+    "storage": "preview-only",
+    "warnings": 0
+  },
+  "cacheControl": "no-store",
+  "externalContentPersisted": false
+}
