@@ -140,5 +140,8 @@
   }
 }
 @layer brand {
- .gs-song-app .rail .gs-button { flex-direction: column; gap: 0; }
+  .gs-song-app .rail .gs-button {
+    flex-direction: column;
+    gap: 0;
+  }
 }

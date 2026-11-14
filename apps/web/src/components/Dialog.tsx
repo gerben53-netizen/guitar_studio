@@ -28,10 +28,24 @@ export function Dialog({
       aria-labelledby={titleId}
       onKeyDown={(event) => {
         if (event.key !== 'Tab') return;
-        const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]')).filter(el => el.getClientRects().length && !el.hidden);
-        const first = items[0], last = items.at(-1);
-        if (event.shiftKey && document.activeElement === first && last) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && document.activeElement === last && first) { event.preventDefault(); first.focus(); }
+        const items = Array.from(
+          event.currentTarget.querySelectorAll<HTMLElement>(
+            'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]',
+          ),
+        ).filter((el) => el.getClientRects().length && !el.hidden);
+        const first = items[0],
+          last = items.at(-1);
+        if (event.shiftKey && document.activeElement === first && last) {
+          event.preventDefault();
+          last.focus();
+        } else if (
+          !event.shiftKey &&
+          document.activeElement === last &&
+          first
+        ) {
+          event.preventDefault();
+          first.focus();
+        }
       }}
     >
       <header className="dialog-head">

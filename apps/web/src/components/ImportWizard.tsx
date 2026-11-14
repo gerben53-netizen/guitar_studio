@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   newSong,
   parseLyrics,
@@ -12,6 +12,7 @@ export function ImportWizard({
   close: () => void;
   create: (song: StudioSong) => Promise<void>;
 }) {
+  const errorId = useId();
   const [step, setStep] = useState(0),
     [title, setTitle] = useState(''),
     [artist, setArtist] = useState(''),
@@ -52,7 +53,11 @@ export function ImportWizard({
         )}
       </div>
       {error && (
-        <p role="alert" className="notice danger gs-notice gs-danger">
+        <p
+          id={errorId}
+          role="alert"
+          className="notice danger gs-notice gs-danger"
+        >
           {error}
         </p>
       )}
@@ -86,6 +91,8 @@ export function ImportWizard({
                 className="gs-input"
                 aria-label="Songtitel"
                 maxLength={200}
+                aria-invalid={!!error && !title.trim()}
+                aria-describedby={error && !title.trim() ? errorId : undefined}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -151,6 +158,10 @@ export function ImportWizard({
             <input
               className="gs-input"
               type="checkbox"
+              aria-invalid={!!error && step === 1 && !rights}
+              aria-describedby={
+                error && step === 1 && !rights ? errorId : undefined
+              }
               checked={rights}
               onChange={(e) => setRights(e.target.checked)}
             />
@@ -185,6 +196,7 @@ export function ImportWizard({
         </button>
         <button
           className="primary gs-button gs-button--primary"
+          aria-busy={busy}
           disabled={busy}
           onClick={async () => {
             if (!title.trim()) {
