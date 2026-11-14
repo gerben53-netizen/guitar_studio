@@ -7,3 +7,6 @@ coverage/
 *.log
 backups/
 *.dump
+.reference/
+playwright-report/
+test-results/

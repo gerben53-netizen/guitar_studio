@@ -1,6 +1,6 @@
 # Guitar Studio
 
-Sprint 0: a technical foundation for acoustic and electric guitar practice. GPL v3; the original LICENSE is preserved. No song editor, microphone capture, lyrics integration or deployment is implemented.
+Guitar Studio is a personal workspace for acoustic/electric guitar: persistent songs, shared lyrics, independent arrangements, word-anchored chords, structured six-line tablature, a linked fretboard and manual Practice Mode. Sprint 1 follows the original approved UX prototype. GPL v3; the original LICENSE is preserved. No microphone/audio processing, metronome, external lyrics provider, PDF export or deployment is implemented.
 
 ## Requirements and installation
 
@@ -21,7 +21,15 @@ docker compose ps
 Invoke-RestMethod http://localhost:3000/health
 ```
 
-Open http://localhost:5173. The status indicator checks API/database readiness every 15 seconds. Four navigation placeholders and light/dark preference are available. Compose runs a development Vite server, not a production hosting setup.
+Open http://localhost:5173. The status indicator checks API/database readiness every 15 seconds. Create a song using your own text or a UTF-8 file, confirm your usage rights, and edit lyrics/chords/tab in the studio. Song content is stored in PostgreSQL; localStorage only stores theme preference. Compose runs a development Vite server, not a production hosting setup.
+
+Optionally load the supplied original fictional prototype demos (existing songs are never overwritten):
+
+```powershell
+docker compose run --rm --no-deps api npm run seed:demo
+```
+
+The library supports search/filter, favorites, duplication, archive/restore and confirmed deletion. JSON export/import transfers the versioned song/arrangement document, independently of the deferred PDF feature. Save failures retain the current draft with retry/export actions; the last 20 successful server revisions can be restored. Unsaved changes still need a successful save or export before closing the browser.
 
 ```powershell
 docker compose down
@@ -43,7 +51,7 @@ npm audit --audit-level=moderate
 docker compose run --rm migrate
 ```
 
-Migrations are ordered SQL files in `apps/api/migrations`. A transaction and advisory lock serialize execution; checksums reject edits to applied migrations. Add a new migration rather than rewriting history. Sprint 0 creates only metadata, no song CRUD tables.
+Migrations are ordered SQL files in `apps/api/migrations`. A transaction and advisory lock serialize execution; checksums reject edits to applied migrations. Add a new migration rather than rewriting history. Migration 001 preserves the Sprint 0 foundation; 002 adds song documents, optimistic revisions and transactional recovery history.
 
 For integration tests in containers, use the separate TEST_DATABASE_URL from `.env`:
 
@@ -53,6 +61,15 @@ docker compose run --rm -e NODE_ENV=test -e TEST_DATABASE_URL=<your-test-url-wit
 ```
 
 With host Node, set DATABASE_URL and TEST_DATABASE_URL in the shell, set NODE_ENV to `test`, run `npm run migrate` twice and `npm run test:integration`. The configuration rejects missing or identical test/development URLs. Unit tests do not need PostgreSQL.
+
+For Chromium acceptance against the running Compose application:
+
+```powershell
+npx playwright install chromium
+npm run test:browser
+```
+
+Tests create and clean up their own song IDs; do not run against a production database. Screenshots are written to `docs/qa/screenshots/sprint-1`, and failures retain traces in ignored `test-results/`. CI additionally installs browser OS dependencies, runs the same tests and uploads the evidence. When using a different preview port set `PLAYWRIGHT_BASE_URL`; start a custom Vite port with `npm run dev -w @guitar/web -- --port 5174` and set `API_PROXY_TARGET` for a custom API port.
 
 ## Backup and restore
 
@@ -70,6 +87,6 @@ Protect backups as user data; move them outside the checkout and never commit th
 
 ## Structure and workflow
 
-`apps/web`: React shell; `apps/api`: Fastify REST service/migrations; `packages/shared`: HTTP contract; `packages/music-domain`: pure types, validation and tests; `packages/ui`: shared panel and starting design tokens in the web stylesheet; `infrastructure/docker`: local infrastructure; `docs`: architecture, ADRs, product and sprint evidence.
+`apps/web`: typed React screens and semantic component/state CSS; `apps/api`: Fastify REST service/migrations; `packages/shared`: HTTP contract; `packages/music-domain`: pure types, validated workspace aggregate, explicit prototype converter and tests; `packages/ui`: shared UI foundation; `infrastructure/docker`: local infrastructure; `docs`: architecture, ADRs, product and sprint evidence. Read [Song Workspace](docs/architecture/song-workspace.md), [tab editor](docs/architecture/tab-editor.md) and [Sprint 1 acceptance](docs/qa/sprint-1-acceptance.md).
 
 `main` is stable, `develop` integrates, `feature/*` branches target develop. `release/*` is for stabilization; `hotfix/*` starts at main and is later reconciled into develop. Changes reach develop through reviewed green PRs. Sprint 0 does not merge to main, create release tags or deploy. See [system overview](docs/architecture/system-overview.md), [decisions](docs/decisions/0001-foundation.md) and [sprint report](docs/sprints/sprint-0-report.md).

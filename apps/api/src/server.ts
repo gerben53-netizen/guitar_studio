@@ -6,7 +6,13 @@ const pool = new pg.Pool({
   connectionString: config.databaseUrl,
   connectionTimeoutMillis: 3000,
 });
-const app = buildApp(() => pool.query('SELECT 1'), true);
+const app = buildApp(() => pool.query('SELECT 1'), true, pool);
+pool.on('error', (error) => {
+  app.log.error(
+    { err: error },
+    'Idle database connection lost; new requests will reconnect',
+  );
+});
 app.addHook('onClose', async () => {
   await pool.end();
 });

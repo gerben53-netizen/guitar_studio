@@ -1,0 +1,344 @@
+[
+  {
+    "id": "s1",
+    "title": "Waar de morgen begint",
+    "artist": "Noor & de Noorderwind",
+    "status": "In bewerking",
+    "difficulty": "Beginner",
+    "tags": "Akkoorden",
+    "favorite": true,
+    "progress": 35,
+    "source": "Eigen fictieve demonstratie • origineel",
+    "arrangements": [
+      {
+        "name": "Akoestisch · basis",
+        "capo": 0,
+        "tempo": 84,
+        "meter": 8,
+        "sections": [
+          {
+            "name": "Couplet 1",
+            "lines": [
+              "Langs het water wordt de ochtend licht",
+              "Ik zoek de zon in een open gezicht",
+              "Mijn voeten volgen het pad naar de zee",
+              "De wind neemt al mijn vragen mee"
+            ],
+            "chords": [
+              {
+                "line": 0,
+                "word": 0,
+                "name": "Am",
+                "grip": [0, 1, 2, 2, 0, -1]
+              },
+              {
+                "line": 0,
+                "word": 5,
+                "name": "C",
+                "grip": [0, 1, 0, 2, 3, -1]
+              },
+              {
+                "line": 1,
+                "word": 2,
+                "name": "G",
+                "grip": [3, 0, 0, 0, 2, 3]
+              },
+              {
+                "line": 2,
+                "word": 3,
+                "name": "Em",
+                "grip": [0, 0, 0, 2, 2, 0]
+              }
+            ],
+            "bars": [
+              [
+                {
+                  "tick": 0,
+                  "duration": 2,
+                  "notes": {
+                    "4": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 2,
+                  "duration": 2,
+                  "notes": {
+                    "2": 2
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 4,
+                  "duration": 2,
+                  "notes": {
+                    "1": 1
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 6,
+                  "duration": 2,
+                  "notes": {
+                    "0": 0
+                  },
+                  "rest": false
+                }
+              ],
+              []
+            ]
+          },
+          {
+            "name": "Couplet 2",
+            "lines": [
+              "Onder wolken ligt een nieuwe dag",
+              "Met alle ruimte voor een kleine stap"
+            ],
+            "chords": [],
+            "bars": [[]]
+          },
+          {
+            "name": "Refrein",
+            "lines": [
+              "Hier begint de morgen voor mij",
+              "Met zes snaren en de wereld dichtbij"
+            ],
+            "chords": [],
+            "bars": [[]]
+          }
+        ]
+      },
+      {
+        "name": "Mijn tokkelversie",
+        "capo": 2,
+        "tempo": 76,
+        "meter": 8,
+        "sections": [
+          {
+            "name": "Intro",
+            "lines": ["Een eigen tokkelidee voor de morgen"],
+            "chords": [],
+            "bars": [
+              [
+                {
+                  "tick": 0,
+                  "duration": 1,
+                  "notes": {
+                    "4": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 1,
+                  "duration": 1,
+                  "notes": {
+                    "2": 2
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 2,
+                  "duration": 1,
+                  "notes": {
+                    "1": 1
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 3,
+                  "duration": 1,
+                  "notes": {
+                    "0": 0
+                  },
+                  "rest": false
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s2",
+    "title": "Lantaarns aan de kade",
+    "artist": "Milo Veld",
+    "status": "Oefenen",
+    "difficulty": "Gemiddeld",
+    "tags": "Fingerstyle",
+    "favorite": true,
+    "progress": 65,
+    "source": "Eigen fictieve demonstratie • origineel",
+    "arrangements": [
+      {
+        "name": "Fingerstyle · idee 01",
+        "capo": 0,
+        "tempo": 92,
+        "meter": 8,
+        "sections": [
+          {
+            "name": "Intro",
+            "lines": [
+              "Lantaarns tekenen strepen op het water",
+              "Ik bewaar dit stille uur voor later"
+            ],
+            "chords": [
+              {
+                "line": 0,
+                "word": 0,
+                "name": "C",
+                "grip": [0, 1, 0, 2, 3, -1]
+              }
+            ],
+            "bars": [
+              [
+                {
+                  "tick": 0,
+                  "duration": 1,
+                  "notes": {
+                    "4": 3
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 1,
+                  "duration": 1,
+                  "notes": {
+                    "2": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 2,
+                  "duration": 1,
+                  "notes": {
+                    "1": 1
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 3,
+                  "duration": 1,
+                  "notes": {
+                    "0": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 4,
+                  "duration": 1,
+                  "notes": {
+                    "3": 2
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 5,
+                  "duration": 1,
+                  "notes": {
+                    "2": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 6,
+                  "duration": 1,
+                  "notes": {
+                    "1": 1
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 7,
+                  "duration": 1,
+                  "notes": {
+                    "0": 0
+                  },
+                  "rest": false
+                }
+              ],
+              []
+            ]
+          },
+          {
+            "name": "Couplet",
+            "lines": ["Elke golf draagt een ander verhaal"],
+            "chords": [],
+            "bars": [[]]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "s3",
+    "title": "Tussen twee heuvels",
+    "artist": "Studio schetsen",
+    "status": "Nieuw",
+    "difficulty": "Beginner",
+    "tags": "Melodie",
+    "favorite": false,
+    "progress": 10,
+    "source": "Eigen fictieve demonstratie • origineel",
+    "arrangements": [
+      {
+        "name": "Melodie · verkenning",
+        "capo": 0,
+        "tempo": 72,
+        "meter": 8,
+        "sections": [
+          {
+            "name": "Thema A",
+            "lines": ["Instrumentaal — schrijf hier je eigen speelnotities"],
+            "chords": [],
+            "bars": [
+              [
+                {
+                  "tick": 0,
+                  "duration": 2,
+                  "notes": {
+                    "2": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 2,
+                  "duration": 1,
+                  "notes": {
+                    "1": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 3,
+                  "duration": 1,
+                  "notes": {
+                    "1": 3
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 4,
+                  "duration": 2,
+                  "notes": {
+                    "0": 0
+                  },
+                  "rest": false
+                },
+                {
+                  "tick": 6,
+                  "duration": 2,
+                  "notes": {
+                    "1": 1
+                  },
+                  "rest": false
+                }
+              ],
+              []
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
