@@ -34,6 +34,10 @@ function App() {
   }, []);
   function navigate(next: string) {
     if (next === page) return;
+    if (editor.locked) {
+      setMessage('Rond Lyrics uitlijnen eerst af of annuleer het concept.');
+      return;
+    }
     if (!practiceGuard.current()) return;
     setPage(next);
   }
@@ -123,7 +127,7 @@ function App() {
     }
   }, [theme]);
   async function open(record: SongRecord) {
-    if (!practiceGuard.current()) return;
+    if (editor.locked || !practiceGuard.current()) return;
     if (!(await editor.flush())) return;
     const rows = await refresh();
     const latest = rows?.find((r) => r.song.id === record.song.id);
@@ -136,6 +140,7 @@ function App() {
     setPage('workspace');
   }
   async function importSong(input: ImportCommit) {
+    if (editor.locked) throw Error('Rond Lyrics uitlijnen eerst af.');
     if (!practiceGuard.current() || !(await editor.flush()))
       throw new Error('Sla je huidige wijzigingen eerst op.');
     const record = await request<SongRecord>('/imports', {
@@ -150,6 +155,7 @@ function App() {
     setPage('workspace');
   }
   async function create(song: StudioSong | MultitrackSong) {
+    if (editor.locked) throw Error('Rond Lyrics uitlijnen eerst af.');
     if (!practiceGuard.current())
       throw new Error('Je oefening is niet verlaten. Rond deze eerst af.');
     if (!(await editor.flush()))
@@ -219,7 +225,7 @@ function App() {
     URL.revokeObjectURL(url);
   }
   async function importFile(file?: File) {
-    if (!file) return;
+    if (!file || editor.locked) return;
     try {
       if (file.size > 8_000_000)
         throw new Error('JSON-bestand is groter dan 8 MB.');
@@ -282,6 +288,7 @@ function App() {
         <button
           className="gs-button"
           aria-label="Nieuwe song"
+          disabled={editor.locked}
           onClick={() => setWizard(true)}
         >
           <span className="icon" aria-hidden="true">
@@ -292,6 +299,7 @@ function App() {
         <button
           className="gs-button"
           aria-label="JSON importeren"
+          disabled={editor.locked}
           onClick={() => importRef.current?.click()}
         >
           <span className="icon" aria-hidden="true">
