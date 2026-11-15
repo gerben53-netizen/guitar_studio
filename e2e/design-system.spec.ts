@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { toMultitrack } from '../packages/music-domain/src/multitrack';
 import { mkdir, writeFile } from 'node:fs/promises';
 import {
   newSong,
@@ -24,7 +25,9 @@ for (const viewport of [
         '[Couplet]\nLangs het water klinkt mijn lied',
       );
       expect(
-        (await request.post('/api/v1/songs', { data: song })).ok(),
+        (
+          await request.post('/api/v1/songs', { data: toMultitrack(song) })
+        ).ok(),
       ).toBeTruthy();
       const evidence: object[] = [];
       const errors: string[] = [];
@@ -58,10 +61,6 @@ for (const viewport of [
           quality: 80,
           fullPage: true,
         });
-      }
-      async function mobile(name: string) {
-        if (viewport.width === 390)
-          await page.getByRole('button', { name, exact: true }).last().click();
       }
       async function closeDialog() {
         await page.keyboard.press('Escape');
@@ -121,10 +120,10 @@ for (const viewport of [
           await page
             .getByRole('button', { name: song.title, exact: true })
             .click();
+          await expect(page.locator('.gs-workspace-v3')).toBeVisible();
           await audit('workspace', theme);
-          await mobile('Lyrics');
           await page
-            .getByRole('button', { name: 'Lyrics bewerken', exact: true })
+            .getByRole('button', { name: 'Tekst bewerken', exact: true })
             .click();
           await audit('lyrics', theme);
           await closeDialog();
@@ -132,12 +131,11 @@ for (const viewport of [
             .getByRole('button', { name: 'Langs', exact: true })
             .click();
           await page
-            .getByRole('button', { name: '+ Akkoord', exact: true })
+            .getByRole('button', { name: 'Akkoord plaatsen', exact: true })
             .click();
           await audit('chord', theme);
           await closeDialog();
-          await mobile('Tablatuur');
-          const active = page.locator('.tabcell[data-active=true]');
+          const active = page.locator('.tab-position[data-active=true]');
           await page.keyboard.press('Tab');
           await active.focus();
           await expect(active).toBeFocused();
@@ -145,16 +143,18 @@ for (const viewport of [
             await active.evaluate((el) => getComputedStyle(el).outlineStyle),
           ).toBe('solid');
           await page.keyboard.press('3');
+          await page.keyboard.press('Enter');
           await expect(active).toHaveText('3');
           await audit('tab', theme);
-          await mobile('Gitaarhals');
           const fret = page.getByRole('button', {
-            name: /^Hals snaar 1, fret 3,/,
+            name: /^Hals snaar 1, fysieke fret 3,/,
           });
           await fret.focus();
           await page.keyboard.press('ArrowRight');
           await expect(
-            page.getByRole('button', { name: /^Hals snaar 1, fret 4,/ }),
+            page.getByRole('button', {
+              name: /^Hals snaar 1, fysieke fret 4,/,
+            }),
           ).toBeFocused();
           await audit('fretboard', theme);
           await page
@@ -162,7 +162,7 @@ for (const viewport of [
             .click();
           await audit('practice', theme);
           await page
-            .getByRole('button', { name: '← Terug naar editor', exact: true })
+            .getByRole('button', { name: 'Terug naar editor', exact: true })
             .click();
           await expect(page.locator('.save')).toContainText('Opgeslagen');
         }
@@ -194,7 +194,7 @@ for (const viewport of [
   );
 }
 
-test('split keyboard and pointer retain panels, dialog focus and internal fret scroll', async ({
+test('full-width score retains panels, dialog focus and internal fret scroll', async ({
   page,
   request,
 }) => {
@@ -204,27 +204,17 @@ test('split keyboard and pointer retain panels, dialog focus and internal fret s
     'Langs het water',
   );
   expect(
-    (await request.post('/api/v1/songs', { data: song })).ok(),
+    (await request.post('/api/v1/songs', { data: toMultitrack(song) })).ok(),
   ).toBeTruthy();
   try {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/');
     await page.getByRole('button', { name: 'Songs', exact: true }).click();
     await page.getByRole('button', { name: song.title, exact: true }).click();
-    const splitter = page.getByRole('separator', { name: 'Paneelbreedte' });
-    await splitter.focus();
-    await page.keyboard.press('ArrowRight');
-    await expect(splitter).toHaveAttribute('aria-valuenow', '45');
-    await page.keyboard.press('ArrowLeft');
-    await expect(splitter).toHaveAttribute('aria-valuenow', '42');
-    const box = await splitter.boundingBox();
-    expect(box).not.toBeNull();
-    await page.mouse.move(box!.x + box!.width / 2, box!.y + 30);
-    await page.mouse.down();
-    await page.mouse.move(box!.x + 50, box!.y + 30);
-    await page.mouse.up();
-    const split = await splitter.getAttribute('aria-valuenow');
-    expect(Number(split)).toBeGreaterThan(42);
+    await expect(page.locator('.gs-workspace-v3')).toBeVisible();
+    await expect(
+      page.getByRole('separator', { name: 'Paneelbreedte' }),
+    ).toHaveCount(0);
     const scroll = page.locator('.fret-scroll');
     await scroll.evaluate((el) => {
       el.scrollLeft = 300;
@@ -242,7 +232,7 @@ test('split keyboard and pointer retain panels, dialog focus and internal fret s
     await expect(
       page
         .getByRole('dialog')
-        .getByRole('button', { name: 'Opslaan', exact: true }),
+        .getByRole('button', { name: 'Gegevens opslaan', exact: true }),
     ).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(first).toBeFocused();
@@ -251,9 +241,7 @@ test('split keyboard and pointer retain panels, dialog focus and internal fret s
       page.getByRole('button', { name: 'Songgegevens', exact: true }),
     ).toBeFocused();
     expect(await scroll.evaluate((el) => el.scrollLeft)).toBe(before);
-    await expect(splitter).toHaveAttribute('aria-valuenow', split!);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.getByRole('button', { name: 'Gitaarhals', exact: true }).click();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
@@ -262,10 +250,6 @@ test('split keyboard and pointer retain panels, dialog focus and internal fret s
     expect(await scroll.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(
       true,
     );
-    for (const name of ['Lyrics', 'Tablatuur', 'Gitaarhals'])
-      await expect(
-        page.getByRole('button', { name, exact: true }).last(),
-      ).toHaveCSS('min-height', '44px');
   } finally {
     const rows = (await (
       await request.get('/api/v1/songs')

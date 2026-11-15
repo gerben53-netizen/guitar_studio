@@ -170,13 +170,13 @@ test('personal search/correction/persistence/replay, source after edits, fresh b
   expect((await api('/imports', 'POST', replayBody)).song.id).toBe(firstId);
   expect((await api('/songs')).length).toBe(rows.length);
   await page
-    .getByText('Importbron, akkoorden en ongetimede tablatuur', { exact: true })
+    .getByText('Importbron en oorspronkelijke timing', { exact: true })
     .click();
   await expect(
     page.getByRole('link', { name: 'LRCLIB #900003', exact: true }),
   ).toHaveAttribute('href', 'https://lrclib.net/record/900003');
   await page
-    .getByRole('button', { name: 'Lyrics bewerken', exact: true })
+    .getByRole('button', { name: 'Tekst bewerken', exact: true })
     .click();
   await page.getByLabel('Sectietekst').fill('Later bewerkte eigen lyrics');
   await page
@@ -222,7 +222,7 @@ test('personal search/correction/persistence/replay, source after edits, fresh b
       'Later bewerkte eigen lyrics',
     );
     await p
-      .getByText('Importbron, akkoorden en ongetimede tablatuur', {
+      .getByText('Importbron en oorspronkelijke timing', {
         exact: true,
       })
       .click();

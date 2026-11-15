@@ -1,7 +1,7 @@
 import {
   MultitrackExportSchema,
   cloneMultitrackSong,
-  mergeLegacyWrite,
+  toMultitrack,
   type MultitrackSong,
 } from '../../../packages/music-domain/src/multitrack';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
@@ -17,12 +17,18 @@ import type { ImportCommit } from '../../../packages/music-domain/src/song-impor
 import { useSong } from './useSong';
 import { Library, type SongAction } from './components/Library';
 import { ImportWizard } from './components/ImportWizard';
-import { Workspace } from './components/Workspace';
+import { WorkspaceV3, type PracticeHandoff } from './workspace-v3/WorkspaceV3';
+import type { EditorCursor } from '../../../packages/music-domain/src/workspace-editor';
+import type { MultitrackRecord } from '../../../packages/shared/src/multitrack-client';
 import './style.css';
 import { PracticeRoom } from './practice/PracticeRoom';
 import type { PracticeGuard } from './practice/RhythmLab';
 function App() {
   const practiceGuard = useRef<PracticeGuard>(() => true);
+  const [originContext, setOriginContext] = useState<PracticeHandoff | null>(
+    null,
+  );
+  const [returnCursor, setReturnCursor] = useState<EditorCursor | undefined>();
   const registerPracticeGuard = useCallback((guard: PracticeGuard) => {
     practiceGuard.current = guard;
   }, []);
@@ -76,16 +82,12 @@ function App() {
     [],
   );
   const editor = useSong(saved);
-  const fullSongCache = useRef(new Map<string, MultitrackSong>());
   async function loadRecord(record: SongRecord) {
     try {
-      if (record.storageSchemaVersion === 2) {
-        const full = await request<{ document: MultitrackSong }>(
-          '/songs/' + encodeURIComponent(record.song.id) + '/multitrack',
-        );
-        fullSongCache.current.set(record.song.id, full.document);
-      } else fullSongCache.current.delete(record.song.id);
-      editor.load(record);
+      const full = await request<MultitrackRecord>(
+        '/songs/' + encodeURIComponent(record.song.id) + '/multitrack',
+      );
+      editor.load(record, full);
       return true;
     } catch {
       setMessage(
@@ -130,9 +132,7 @@ function App() {
       return;
     }
     if (!(await loadRecord(latest))) return;
-    editor.change((s) => {
-      s.lastOpened = new Date().toISOString();
-    });
+    setReturnCursor(undefined);
     setPage('workspace');
   }
   async function importSong(input: ImportCommit) {
@@ -154,7 +154,7 @@ function App() {
       throw new Error('Je oefening is niet verlaten. Rond deze eerst af.');
     if (!(await editor.flush()))
       throw new Error('Sla je huidige wijzigingen eerst op of exporteer ze.');
-    const record = await createSong(song);
+    const record = await createSong(toMultitrack(song));
     setRecords((rows) => [record, ...rows]);
     if (!(await loadRecord(record)))
       throw new Error(
@@ -175,7 +175,7 @@ function App() {
             '/songs/' + encodeURIComponent(current.song.id) + '/multitrack',
           );
           await createSong(cloneMultitrackSong(full.document));
-        } else await createSong(cloneSong(current.song));
+        } else await createSong(toMultitrack(cloneSong(current.song)));
       } else if (action === 'delete') {
         if (
           !confirm(
@@ -206,31 +206,7 @@ function App() {
   }
   function exportSong() {
     if (!editor.song) return;
-    let data: unknown = {
-      format: 'guitar-studio',
-      version: 1,
-      song: editor.song,
-    };
-    const full = fullSongCache.current.get(editor.song.id);
-    if (full) {
-      try {
-        data = {
-          format: 'guitar-studio',
-          version: 2,
-          song: mergeLegacyWrite(full, editor.song),
-        };
-      } catch {
-        data = {
-          format: 'guitar-studio-recovery',
-          version: 1,
-          canonicalBase: full,
-          legacyDraft: editor.song,
-        };
-        setMessage(
-          'Herstelbestand bevat alle sporen en je onopgeslagen tekst. Review de koppelingen vóór herstel.',
-        );
-      }
-    }
+    const data = { format: 'guitar-studio', version: 2, song: editor.document };
     const content = JSON.stringify(data, null, 2);
     const url = URL.createObjectURL(
       new Blob([content], { type: 'application/json' }),
@@ -367,7 +343,45 @@ function App() {
               Je studio wordt geladen…
             </div>
           ) : page === 'practice-room' ? (
-            <PracticeRoom registerGuard={registerPracticeGuard} />
+            <>
+              {originContext && (
+                <section className="gs-notice" aria-label="Songpassage">
+                  <strong>{originContext.title}</strong>
+                  <p>Oefenen vanuit de geselecteerde sporen en passage.</p>
+                  <button
+                    className="gs-button"
+                    onClick={() =>
+                      void (async () => {
+                        if (!practiceGuard.current()) return;
+                        const result = await request<{ status: string }>(
+                          '/practice/origins/' + originContext.id,
+                        );
+                        if (result.status === 'available') {
+                          const rows = await refresh();
+                          const row = rows?.find(
+                            (r) => r.song.id === editor.song?.id,
+                          );
+                          if (row && (await loadRecord(row))) {
+                            setReturnCursor(originContext.cursor);
+                            setPage('workspace');
+                          }
+                        } else {
+                          setPage('library');
+                          setMessage(
+                            'De bron is gewijzigd of verwijderd. Je oorspronkelijke oefensnapshot blijft bewaard.',
+                          );
+                        }
+                      })().catch(() =>
+                        setMessage('Bron niet bereikbaar; probeer opnieuw.'),
+                      )
+                    }
+                  >
+                    Terug naar songpassage
+                  </button>
+                </section>
+              )}
+              <PracticeRoom registerGuard={registerPracticeGuard} />
+            </>
           ) : page === 'dashboard' || page === 'library' ? (
             <Library
               records={records}
@@ -376,18 +390,24 @@ function App() {
               newSong={() => setWizard(true)}
               action={(r, a) => void action(r, a)}
             />
-          ) : editor.song ? (
-            <Workspace
+          ) : editor.song && editor.document ? (
+            <WorkspaceV3
               key={editor.song.id}
-              song={editor.song}
-              change={editor.change}
-              status={editor.status}
-              error={editor.error}
-              retry={() => void editor.flush()}
+              editor={editor}
+              practice={page === 'practice'}
+              setPractice={(p) => setPage(p ? 'practice' : 'workspace')}
+              exportSong={exportSong}
+              report={setMessage}
+              openImport={() => setWizard(true)}
+              openPracticeRoom={(context) => {
+                setOriginContext(context);
+                navigate('practice-room');
+              }}
+              {...(returnCursor ? { returnCursor } : {})}
               reload={async () => {
                 if (
                   confirm(
-                    'Niet opgeslagen wijzigingen vervangen door de serverversie? Exporteer ze eerst als je ze wilt bewaren.',
+                    'Niet opgeslagen wijzigingen vervangen? Exporteer ze eerst als je ze wilt bewaren.',
                   )
                 ) {
                   const rows = await refresh();
@@ -397,13 +417,6 @@ function App() {
                   if (record) await loadRecord(record);
                 }
               }}
-              undo={editor.undo}
-              canUndo={editor.canUndo}
-              canRedo={editor.canRedo}
-              practice={page === 'practice'}
-              setPractice={(p) => setPage(p ? 'practice' : 'workspace')}
-              exportSong={exportSong}
-              report={setMessage}
             />
           ) : null}
         </main>

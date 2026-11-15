@@ -1,0 +1,645 @@
+{
+  "status": "PASS",
+  "date": "2026-11-15",
+  "unit": 130,
+  "postgresql": 39,
+  "chromeCases": 49,
+  "axeChecks": 56,
+  "violations": 0,
+  "browser": "157.0.8103.51",
+  "channel": "chrome",
+  "screenshots": [
+    "workspace-dark.jpg",
+    "workspace-light.jpg",
+    "track-manager-dark.jpg",
+    "track-manager-light.jpg",
+    "syllables-dialog.jpg",
+    "lyrics-melisma.jpg",
+    "neck-compact.jpg",
+    "neck-expanded.jpg",
+    "mobile-dark.jpg",
+    "mobile-light.jpg",
+    "tablet-dark.jpg",
+    "practice-dark.jpg",
+    "import-dialog.jpg"
+  ],
+  "checks": [
+    {
+      "surface": "workspace",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "dark",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "light",
+      "viewport": {
+        "width": 1280,
+        "height": 800
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "dark",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "light",
+      "viewport": {
+        "width": 1024,
+        "height": 768
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "dark",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "workspace",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "manager",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "linking",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-compact",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "neck-expanded",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "practice",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    },
+    {
+      "surface": "import",
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "browser": "157.0.8103.51",
+      "channel": "chrome",
+      "violations": []
+    }
+  ],
+  "visualCapture": "Native installed-Chrome captures from a separate original multi-track fixture in the same real application; viewport captures for dialogs and full-page captures for workspaces."
+}

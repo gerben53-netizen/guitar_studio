@@ -5,7 +5,10 @@ import {
   mergeWorkspaceWrite,
   type StoredSong,
 } from './song-documents.js';
-import { legacyView } from '../../../packages/music-domain/src/multitrack.js';
+import {
+  legacyView,
+  toMultitrack,
+} from '../../../packages/music-domain/src/multitrack.js';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import {
@@ -89,7 +92,7 @@ export function registerImports(
       )
         throw fail(400, 'Corrigeer de import vóór opslag.');
       const imported = importToSong(doc);
-      let song: StoredSong = imported,
+      let song: StoredSong = toMultitrack(imported),
         revision = 1;
       if (input.target.kind !== 'new-song') {
         const existing = await db.query(

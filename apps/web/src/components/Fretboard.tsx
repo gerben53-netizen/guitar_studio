@@ -5,7 +5,8 @@ import {
   sameTime,
   type StudioArrangement,
 } from '../../../../packages/music-domain/src/workspace';
-import type { Cursor } from './TabEditor';
+import type { EditorCursor } from '../../../../packages/music-domain/src/workspace-editor';
+type Cursor = Pick<EditorCursor, 'measureId' | 'start' | 'string'>;
 export function Fretboard({
   arrangement,
   section,
@@ -15,7 +16,11 @@ export function Fretboard({
   setCollapsed,
   advance,
   setAdvance,
+  physical = false,
+  expanded = false,
 }: {
+  physical?: boolean;
+  expanded?: boolean;
   arrangement: StudioArrangement;
   section: StudioArrangement['sections'][number];
   cursor: Cursor;
@@ -28,35 +33,47 @@ export function Fretboard({
   const [showNames, setShowNames] = useState(false);
   const [focusPosition, setFocusPosition] = useState({ string: 1, fret: 0 });
   const board = useRef<HTMLDivElement>(null);
-  const event = section.measures
-    .find((m) => m.id === cursor.measureId)
-    ?.events.find((e) => sameTime(e.start, cursor.start));
+  const events =
+    section.measures
+      .find((m) => m.id === cursor.measureId)
+      ?.events.filter((e) => sameTime(e.start, cursor.start)) ?? [];
+  const event = events.length
+    ? { tones: events.flatMap((e) => e.tones) }
+    : undefined;
   useEffect(() => {
     const tone = event?.tones.find((t) => t.position?.string === cursor.string);
     const position = {
       string: cursor.string,
       fret: tone?.position
-        ? fretLabel(tone.position.fret, arrangement.instrument.capo)
-        : 0,
+        ? physical
+          ? tone.position.fret
+          : fretLabel(tone.position.fret, arrangement.instrument.capo)
+        : physical
+          ? arrangement.instrument.capo
+          : 0,
     };
     setFocusPosition(position);
-    board.current
-      ?.querySelector(
-        '[data-neck-string="' +
-          position.string +
-          '"][data-neck-fret="' +
-          position.fret +
-          '"]',
-      )
-      ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, [cursor, event, arrangement.instrument.capo]);
+    if (board.current?.contains(document.activeElement))
+      board.current
+        ?.querySelector(
+          '[data-neck-string="' +
+            position.string +
+            '"][data-neck-fret="' +
+            position.fret +
+            '"]',
+        )
+        ?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [cursor, section, arrangement.instrument.capo, physical]);
   return (
     <section className="panel neck gs-panel">
       <div className="panelhead fretboard-header gs-panel__header">
         <h2>
           Interactieve gitaarhals{' '}
           <small>
-            Frets ten opzichte van capo {arrangement.instrument.capo}
+            {physical
+              ? 'Fysieke frets 0–24 · capo '
+              : 'Frets ten opzichte van capo '}
+            {arrangement.instrument.capo}
           </small>
         </h2>
         <div className="fretboard-controls">
@@ -110,7 +127,9 @@ export function Fretboard({
                     {i + 1}
                   </span>
                   {Array.from({ length: 25 }, (_, f) => {
-                    const absolute = f + arrangement.instrument.capo;
+                    const absolute = physical
+                      ? f
+                      : f + arrangement.instrument.capo;
                     const selected = event?.tones.some(
                       (t) =>
                         t.position?.string === i + 1 &&
@@ -133,11 +152,22 @@ export function Fretboard({
                         }
                         className={
                           'gs-button ' +
-                          ((f === 0 ? 'open ' : '') + (selected ? 'lit' : ''))
+                          ((f === (physical ? arrangement.instrument.capo : 0)
+                            ? 'open '
+                            : '') +
+                            (selected ? 'lit' : ''))
                         }
-                        disabled={absolute > arrangement.instrument.maxFret}
+                        disabled={
+                          absolute > arrangement.instrument.maxFret ||
+                          absolute < arrangement.instrument.capo
+                        }
                         aria-label={
-                          'Hals snaar ' + (i + 1) + ', fret ' + f + ', ' + name
+                          'Hals snaar ' +
+                          (i + 1) +
+                          (physical ? ', fysieke fret ' : ', fret ') +
+                          f +
+                          ', ' +
+                          name
                         }
                         aria-pressed={!!selected}
                         onClick={() => {
@@ -172,7 +202,7 @@ export function Fretboard({
                             0,
                             Math.min(
                               arrangement.instrument.maxFret -
-                                arrangement.instrument.capo,
+                                (physical ? 0 : arrangement.instrument.capo),
                               24,
                               f +
                                 (e.key === 'ArrowRight'
@@ -194,7 +224,9 @@ export function Fretboard({
                             ?.focus();
                         }}
                       >
-                        <span className={showNames ? 'show' : ''}>{name}</span>
+                        <span className={showNames || expanded ? 'show' : ''}>
+                          {name}
+                        </span>
                       </button>
                     );
                   })}
@@ -210,13 +242,19 @@ export function Fretboard({
                   ? 'S' +
                     t.position.string +
                     ' fret ' +
-                    fretLabel(t.position.fret, arrangement.instrument.capo) +
+                    (physical
+                      ? t.position.fret
+                      : fretLabel(
+                          t.position.fret,
+                          arrangement.instrument.capo,
+                        )) +
                     ' = ' +
                     pitchName(t.pitch)
                   : pitchName(t.pitch),
               )
               .join(' · ') || 'Kies een fret'}{' '}
-            · 0 = open snaar bij de capo · meerdere snaren = samenklank
+            · 0 = fysieke open snaar; capo bepaalt de speelbare ondergrens ·
+            meerdere snaren = samenklank
           </div>
         </>
       )}
