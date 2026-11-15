@@ -73,6 +73,12 @@ describe('personal LRCLIB PostgreSQL transactions and existing contracts', () =>
         res = await call('POST', '/api/v1/imports', body);
       expect(res.statusCode).toBe(201);
       let record = res.json();
+      expect(record.storageSchemaVersion).toBe(2);
+      const canonical = await call(
+        'GET',
+        '/api/v1/songs/' + record.song.id + '/multitrack',
+      );
+      expect(canonical.json().document.schemaVersion).toBe(2);
       const doc = record.song.importDocuments[0];
       expect(doc.source).toMatchObject({
         provider: 'lrclib',
@@ -126,7 +132,7 @@ describe('personal LRCLIB PostgreSQL transactions and existing contracts', () =>
         'GET',
         '/api/v1/songs/' + record.song.id + '/history',
       );
-      expect(history.json()).toHaveLength(3);
+      expect(history.json()).toHaveLength(2); // New imports are already v2; upgrading again is a no-op.
     },
   );
   it('replays concurrent/restarted requests without duplicates, even after the transient signing key changed', async () => {

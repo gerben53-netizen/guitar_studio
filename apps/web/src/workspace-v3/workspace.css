@@ -1,0 +1,405 @@
+@layer screens {
+  .gs-workspace-v3 {
+    min-width: 0;
+    padding: var(--space-4);
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    font-size: var(--font-size-body);
+  }
+  .gs-workspace-v3 .workspace-header,
+  .gs-workspace-v3 .workspace-panel-heading,
+  .gs-workspace-v3 .track-heading,
+  .gs-workspace-v3 .neck-mode {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+  .gs-workspace-v3 .workspace-header > div:first-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .gs-workspace-v3 .workspace-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+  .gs-workspace-v3 .workspace-header p {
+    margin: var(--space-1) 0;
+    color: var(--color-text-secondary);
+  }
+  .gs-workspace-v3 .workspace-actions,
+  .gs-workspace-v3 .workspace-settings,
+  .gs-workspace-v3 .score-toolbar,
+  .gs-workspace-v3 .track-tabs,
+  .gs-workspace-v3 .workspace-footer,
+  .gs-workspace-v3 .score-practice,
+  .gs-workspace-v3 .lyric-link-editor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-2);
+  }
+  .gs-workspace-v3 .workspace-settings {
+    padding-block: var(--space-2);
+    border-block: 1px solid var(--color-border);
+  }
+  .gs-workspace-v3 .gs-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .gs-field input[type='number'],
+  .gs-workspace-v3 .fret-input {
+    width: 5rem;
+  }
+  .gs-workspace-v3 .gs-button {
+    min-height: 34px;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .workspace-panel {
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+  }
+  .gs-workspace-v3 .workspace-panel-heading {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .gs-workspace-v3 h2 {
+    font-size: var(--font-size-body);
+    margin: 0;
+  }
+  .gs-workspace-v3 h2 small {
+    color: var(--color-accent-primary);
+    font-size: var(--font-size-caption);
+    margin-inline-start: var(--space-2);
+  }
+  .gs-workspace-v3 .workspace-panel-heading nav {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+  .gs-workspace-v3 .lyrics-content {
+    padding: var(--space-3);
+    font-family: var(--font-family-lyrics);
+    min-height: 0;
+    max-height: 10rem;
+    overflow: auto;
+  }
+  .gs-workspace-v3 .lyrics-line {
+    white-space: pre-wrap;
+    min-height: 2.8rem;
+  }
+  .gs-workspace-v3 .lyric-word {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: start;
+    position: relative;
+    border: 1px solid var(--color-surface);
+    border-radius: var(--radius-control);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    padding: var(--space-1);
+    font: inherit;
+    cursor: pointer;
+  }
+  .gs-workspace-v3 .lyric-word.is-selected {
+    border-color: var(--color-accent-primary);
+    background: var(--color-accent-subtle);
+  }
+  .gs-workspace-v3 .chord-annotation {
+    height: 1rem;
+    color: var(--color-accent-primary);
+    font: var(--font-size-caption) var(--font-family-ui);
+  }
+  .gs-workspace-v3 .score-toolbar {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface-raised);
+  }
+  .gs-workspace-v3 .track-tabs {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gs-workspace-v3 .track-tabs [aria-pressed='true'] {
+    color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+  }
+  .gs-workspace-v3 .score-pages {
+    max-height: 65vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+  .gs-workspace-v3 .score-system {
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gs-workspace-v3 .score-system h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-caption);
+    color: var(--color-accent-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .gs-workspace-v3 .score-system-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+  .gs-workspace-v3 .notation-row {
+    min-width: 0;
+  }
+  .gs-workspace-v3 .track-heading {
+    padding-block: var(--space-2);
+  }
+  .gs-workspace-v3 .track-heading small {
+    color: var(--color-text-secondary);
+    margin-inline-end: auto;
+  }
+  .gs-workspace-v3 .track-name {
+    font-weight: 700;
+    border: 0;
+    background: var(--color-surface);
+  }
+  .gs-workspace-v3 .measure-row {
+    display: grid;
+    grid-template-columns: repeat(var(--measure-count), minmax(245px, 1fr));
+    min-width: calc(var(--measure-count) * 245px);
+  }
+  .gs-workspace-v3 .score-measure {
+    min-width: 0;
+    border-inline-end: 1px solid var(--color-tab-line);
+    padding: 0 var(--space-2);
+  }
+  .gs-workspace-v3 .measure-heading {
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    border: 0;
+    font: var(--font-size-caption) var(--font-family-ui);
+    padding: var(--space-1);
+    cursor: pointer;
+  }
+  .gs-workspace-v3 .is-range {
+    background: var(--color-accent-subtle);
+  }
+  .gs-workspace-v3 .is-playing {
+    outline: 2px solid var(--color-accent-primary);
+    outline-offset: -2px;
+  }
+  .gs-workspace-v3 .tab-staff {
+    padding-block: var(--space-2);
+    font-family: var(--font-family-music);
+  }
+  .gs-workspace-v3 .string-line {
+    position: relative;
+    height: 24px;
+    margin-inline-start: 24px;
+  }
+  .gs-workspace-v3 .string-name {
+    position: absolute;
+    left: -22px;
+    top: 3px;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .staff-field {
+    position: relative;
+    height: 100%;
+    margin-inline-end: 14px;
+    background: linear-gradient(var(--color-tab-line), var(--color-tab-line))
+      left 50%/100% 1px no-repeat;
+  }
+  .gs-workspace-v3 .tab-position {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    height: 24px;
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-primary);
+    font: bold 15px var(--font-family-music);
+    cursor: pointer;
+  }
+  .gs-workspace-v3 .tab-position span {
+    padding: 0 3px;
+    background: var(--color-surface);
+    border-radius: 3px;
+  }
+  .gs-workspace-v3 .tab-position:not([data-event-id]) span {
+    color: var(--color-text-secondary);
+    background: none;
+    visibility: hidden;
+  }
+  .gs-workspace-v3 .tab-position.is-selected span {
+    background: var(--color-accent-primary);
+    color: var(--color-on-accent);
+  }
+  .gs-workspace-v3 .tab-position.is-linked span {
+    outline: 1px solid var(--color-accent-primary);
+  }
+  .gs-workspace-v3 button:focus-visible,
+  .gs-workspace-v3 .tab-position[data-active='true']:focus {
+    outline: var(--focus-width) solid var(--color-focus);
+    outline-offset: var(--focus-offset);
+    z-index: 2;
+  }
+  .gs-workspace-v3 .duration-lane {
+    position: relative;
+    height: 24px;
+    margin-inline-start: 24px;
+    margin-inline-end: 14px;
+  }
+  .gs-workspace-v3 .duration-lane span {
+    position: absolute;
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    max-width: 25%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .gs-workspace-v3 .lyric-lane {
+    position: relative;
+    height: 34px;
+    margin-inline-start: 24px;
+    margin-inline-end: 14px;
+    border-top: 1px dashed var(--color-border);
+  }
+  .gs-workspace-v3 .lyric-anchor {
+    position: absolute;
+    top: 4px;
+    transform: translateX(-4px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border: 0;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-caption);
+    padding: 3px;
+    cursor: pointer;
+  }
+  .gs-workspace-v3 .lyric-anchor.is-selected {
+    background: var(--color-surface-interactive);
+    color: var(--color-accent-primary);
+  }
+  .gs-workspace-v3 .melisma-mark,
+  .gs-workspace-v3 .sustain-mark {
+    color: var(--color-accent-primary);
+    padding-inline-start: 3px;
+  }
+  .gs-workspace-v3 .score-status {
+    font-size: var(--font-size-caption);
+    padding: var(--space-2);
+    background: var(--color-surface-raised);
+    border-top: 1px solid var(--color-border);
+  }
+  .gs-workspace-v3 .lyric-link-editor {
+    padding: var(--space-2);
+    border-top: 1px solid var(--color-border);
+  }
+  .gs-workspace-v3 .lyric-link-editor h3 {
+    font-size: var(--font-size-caption);
+    margin: 0;
+    align-self: center;
+  }
+  .gs-workspace-v3 .lyric-link-editor select {
+    max-width: 15rem;
+  }
+  .gs-workspace-v3 .compact-fretboard {
+    min-width: 0;
+  }
+  .gs-workspace-v3 .neck-mode {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
+  }
+  .gs-workspace-v3 .neck {
+    margin: 0;
+  }
+  .gs-workspace-v3 .fretboard-header h2 {
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .neck-compact .fretboard {
+    grid-template-rows: 16px repeat(6, 20px);
+  }
+  .gs-workspace-v3 .neck-compact .fretboard button {
+    border-radius: 0;
+    padding: 0;
+    min-height: 20px;
+    height: 20px;
+  }
+  .gs-workspace-v3 .neck-expanded .fretboard button {
+    border-radius: 0;
+    padding: 0;
+    min-height: 36px;
+  }
+  .gs-workspace-v3 .fret-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .gs-workspace-v3 .score-practice {
+    padding: var(--space-3);
+  }
+  .gs-workspace-v3 .workspace-footer {
+    justify-content: flex-end;
+  }
+  .gs-workspace-v3 .workspace-import-source {
+    min-width: 0;
+  }
+  .gs-workspace-v3 .track-manager-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .gs-workspace-v3 .track-manager-row {
+    border-bottom: 1px solid var(--color-border);
+    padding-block: var(--space-2);
+  }
+  .gs-workspace-v3 .track-manager-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-block: var(--space-2);
+  }
+  @media (max-width: 650px) {
+    .gs-workspace-v3 .workspace-header > div:first-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .gs-workspace-v3 .workspace-header h1 {
+      font-size: 1.4rem;
+      overflow-wrap: anywhere;
+    }
+    .gs-workspace-v3 .workspace-panel-heading > div {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1);
+    }
+    .gs-workspace-v3 .track-heading {
+      min-width: calc(2 * 245px);
+    }
+    .gs-workspace-v3 .score-pages {
+      max-height: 70vh;
+    }
+    .gs-workspace-v3 .gs-button {
+      min-height: 40px;
+    }
+    .gs-workspace-v3 .workspace-settings > * {
+      max-width: 100%;
+    }
+    .gs-workspace-v3 .workspace-header,
+    .gs-workspace-v3 .workspace-panel {
+      max-width: 100%;
+    }
+  }
+}

@@ -6,6 +6,7 @@
 @import './design-system/gs.song.css';
 @import './design-system/gs.brand.css';
 @import './design-system/gs.practice.css';
+@import './workspace-v3/workspace.css';
 
 /* Import foundation: existing v2 components and semantic layout only. */
 .import-fields {

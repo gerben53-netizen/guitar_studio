@@ -207,7 +207,7 @@ test('import formats, manual correction, loss-response recovery, safe destinatio
       ),
     ).toBe(true);
     await page
-      .getByText('Importbron, akkoorden en ongetimede tablatuur', {
+      .getByText('Importbron en oorspronkelijke timing', {
         exact: true,
       })
       .click();

@@ -1,53 +1,86 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  SongSchema,
-  type SongRecord,
-  type StudioSong,
-} from '../../../packages/music-domain/src/workspace';
+  MultitrackSongSchema,
+  toLegacy,
+  type MultitrackSong,
+} from '../../../packages/music-domain/src/multitrack';
+import type { SongRecord } from '../../../packages/music-domain/src/workspace';
+import type { MultitrackRecord } from '../../../packages/shared/src/multitrack-client';
 import { request } from './api';
-export function useSong(onSaved: (record: SongRecord) => void) {
-  const [song, setSong] = useState<StudioSong | null>(null),
+import {
+  pushHistory,
+  stepHistory,
+} from '../../../packages/music-domain/src/workspace-editor';
+export function useSong(onSaved: (r: SongRecord) => void) {
+  const [document, setDocument] = useState<MultitrackSong | null>(null),
     [status, setStatus] = useState('Opgeslagen'),
     [error, setError] = useState(''),
-    [history, setHistory] = useState<{
-      past: StudioSong[];
-      future: StudioSong[];
-    }>({ past: [], future: [] });
+    [needsUpgrade, setNeedsUpgrade] = useState(false);
+  const [history, setHistory] = useState<{
+    past: MultitrackSong[];
+    future: MultitrackSong[];
+  }>({ past: [], future: [] });
+  const historyRef = useRef(history);
   const state = useRef<{
-    song: StudioSong | null;
-    revision: number;
+    document: MultitrackSong | null;
     saved: string;
+    revision: number;
+    schema: 1 | 2;
+    upgrade: boolean;
     flight: Promise<boolean> | null;
-  }>({ song: null, revision: 0, saved: '', flight: null });
-  const savedCallback = useRef(onSaved);
-  savedCallback.current = onSaved;
+  }>({
+    document: null,
+    saved: 'null',
+    revision: 0,
+    schema: 1,
+    upgrade: false,
+    flight: null,
+  });
+  const callback = useRef(onSaved);
+  callback.current = onSaved;
   const dirty = () =>
-    state.current.song !== null &&
-    JSON.stringify(state.current.song) !== state.current.saved;
+    JSON.stringify(state.current.document) !== state.current.saved;
   const flush = useCallback(async (): Promise<boolean> => {
     if (state.current.flight) return state.current.flight;
     const run = async () => {
       while (
-        state.current.song &&
-        JSON.stringify(state.current.song) !== state.current.saved
+        state.current.document &&
+        JSON.stringify(state.current.document) !== state.current.saved
       ) {
-        const snapshot = state.current.song;
+        if (state.current.schema === 1 && !state.current.upgrade) {
+          setNeedsUpgrade(true);
+          setStatus('Bevestig opslaan');
+          return false;
+        }
+        const snapshot = state.current.document;
         setStatus('Opslaan…');
         try {
-          const record = await request<SongRecord>('/songs/' + snapshot.id, {
-            method: 'PUT',
-            body: JSON.stringify({
-              song: snapshot,
-              revision: state.current.revision,
-            }),
-          });
-          state.current.revision = record.revision;
+          const saved = await request<MultitrackRecord>(
+            '/songs/' + snapshot.id + '/multitrack',
+            {
+              method: 'PUT',
+              body: JSON.stringify({
+                document: snapshot,
+                revision: state.current.revision,
+                confirmedUpgrade: state.current.upgrade,
+                confirmedDestructive: true,
+              }),
+            },
+          );
+          state.current.schema = 2;
+          state.current.revision = saved.revision;
           state.current.saved = JSON.stringify(snapshot);
-          savedCallback.current(record);
+          callback.current({
+            song: toLegacy(saved.document),
+            revision: saved.revision,
+            updatedAt: saved.updatedAt,
+            storageSchemaVersion: 2,
+          });
           setError('');
-        } catch (error) {
+          setNeedsUpgrade(false);
+        } catch (e) {
           setStatus('Niet opgeslagen');
-          setError(error instanceof Error ? error.message : 'Opslaan mislukt');
+          setError(e instanceof Error ? e.message : 'Opslaan mislukt');
           return false;
         }
       }
@@ -63,80 +96,89 @@ export function useSong(onSaved: (record: SongRecord) => void) {
     }
   }, []);
   useEffect(() => {
-    if (!song) return;
+    if (!document) return;
     if (!dirty()) {
       setStatus('Opgeslagen');
       return;
     }
     setStatus('Wijzigingen wachten');
-    const timer = setTimeout(() => void flush(), 600);
-    return () => clearTimeout(timer);
-  }, [song, flush]);
+    const t = setTimeout(() => void flush(), 600);
+    return () => clearTimeout(t);
+  }, [document, flush]);
   useEffect(() => {
-    const leave = (event: BeforeUnloadEvent) => {
+    const leave = (e: BeforeUnloadEvent) => {
       if (dirty()) {
-        event.preventDefault();
-        event.returnValue = '';
+        e.preventDefault();
+        e.returnValue = '';
       }
     };
     addEventListener('beforeunload', leave);
     return () => removeEventListener('beforeunload', leave);
   }, []);
-  function load(record: SongRecord) {
+  function load(_record: SongRecord, full: MultitrackRecord) {
+    const document = MultitrackSongSchema.parse(full.document);
     state.current = {
-      song: structuredClone(record.song),
-      revision: record.revision,
-      saved: JSON.stringify(record.song),
+      document,
+      saved: JSON.stringify(document),
+      revision: full.revision,
+      schema: full.storageSchemaVersion,
+      upgrade: false,
       flight: null,
     };
-    setSong(state.current.song);
-    setHistory({ past: [], future: [] });
+    setDocument(document);
+    historyRef.current = { past: [], future: [] };
+    setHistory(historyRef.current);
     setStatus('Opgeslagen');
     setError('');
+    setNeedsUpgrade(false);
   }
-  function change(action: (draft: StudioSong) => void) {
-    if (!state.current.song) return false;
+  function changeDocument(fn: (s: MultitrackSong) => void | MultitrackSong) {
+    const current = state.current.document;
+    if (!current) return false;
     try {
-      const draft = structuredClone(state.current.song);
-      action(draft);
-      const result = SongSchema.parse(draft);
-      const previous = state.current.song;
-      setHistory((h) => ({
-        past: [...h.past.slice(-99), previous],
-        future: [],
-      }));
-      state.current.song = result;
-      setSong(result);
+      const draft = structuredClone(current);
+      const next = MultitrackSongSchema.parse(fn(draft) ?? draft);
+      historyRef.current = pushHistory(historyRef.current, current);
+      setHistory(historyRef.current);
+      state.current.document = next;
+      setDocument(next);
       setError('');
       return true;
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Wijziging ongeldig');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Ongeldige wijziging');
       return false;
     }
   }
   function undo(redo = false) {
-    const source = redo ? history.future : history.past;
-    const next = source.at(-1);
-    if (!next || !state.current.song) return;
-    const current = state.current.song;
-    setHistory(
-      redo
-        ? { past: [...history.past, current], future: source.slice(0, -1) }
-        : { past: source.slice(0, -1), future: [...history.future, current] },
-    );
-    state.current.song = next;
-    setSong(next);
+    const current = state.current.document;
+    if (!current) return;
+    const result = stepHistory(historyRef.current, current, redo);
+    if (!result) return;
+    historyRef.current = result.history;
+    setHistory(result.history);
+    state.current.document = result.document;
+    setDocument(result.document);
+    setError('');
+  }
+  async function confirmUpgrade() {
+    state.current.upgrade = true;
+    setNeedsUpgrade(false);
+    return flush();
   }
   return {
-    song,
+    song: document ? toLegacy(document) : null,
+    document,
     status,
     error,
     setError,
-    change,
     load,
+    changeDocument,
     flush,
     undo,
     canUndo: history.past.length > 0,
     canRedo: history.future.length > 0,
+    requiresUpgrade: state.current.schema === 1,
+    needsUpgrade,
+    confirmUpgrade,
   };
 }

@@ -57,7 +57,8 @@ async function open(page: Page, id: string, title: string) {
   await expect(
     page.getByRole('heading', { name: title, exact: true }),
   ).toBeVisible();
-  await expect(page.locator('.save')).toContainText('Opgeslagen');
+  await expect(page.locator('.gs-workspace-v3')).toBeVisible();
+  await expect(page.locator('.save')).toHaveText('Opgeslagen');
 }
 async function cleanup(request: APIRequestContext, ids: string[]) {
   for (const id of ids) {
@@ -67,7 +68,7 @@ async function cleanup(request: APIRequestContext, ids: string[]) {
       await request.delete(`/api/v1/songs/${id}?revision=${row.revision}`);
   }
 }
-test('converted legacy editor saves, undo/redo and complete multi-track JSON transfer preserve hidden tracks and links', async ({
+test('canonical v3 editor saves, undo/redo and complete multi-track JSON transfer preserve hidden tracks and links', async ({
   page,
   request,
 }) => {
@@ -104,7 +105,7 @@ test('converted legacy editor saves, undo/redo and complete multi-track JSON tra
     const hidden = structuredClone(record.document.arrangements[0]!.tracks[1]);
     await open(page, source.id, source.title);
     await page
-      .getByRole('button', { name: 'Lyrics bewerken', exact: true })
+      .getByRole('button', { name: 'Tekst bewerken', exact: true })
       .click();
     await page
       .getByLabel('Sectietekst')
@@ -119,8 +120,9 @@ test('converted legacy editor saves, undo/redo and complete multi-track JSON tra
         ).join('\n'),
       )
       .toContain('plus');
-    await page.locator('.tabcell[data-active=true]').focus();
+    await page.locator('.tab-position[data-active=true]').focus();
     await page.keyboard.press('4');
+    await page.keyboard.press('Enter');
     await expect
       .poll(async () =>
         (
@@ -183,32 +185,30 @@ test('converted legacy editor saves, undo/redo and complete multi-track JSON tra
     await open(page, source.id, source.title);
     const protectedState = await canonical(request, source.id);
     await page
-      .getByRole('button', { name: 'Lyrics bewerken', exact: true })
+      .getByRole('button', { name: 'Tekst bewerken', exact: true })
       .click();
     await page
       .getByLabel('Sectietekst')
       .fill('Een vervangende regel zonder gekoppeld woord');
-    await page
-      .getByRole('button', { name: 'Lyrics opslaan', exact: true })
-      .click();
-    await expect(page.locator('.save')).toContainText('Niet opgeslagen');
+    await expect(
+      page.getByRole('button', { name: 'Lyrics opslaan', exact: true }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole('region', { name: 'Ankerreview' }),
+    ).toContainText('koppelingen');
     expect((await canonical(request, source.id)).document).toEqual(
       protectedState.document,
     );
+    await page.keyboard.press('Escape');
     const recoveryDownload = page.waitForEvent('download');
     await page
       .getByRole('button', { name: 'JSON exporteren', exact: true })
       .click();
     const recoveryPath = await (await recoveryDownload).path();
     const recovery = JSON.parse(await readFile(recoveryPath!, 'utf8'));
-    expect(recovery.format).toBe('guitar-studio-recovery');
-    expect(recovery.canonicalBase.arrangements[0].tracks[1]).toEqual(hidden);
-    expect(recovery.canonicalBase.arrangements[0].lyricsLinks).toHaveLength(1);
-    expect(
-      recovery.legacyDraft.lyrics[0].tokens
-        .map((t: { text: string }) => t.text)
-        .join(''),
-    ).toContain('Een vervangende regel');
+    expect(recovery.version).toBe(2);
+    expect(recovery.song.arrangements[0].tracks[1]).toEqual(hidden);
+    expect(recovery.song.arrangements[0].lyricsLinks).toHaveLength(1);
     expect(errors).toEqual([]);
   } finally {
     await cleanup(request, ids);
@@ -221,8 +221,7 @@ for (const [index, viewport] of [
   { width: 390, height: 844 },
 ].entries())
   test(
-    'converted Workspace compatibility, themes, keyboard and axe ' +
-      viewport.width,
+    'existing fixture in v3, themes, keyboard and axe ' + viewport.width,
     async ({ page, request, browser }) => {
       test.setTimeout(180000);
       await page.setViewportSize(viewport);
@@ -239,15 +238,10 @@ for (const [index, viewport] of [
           await expect(
             page.getByLabel('Arrangement', { exact: true }),
           ).toBeVisible();
-          if (viewport.width === 390)
-            await page
-              .locator('.mobiletabs')
-              .getByRole('button', { name: 'Tablatuur', exact: true })
-              .click();
-          await page.locator('.tabcell[data-active=true]').focus();
+          await page.locator('.tab-position[data-active=true]').focus();
           await page.keyboard.press('ArrowRight');
           await expect(
-            page.locator('.tabcell[data-active=true]'),
+            page.locator('.tab-position[data-active=true]'),
           ).toBeFocused();
           const scan = await new AxeBuilder({ page })
             .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

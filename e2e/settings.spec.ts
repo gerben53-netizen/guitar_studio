@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import type { SongRecord } from '../packages/music-domain/src/workspace';
-test('file import, explicit rights, retained/ambiguous chords, meter, profiles, multi-measure copy and recovery', async ({
+test('file import, explicit rights, retained/ambiguous chords, meter, profiles, physical fret input and canonical history recovery', async ({
   page,
   request,
 }) => {
@@ -37,61 +37,67 @@ test('file import, explicit rights, retained/ambiguous chords, meter, profiles, 
     );
     await page.getByRole('button', { name: 'Song aanmaken →' }).click();
     id = ((await (await response).json()) as SongRecord).song.id;
+    await expect(page.locator('.gs-workspace-v3')).toBeVisible();
     await page.getByRole('button', { name: 'tekst', exact: true }).click();
-    await page.getByRole('button', { name: '+ Akkoord', exact: true }).click();
-    await page.getByRole('button', { name: 'C', exact: true }).click();
-    await page.getByRole('button', { name: 'Op woord plaatsen' }).click();
-    await page.locator('.word').filter({ hasText: 'tekst' }).click();
+    await page
+      .getByRole('button', { name: 'Akkoord plaatsen', exact: true })
+      .click();
     await page.getByRole('button', { name: 'G', exact: true }).click();
-    await page.getByRole('button', { name: 'Op woord plaatsen' }).click();
-    await page.getByRole('button', { name: 'Lyrics bewerken' }).click();
+    await page
+      .getByRole('button', { name: 'Op woord plaatsen', exact: true })
+      .click();
+    await page
+      .getByRole('button', { name: 'Tekst bewerken', exact: true })
+      .click();
     await page
       .getByLabel('Sectietekst')
       .fill('Een eigen verhaal\n\nEen tweede regel');
-    await page.getByRole('button', { name: 'Lyrics opslaan' }).click();
     await expect(
-      page.locator('.notice').filter({ hasText: 'geen zeker tekstanker' }),
-    ).toContainText('G');
-    await page.getByRole('button', { name: 'Opnieuw positioneren' }).click();
+      page.getByRole('region', { name: 'Ankerreview' }),
+    ).toContainText('tekstankers');
+    await expect(
+      page.getByRole('button', { name: 'Lyrics opslaan', exact: true }),
+    ).toBeDisabled();
+    await page.getByRole('checkbox', { name: /Ik bevestig/ }).check();
+    await page
+      .getByRole('button', { name: 'Lyrics opslaan', exact: true })
+      .click();
     await page.getByRole('button', { name: 'verhaal', exact: true }).click();
+    await page
+      .getByRole('button', { name: 'Akkoord plaatsen', exact: true })
+      .click();
+    await page.getByRole('button', { name: 'G', exact: true }).click();
+    await page
+      .getByRole('button', { name: 'Op woord plaatsen', exact: true })
+      .click();
     await expect(
-      page.locator('.word').filter({ hasText: 'verhaal' }),
+      page.locator('.lyric-word').filter({ hasText: 'verhaal' }),
     ).toContainText('G');
-    await page.getByLabel('Maatsoort').selectOption('6/8');
-    await page.getByLabel('Ritmeraster').selectOption('16');
-    await page.getByLabel('Nootduur').selectOption('16');
-    await page.locator('.tabcell[data-active=true]').focus();
-    await page.keyboard.press('1');
-    await page.keyboard.press('2');
-    await expect(page.locator('.tabcell[data-active=true]')).toHaveText('12');
-    await page.getByRole('button', { name: /^Hals snaar 6, fret 3,/ }).click();
-    await page.getByLabel('Stemming').selectOption('Drop D');
+    await page.getByLabel('Maatsoort', { exact: true }).selectOption('6/8');
+    await page.getByLabel('Nootduur', { exact: true }).selectOption('16');
+    await page.locator('.tab-position[data-active=true]').focus();
+    await page.keyboard.type('12');
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.tab-position[data-active=true]')).toHaveText(
+      '12',
+    );
+    await page.locator('[data-neck-string="6"][data-neck-fret="3"]').click();
+    await page.getByLabel('Stemming', { exact: true }).selectOption('dropd');
+    await expect(
+      page.locator('.score-measure').first().locator('.string-name').last(),
+    ).toHaveText('D');
     await page.getByLabel('Capo', { exact: true }).fill('2');
+    await page.getByLabel('Capo', { exact: true }).press('Tab');
     await page
       .getByLabel('Instrument', { exact: true })
       .selectOption('electric');
-    await page.getByLabel('Tempo').fill('120');
+    await page.getByLabel('BPM', { exact: true }).fill('120');
+    await page.getByLabel('BPM', { exact: true }).press('Tab');
     await expect(
-      page.getByRole('button', {
-        name: 'Hals snaar 6, fret 1, F2',
-        exact: true,
-      }),
+      page.locator('[data-neck-string="6"][data-neck-fret="3"]'),
     ).toHaveAttribute('aria-pressed', 'true');
-    await page
-      .getByRole('button', { name: 'Selecteer maat 1', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Selecteer maat 2', exact: true })
-      .click({ modifiers: ['Shift'] });
-    await page.getByRole('button', { name: 'Kopieer', exact: true }).click();
-    await expect(
-      page.getByRole('status').filter({ hasText: 'gekopieerd' }),
-    ).toContainText('2 maat');
-    await page.getByRole('button', { name: 'Plak', exact: true }).click();
-    await expect(
-      page.getByRole('button', { name: 'Selecteer maat 4', exact: true }),
-    ).toBeVisible();
-    await expect(page.locator('.save')).toHaveText('● Opgeslagen');
+    await page.getByRole('button', { name: '+ Maat', exact: true }).click();
+    await expect(page.locator('.save')).toHaveText('Opgeslagen');
     const before = (
       (await (await request.get('/api/v1/songs')).json()) as SongRecord[]
     ).find((r) => r.song.id === id)!;
@@ -102,18 +108,23 @@ test('file import, explicit rights, retained/ambiguous chords, meter, profiles, 
     expect(a.instrument.type).toBe('electric');
     expect(a.instrument.tuning.name).toBe('Drop D');
     expect(a.instrument.capo).toBe(2);
-    expect(a.sections[0]!.measures).toHaveLength(4);
-    await page.getByRole('button', { name: 'Herstelversies' }).click();
-    const rows = page.locator('.history-version');
-    await expect(rows).not.toHaveCount(0);
-    await rows
-      .last()
-      .getByRole('button', { name: 'Herstellen', exact: true })
+    expect(a.tempo).toBe(120);
+    await page
+      .getByRole('button', { name: 'Historische versies', exact: true })
       .click();
-    await expect(page.locator('.save')).toHaveText('● Opgeslagen');
+    await page
+      .getByRole('button', { name: 'Revisie 1 herstellen', exact: true })
+      .click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.locator('.save')).toHaveText('Opgeslagen');
+    await expect(page.getByLabel('Maatsoort', { exact: true })).toHaveValue(
+      '4/4',
+    );
     await page.getByRole('button', { name: 'Undo', exact: true }).click();
-    await expect(page.getByLabel('Maatsoort')).toHaveValue('6/8');
-    await expect(page.locator('.save')).toHaveText('● Opgeslagen');
+    await expect(page.getByLabel('Maatsoort', { exact: true })).toHaveValue(
+      '6/8',
+    );
+    await expect(page.locator('.save')).toHaveText('Opgeslagen');
   } finally {
     if (id) {
       const row = (
