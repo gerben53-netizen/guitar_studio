@@ -1,9 +1,6 @@
 name: Foundation CI
 on:
-  push:
-    branches: [develop, main]
-  pull_request:
-    branches: [develop, main]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
