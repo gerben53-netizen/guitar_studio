@@ -1,0 +1,218 @@
+@layer screens {
+  .gs-workspace-v3 .alignment-entry {
+    padding: var(--space-2) var(--space-3);
+  }
+  .gs-workspace-v3 .alignment-line-entry {
+    float: right;
+    margin-inline-start: var(--space-2);
+  }
+  .gs-workspace-v3 .alignment-panel {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    min-width: 0;
+    padding: var(--space-3);
+    background: var(--color-surface-raised);
+    border-block: 2px solid var(--color-accent-primary);
+  }
+  .gs-workspace-v3 .alignment-heading,
+  .gs-workspace-v3 .alignment-line-choice,
+  .gs-workspace-v3 .alignment-history,
+  .gs-workspace-v3 .alignment-actions,
+  .gs-workspace-v3 .alignment-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .gs-workspace-v3 .alignment-heading,
+  .gs-workspace-v3 .alignment-line-choice {
+    justify-content: space-between;
+  }
+  .gs-workspace-v3 .alignment-heading h3 {
+    margin: var(--space-1) 0;
+  }
+  .gs-workspace-v3 .alignment-heading small {
+    color: var(--color-text-secondary);
+  }
+  .gs-workspace-v3 .alignment-line-choice {
+    margin-block: var(--space-2);
+  }
+  .gs-workspace-v3 .alignment-line-choice label {
+    flex: 1;
+    max-width: 34rem;
+  }
+  .gs-workspace-v3 .alignment-line-choice select {
+    width: 100%;
+    min-width: 0;
+  }
+  .gs-workspace-v3 .alignment-counts {
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .syllable-strip {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    max-width: 100%;
+    padding: var(--space-2);
+    position: relative;
+    overscroll-behavior-inline: contain;
+  }
+  .gs-workspace-v3 .syllable-chip {
+    flex: 0 0 auto;
+    min-width: 5rem;
+    max-width: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    border: 1px solid var(--color-border-interactive);
+    border-radius: var(--radius-control);
+    padding: var(--space-2);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+  .gs-workspace-v3 .syllable-chip small,
+  .gs-workspace-v3 .syllable-word-context {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .syllable-chip[aria-pressed='true'] {
+    border: 2px solid var(--color-accent-primary);
+    background: var(--color-accent-subtle);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .gs-workspace-v3 .alignment-current {
+    padding-block: var(--space-2);
+    margin: var(--space-1) 0;
+    border-top: 1px solid var(--color-border);
+    font-size: var(--font-size-caption);
+    overflow-wrap: anywhere;
+  }
+  .gs-workspace-v3 .alignment-current strong {
+    color: var(--color-accent-primary);
+  }
+  .gs-workspace-v3 .alignment-corrections {
+    margin-top: var(--space-2);
+    font-size: var(--font-size-caption);
+  }
+  .gs-workspace-v3 .alignment-corrections summary {
+    cursor: pointer;
+    padding: var(--space-1);
+  }
+  .gs-workspace-v3 .alignment-corrections p {
+    margin-block: var(--space-2);
+  }
+  .gs-workspace-v3 .unpositioned-alignment-note[aria-current='true'],
+  .gs-workspace-v3 .is-alignment-current span {
+    outline: var(--focus-width) double var(--color-focus);
+    outline-offset: var(--focus-offset);
+  }
+  .gs-workspace-v3 .alignment-draft-lane {
+    position: relative;
+    min-height: 2rem;
+    margin-inline: 24px 14px;
+    border-top: 1px dashed var(--color-accent-primary);
+  }
+  .gs-workspace-v3 .alignment-draft-anchor {
+    position: absolute;
+    max-width: 100%;
+    white-space: nowrap;
+    background: var(--color-surface-raised);
+    color: var(--color-accent-primary);
+    border: 0;
+    padding: var(--space-1);
+    font: var(--font-size-caption) var(--font-family-lyrics);
+    cursor: pointer;
+  }
+  .gs-workspace-v3 .alignment-preview-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .gs-workspace-v3 .alignment-preview-row {
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    overflow-wrap: anywhere;
+  }
+  .gs-workspace-v3 .alignment-preview-row h3 {
+    margin: 0;
+  }
+  .gs-workspace-v3 .alignment-preview-row small {
+    font-weight: 400;
+  }
+  .gs-workspace-v3.is-aligning .workspace-settings,
+  .gs-workspace-v3.is-aligning .lyrics-editor,
+  .gs-workspace-v3.is-aligning .score-toolbar,
+  .gs-workspace-v3.is-aligning .lyric-link-editor,
+  .gs-workspace-v3.is-aligning .compact-fretboard,
+  .gs-workspace-v3.is-aligning .workspace-footer,
+  .gs-workspace-v3.is-aligning .workspace-import-source,
+  .gs-workspace-v3.is-aligning .workspace-actions {
+    display: none;
+  }
+  .gs-workspace-v3.is-aligning .score-editor {
+    overflow: visible;
+  }
+  .gs-workspace-v3.is-aligning .workspace-header h1 {
+    font-size: var(--font-size-body);
+  }
+  .gs-workspace-v3.is-aligning .score-pages {
+    max-height: 52vh;
+  }
+  @media (max-width: 650px) {
+    .gs-workspace-v3 .alignment-panel {
+      padding: var(--space-2);
+    }
+    .gs-workspace-v3 .alignment-heading {
+      align-items: start;
+    }
+    .gs-workspace-v3 .alignment-heading small,
+    .gs-workspace-v3 .syllable-word-context {
+      display: none;
+    }
+    .gs-workspace-v3 .alignment-history .gs-button {
+      min-height: 30px;
+      padding: var(--space-1);
+    }
+    .gs-workspace-v3 .alignment-line-choice label {
+      flex-basis: 100%;
+    }
+    .gs-workspace-v3 .alignment-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .gs-workspace-v3 .alignment-actions .gs-button {
+      min-width: 0;
+      padding: var(--space-1);
+    }
+    .gs-workspace-v3 .alignment-actions .gs-button:last-child {
+      grid-column: 1 / -1;
+    }
+    .gs-workspace-v3 .syllable-chip {
+      min-width: 4.5rem;
+      padding: var(--space-1);
+    }
+    .gs-workspace-v3.is-aligning .workspace-header p {
+      display: none;
+    }
+    .gs-workspace-v3.is-aligning .score-editor > .workspace-panel-heading {
+      display: none;
+    }
+    .gs-workspace-v3.is-aligning .score-pages {
+      max-height: 46vh;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gs-workspace-v3 .alignment-panel,
+    .gs-workspace-v3 .syllable-strip {
+      scroll-behavior: auto;
+      transition: none;
+      animation: none;
+    }
+  }
+}

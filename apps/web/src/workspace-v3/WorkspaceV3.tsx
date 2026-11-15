@@ -15,6 +15,13 @@ import { TrackManager } from './TrackManager';
 import { LyricsTextEditor, SyllableEditor } from './LyricLinkEditor';
 import { ScoreSystem } from './ScoreSystem';
 import { useScorePractice } from './useScorePractice';
+import { AlignmentToolbar } from './AlignmentToolbar';
+import {
+  startAlignment,
+  alignmentAction,
+  applyAlignment,
+  type AlignmentSession,
+} from '../../../../packages/music-domain/src/lyrics-alignment';
 import { WorkspaceDialogs } from './WorkspaceDialogs';
 import {
   applyMultitrackMutation,
@@ -70,6 +77,20 @@ export function WorkspaceV3(p: Props) {
   const { editor, practice } = p;
   const song = editor.document!,
     change = editor.changeDocument;
+  const [alignment, setAlignment] = useState<AlignmentSession | null>(null);
+  const [alignmentExit, setAlignmentExit] = useState<string | null>(null);
+  const [rangeExplicit, setRangeExplicit] = useState(false);
+  const alignmentOrigin = useRef<{
+    cursor: EditorCursor;
+    selection: ToneSelection[];
+    range: string[];
+    anchor: string;
+    wordId: string;
+    syllableId: string;
+    lyricsId: string;
+    rangeExplicit: boolean;
+    focus: HTMLElement | null;
+  } | null>(null);
   const [arrId, setArrId] = useState(
       song.lastArrangementId ?? song.arrangements[0]!.id,
     ),
@@ -192,16 +213,24 @@ export function WorkspaceV3(p: Props) {
         e.defaultPrevented ||
         !(e.ctrlKey || e.metaKey) ||
         e.key.toLowerCase() !== 'z' ||
-        (e.target as HTMLElement).closest('input,textarea,select,dialog')
+        (e.target as HTMLElement).closest(
+          'input,textarea,select,dialog,[contenteditable]',
+        )
       )
         return;
       e.preventDefault();
-      editor.undo(e.shiftKey);
+      if (!editor.locked) editor.undo(e.shiftKey);
     };
     addEventListener('keydown', handler);
     return () => removeEventListener('keydown', handler);
   }, [editor.undo]);
   function chooseTrack(id: string) {
+    if (alignment) {
+      if (id !== alignment.scope.trackId) setAlignmentExit(id);
+      return;
+    }
+    if (editor.locked) return;
+    setRangeExplicit(false);
     if (id !== a.activeTrackId)
       mutate({ op: 'select-track', arrangementId: a.id, trackId: id });
     setCursor({ ...cursor, trackId: id });
@@ -209,6 +238,14 @@ export function WorkspaceV3(p: Props) {
     setBuffer('');
   }
   function selectSyllable(id: string) {
+    if (alignment) {
+      const index = alignment.syllables.findIndex((s) => s.id === id);
+      if (index >= 0)
+        setAlignment(
+          alignmentAction(alignment, { type: 'move-syllable', index }),
+        );
+      return;
+    }
     setSyllableId(id);
     const w = song.lyrics
       .flatMap((s) => s.lines.flatMap((l) => l.tokens))
@@ -245,6 +282,17 @@ export function WorkspaceV3(p: Props) {
     }
   }
   function choose(c: EditorCursor, eventId: string | null, e: MouseEvent) {
+    if (alignment) {
+      const index = alignment.notes.findIndex((n) => n.id === eventId);
+      if (index >= 0)
+        setAlignment(alignmentAction(alignment, { type: 'move-note', index }));
+      else
+        p.report(
+          'Deze noot ligt buiten de geselecteerde passage of is een rust.',
+        );
+      return;
+    }
+    setRangeExplicit(false);
     if (practice) {
       setRange([c.measureId]);
       return;
@@ -291,6 +339,8 @@ export function WorkspaceV3(p: Props) {
     }
   }
   function selectMeasure(id: string, extend: boolean) {
+    if (alignment) return;
+    setRangeExplicit(true);
     const anchor = measures.some((m) => m.id === rangeAnchor)
       ? rangeAnchor
       : cursor.measureId;
@@ -313,7 +363,7 @@ export function WorkspaceV3(p: Props) {
     setCursor({ ...cursor, measureId: id, start: fraction(0, 1) });
   }
   function insert(string: number, fret: number) {
-    if (practice) return;
+    if (practice || editor.locked) return;
     const c = { ...cursor, string };
     if (change((s) => writeFret(s, a.id, c, fret, duration, technique))) {
       setBuffer('');
@@ -349,7 +399,7 @@ export function WorkspaceV3(p: Props) {
     }
   }
   function keyboard(e: KeyboardEvent) {
-    if (practice) return;
+    if (practice || editor.locked) return;
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
       e.preventDefault();
       editor.undo(e.shiftKey);
@@ -450,6 +500,10 @@ export function WorkspaceV3(p: Props) {
     });
   }
   function chooseArrangement(id: string) {
+    if (editor.locked) {
+      p.report('Rond Lyrics uitlijnen eerst af.');
+      return;
+    }
     setArrId(id);
     const n = song.arrangements.find((a) => a.id === id)!;
     setCursor({
@@ -477,6 +531,12 @@ export function WorkspaceV3(p: Props) {
     });
   }
   async function save() {
+    if (editor.locked) {
+      p.report(
+        'Gebruik Controleer concept om de koppelingen expliciet te bevestigen.',
+      );
+      return;
+    }
     if (
       editor.requiresUpgrade ||
       editor.needsUpgrade ||
@@ -518,6 +578,105 @@ export function WorkspaceV3(p: Props) {
       cursor,
     });
   }
+  async function beginAlignment(lineId = lyrics.lines[0]!.id) {
+    if (practice || editor.locked) return;
+    alignmentOrigin.current = {
+      cursor: structuredClone(cursor),
+      selection: structuredClone(selection),
+      range: [...range],
+      anchor: rangeAnchor,
+      wordId,
+      syllableId,
+      lyricsId: lyricSectionId,
+      rangeExplicit,
+      focus:
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null,
+    };
+    editor.setLocked(true);
+    try {
+      if (!(await editor.flush()))
+        throw Error('Sla bestaande wijzigingen eerst op voordat je uitlijnt.');
+      const current = editor.current();
+      if (!current.document) throw Error('Song niet beschikbaar.');
+      const sectionId = a.sections.find(
+        (s) => s.lyricsSectionId === lyrics.id,
+      )!.id;
+      setAlignment(
+        startAlignment(
+          current.document,
+          {
+            arrangementId: a.id,
+            trackId: track.id,
+            sectionId,
+            lineId,
+            ...(noteIds.length && !rangeExplicit
+              ? { selectedEventIds: noteIds }
+              : rangeExplicit
+                ? { selectedMeasureIds: range }
+                : {}),
+          },
+          current.revision,
+        ),
+      );
+      setBuffer('');
+      setAlignmentExit(null);
+    } catch (e) {
+      editor.setLocked(false);
+      p.report((e as Error).message);
+    }
+  }
+  function requestAlignmentExit(trackId = '') {
+    if (!alignment) return;
+    if (alignment.current.drafts.length || alignment.current.skipped.length)
+      setAlignmentExit(trackId);
+    else finishAlignment(false, trackId);
+  }
+  function finishAlignment(committed: boolean, nextTrack = '') {
+    const origin = alignmentOrigin.current;
+    setAlignment(null);
+    setAlignmentExit(null);
+    editor.setLocked(false);
+    if (!committed && origin) {
+      setCursor(origin.cursor);
+      setSelection(origin.selection);
+      setRange(origin.range);
+      setRangeAnchor(origin.anchor);
+      setWordId(origin.wordId);
+      setSyllableId(origin.syllableId);
+      setLyricSectionId(origin.lyricsId);
+      setRangeExplicit(origin.rangeExplicit);
+    }
+    if (nextTrack) {
+      if (nextTrack !== a.activeTrackId)
+        editor.changeDocument((doc) =>
+          applyMultitrackMutation(doc, {
+            op: 'select-track',
+            arrangementId: a.id,
+            trackId: nextTrack,
+          }),
+        );
+      setCursor((c) => ({ ...c, trackId: nextTrack }));
+      setSelection([]);
+      setBuffer('');
+    }
+    requestAnimationFrame(() => {
+      if (origin?.focus?.isConnected)
+        origin.focus.focus({ preventScroll: true });
+    });
+  }
+  useEffect(() => {
+    if (!alignment) return;
+    const note = alignment.notes[alignment.current.noteIndex];
+    if (note)
+      setCursor({
+        trackId: alignment.scope.trackId,
+        measureId: note.measureId,
+        start: note.start,
+        string: note.tones.find((t) => t.position)?.position?.string ?? 1,
+      });
+  }, [alignment?.current.noteIndex, alignment?.scope.trackId]);
   const projection = trackProjection(song, a.id, track.id),
     projectedSection = projection.sections.find((s) => s.id === section.id)!,
     activeChord = a.chordAnchors.find((c) => c.tokenId === word?.id);
@@ -551,7 +710,10 @@ export function WorkspaceV3(p: Props) {
     }
   }
   return (
-    <div className="gs-workspace-v3" ref={root}>
+    <div
+      className={'gs-workspace-v3' + (alignment ? ' is-aligning' : '')}
+      ref={root}
+    >
       <header className="workspace-header">
         <div>
           <div className="eyebrow">Song Workspace v3</div>
@@ -562,7 +724,7 @@ export function WorkspaceV3(p: Props) {
           <button
             className="gs-button"
             aria-label="Undo"
-            disabled={!editor.canUndo || practice}
+            disabled={!editor.canUndo || practice || editor.locked}
             onClick={() => editor.undo()}
           >
             ↶
@@ -570,7 +732,7 @@ export function WorkspaceV3(p: Props) {
           <button
             className="gs-button"
             aria-label="Redo"
-            disabled={!editor.canRedo || practice}
+            disabled={!editor.canRedo || practice || editor.locked}
             onClick={() => editor.undo(true)}
           >
             ↷
@@ -578,11 +740,16 @@ export function WorkspaceV3(p: Props) {
           <button className="gs-button" onClick={() => void save()}>
             Opslaan
           </button>
-          <button className="gs-button" onClick={() => setModal('metadata')}>
+          <button
+            className="gs-button"
+            disabled={editor.locked}
+            onClick={() => setModal('metadata')}
+          >
             Songgegevens
           </button>
           <button
             className="gs-button gs-button--primary"
+            disabled={editor.locked}
             onClick={() => {
               audio.stop();
               p.setPractice(!practice);
@@ -598,6 +765,7 @@ export function WorkspaceV3(p: Props) {
           <select
             className="gs-input"
             aria-label="Arrangement"
+            disabled={editor.locked}
             value={a.id}
             onChange={(e) => chooseArrangement(e.target.value)}
           >
@@ -610,7 +778,7 @@ export function WorkspaceV3(p: Props) {
         </label>
         <button
           className="gs-button"
-          disabled={practice}
+          disabled={practice || editor.locked}
           onClick={() => setModal('arrangement')}
         >
           + Arrangement
@@ -635,7 +803,7 @@ export function WorkspaceV3(p: Props) {
           <select
             className="gs-input"
             aria-label="Instrument"
-            disabled={practice}
+            disabled={practice || editor.locked}
             value={track.instrument.type}
             onChange={(e) =>
               change((s) => {
@@ -655,7 +823,7 @@ export function WorkspaceV3(p: Props) {
           <select
             className="gs-input"
             aria-label="Stemming"
-            disabled={practice}
+            disabled={practice || editor.locked}
             value={
               track.instrument.tuning.pitches[5] === 38 ? 'dropd' : 'standard'
             }
@@ -698,7 +866,7 @@ export function WorkspaceV3(p: Props) {
           value={a.capo}
           min={0}
           max={24}
-          disabled={practice}
+          disabled={practice || editor.locked}
           change={(capo) =>
             mutate({ op: 'set-capo', arrangementId: a.id, capo })
           }
@@ -719,7 +887,7 @@ export function WorkspaceV3(p: Props) {
           <select
             className="gs-input"
             aria-label="Maatsoort"
-            disabled={practice}
+            disabled={practice || editor.locked}
             value={a.timeSignature.beats + '/' + a.timeSignature.beatUnit}
             onChange={(e) => {
               const [beats, unit] = e.target.value.split('/').map(Number);
@@ -902,7 +1070,7 @@ export function WorkspaceV3(p: Props) {
             <div>
               <button
                 className="gs-button"
-                disabled={practice}
+                disabled={practice || editor.locked}
                 onClick={() => setModal('lyrics')}
               >
                 Tekst bewerken
@@ -927,6 +1095,17 @@ export function WorkspaceV3(p: Props) {
             <div className="lyrics-content">
               {lyrics.lines.map((l) => (
                 <div className="lyrics-line" key={l.id}>
+                  {!practice && (
+                    <button
+                      className="gs-button alignment-line-entry"
+                      aria-label={
+                        'Deze regel uitlijnen ' + (lyrics.lines.indexOf(l) + 1)
+                      }
+                      onClick={() => void beginAlignment(l.id)}
+                    >
+                      Deze regel uitlijnen
+                    </button>
+                  )}
                   {l.tokens.map((w) =>
                     /\S/.test(w.text) ? (
                       <button
@@ -1147,7 +1326,65 @@ export function WorkspaceV3(p: Props) {
               </button>
             ))}
           </nav>
+          {!practice && !alignment && (
+            <div className="alignment-entry">
+              <button
+                className="gs-button"
+                onClick={() => void beginAlignment()}
+              >
+                Geselecteerde passage uitlijnen
+              </button>
+            </div>
+          )}
+          {alignment && (
+            <AlignmentToolbar
+              session={alignment}
+              setSession={setAlignment}
+              songTitle={song.title}
+              arrangementName={a.name}
+              trackName={track.name}
+              measureIds={measures.map((m) => m.id)}
+              lines={lyrics.lines.map((l) => ({
+                id: l.id,
+                text: l.tokens.map((w) => w.text).join(''),
+              }))}
+              chooseLine={(id) => {
+                if (
+                  alignment.current.drafts.length ||
+                  alignment.current.skipped.length
+                ) {
+                  p.report(
+                    'Controleer of annuleer eerst het huidige concept voordat je een andere regel kiest.',
+                  );
+                  return;
+                }
+                const current = editor.current();
+                if (current.document)
+                  setAlignment(
+                    startAlignment(
+                      current.document,
+                      { ...alignment.scope, lineId: id },
+                      alignment.startRevision,
+                    ),
+                  );
+              }}
+              close={() => requestAlignmentExit()}
+              commit={async () => {
+                const result = await editor.commitDocument(
+                  (doc) =>
+                    applyAlignment(doc, alignment, new Date().toISOString()),
+                  alignment.startRevision,
+                );
+                if (result.ok) {
+                  finishAlignment(true);
+                  p.report('Koppelingen bevestigd en opgeslagen.');
+                }
+                return result;
+              }}
+            />
+          )}
           <ScoreSystem
+            alignment={alignment}
             song={song}
             a={a}
             columns={measureColumns(width, columns)}
@@ -1193,6 +1430,12 @@ export function WorkspaceV3(p: Props) {
           {!practice && (
             <section className="lyric-link-editor" aria-label="Lyrics koppelen">
               <h3>Lyrics koppelen</h3>
+              <button
+                className="gs-button"
+                onClick={() => void beginAlignment()}
+              >
+                Lyrics uitlijnen
+              </button>
               <label className="gs-field">
                 Lettergreep
                 <select
@@ -1452,6 +1695,45 @@ export function WorkspaceV3(p: Props) {
           >
             Bewaren en opslaan
           </button>
+        </Dialog>
+      )}
+      {alignmentExit !== null && (
+        <Dialog
+          title={
+            alignmentExit ? 'Ander spoor kiezen' : 'Lyrics uitlijnen verlaten'
+          }
+          onClose={() => setAlignmentExit(null)}
+        >
+          <p>
+            Je concept is nog niet opgeslagen. Kies hoe je verder wilt gaan.
+          </p>
+          <footer className="dialog-actions">
+            <button
+              className="gs-button"
+              onClick={() => setAlignmentExit(null)}
+            >
+              Doorgaan met uitlijnen
+            </button>
+            <button
+              className="gs-button"
+              onClick={() => {
+                setAlignmentExit(null);
+                document
+                  .querySelector<HTMLButtonElement>(
+                    '.alignment-actions button:last-child',
+                  )
+                  ?.click();
+              }}
+            >
+              Eerst controleren
+            </button>
+            <button
+              className="gs-button gs-danger"
+              onClick={() => finishAlignment(false, alignmentExit)}
+            >
+              Concept verwerpen{alignmentExit ? ' en wisselen' : ''}
+            </button>
+          </footer>
         </Dialog>
       )}
       <WorkspaceDialogs

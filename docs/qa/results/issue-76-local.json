@@ -1,0 +1,1764 @@
+{
+  "issue": 76,
+  "result": "PASS",
+  "generatedAt": "2026-11-15T13:33:06.794045+00:00",
+  "source": {
+    "baseCommit": "c909947e1a273eeb5b1d3842a8104eed957ba3ca",
+    "branch": "feature/lyrics-alignment-mode-76",
+    "testedRevision": "The implementation in the commit containing this report; uncommitted files were tested before committing."
+  },
+  "environment": {
+    "os": "Windows 11 Home 10.0.26200",
+    "node": "24.17.0",
+    "browser": "installed Google Chrome 157.0.8103.51",
+    "headless": true,
+    "api": "http://127.0.0.1:3001",
+    "react": "http://127.0.0.1:5174",
+    "database": "separate PostgreSQL test database"
+  },
+  "checks": {
+    "lint": "PASS",
+    "format": "PASS",
+    "typecheck": "PASS",
+    "workspaceBuilds": "PASS",
+    "dockerBuild": "PASS (guitar-studio:issue-76-local; not deployed)",
+    "design": "PASS (5 asset hashes, 32 contrast pairs, color centralization)",
+    "migrations": "PASS twice on test database",
+    "npmAudit": {
+      "totalVulnerabilities": 0
+    },
+    "githubActions": "NOT RUN; workflow_dispatch-only workflow unchanged"
+  },
+  "mandatoryScenarios": {
+    "passed": 38,
+    "failed": 0,
+    "matrix": "../issue-76-acceptance.md"
+  },
+  "unit": {
+    "passed": 157,
+    "failed": 0,
+    "tests": [
+      {
+        "title": "reports database failure without leaking internal details",
+        "status": "passed",
+        "durationMs": 888.1095
+      },
+      {
+        "title": "rejects invalid config and shared test database",
+        "status": "passed",
+        "durationMs": 5.483799999999974
+      },
+      {
+        "title": "centralizes validation failures",
+        "status": "passed",
+        "durationMs": 57.78049999999985
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary v2 search sends structured parameters/client ID, strips lyrics and fetches detail only on selection",
+        "status": "passed",
+        "durationMs": 129.86620000000016
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary q takes precedence, artist-only uses q, chords yield honest empty response",
+        "status": "passed",
+        "durationMs": 24.67260000000033
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary falls back on incompatible/unavailable beta 404, not on empty results",
+        "status": "passed",
+        "durationMs": 36.87469999999985
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary falls back on incompatible/unavailable beta 405, not on empty results",
+        "status": "passed",
+        "durationMs": 47.615099999999984
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary falls back on incompatible/unavailable beta 502, not on empty results",
+        "status": "passed",
+        "durationMs": 29.028099999999995
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary falls back on schema/JSON incompatibility, strips full v1 lyrics from search results",
+        "status": "passed",
+        "durationMs": 26.905099999999948
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary does not fallback or retry on client/credential HTTP 400",
+        "status": "passed",
+        "durationMs": 14.41879999999992
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary does not fallback or retry on client/credential HTTP 401",
+        "status": "passed",
+        "durationMs": 14.400100000000293
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary honors long Retry-After across future requests and never immediately retries 429",
+        "status": "passed",
+        "durationMs": 19.29549999999972
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary bounded retry waits for Retry-After on 503 with jitter and serializes concurrent requests",
+        "status": "passed",
+        "durationMs": 10.762900000000172
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary cancels obsolete/queued work, bounds queue and times out network requests",
+        "status": "passed",
+        "durationMs": 32.44260000000031
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary handles network errors, non-JSON, malformed records and fixed-host SSRF defense",
+        "status": "passed",
+        "durationMs": 66.10569999999962
+      },
+      {
+        "title": "LRCLIB real adapter with deterministic HTTP boundary handles instrumental and missing lyrics as statuses, preserves invalid YAML only in preview",
+        "status": "passed",
+        "durationMs": 33.2518
+      },
+      {
+        "title": "typed discovery HTTP contracts returns selected preview with no-store and never exposes server configuration",
+        "status": "passed",
+        "durationMs": 538.4585000000002
+      },
+      {
+        "title": "typed discovery HTTP contracts registers providers, validates allowlist/query/IDs and supports unavailable providers",
+        "status": "passed",
+        "durationMs": 12.587199999999939
+      },
+      {
+        "title": "typed discovery HTTP contracts normalizes API error with Retry-After and limits per-IP requests",
+        "status": "passed",
+        "durationMs": 16.99479999999994
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation imports plain/LRC/word source 900001 with corrections and original timing intact",
+        "status": "passed",
+        "durationMs": 120.90789999999993
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation imports plain/LRC/word source 900002 with corrections and original timing intact",
+        "status": "passed",
+        "durationMs": 30.41870000000017
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation imports plain/LRC/word source 900003 with corrections and original timing intact",
+        "status": "passed",
+        "durationMs": 74.88980000000015
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation never offers an import receipt for instrumental/missing/unsafe-only source 900004",
+        "status": "passed",
+        "durationMs": 22.75940000000014
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation never offers an import receipt for instrumental/missing/unsafe-only source 900005",
+        "status": "passed",
+        "durationMs": 7.663299999999936
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation never offers an import receipt for instrumental/missing/unsafe-only source 900006",
+        "status": "passed",
+        "durationMs": 3.4471000000000913
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation requires explicit confirmation, rejects unsigned/tampered/foreign/expired previews and different server keys",
+        "status": "passed",
+        "durationMs": 27.171100000000024
+      },
+      {
+        "title": "personal lyrics policy and verified source preservation refuses empty corrections, spoofed source policies and invalid control characters",
+        "status": "passed",
+        "durationMs": 29.10629999999992
+      },
+      {
+        "title": "maps standard tuning, alternate tuning and capo",
+        "status": "passed",
+        "durationMs": 12.711200000000076
+      },
+      {
+        "title": "validates both instrument types, tuning length and capo bounds",
+        "status": "passed",
+        "durationMs": 1.3744000000001506
+      },
+      {
+        "title": "supports simultaneous tones and rests; rejects invalid timing and string collisions",
+        "status": "passed",
+        "durationMs": 6.050000000000182
+      },
+      {
+        "title": "checks measure capacity, pitch agreement and overlapping string use",
+        "status": "passed",
+        "durationMs": 4.019199999999955
+      },
+      {
+        "title": "production lyrics alignment clears explicit resolutions when their candidate changes or the user chooses unresolved",
+        "status": "passed",
+        "durationMs": 192.8934999999999
+      },
+      {
+        "title": "production lyrics alignment accepts a semantically identical JSONB source with reordered object keys",
+        "status": "passed",
+        "durationMs": 80.31470000000013
+      },
+      {
+        "title": "production lyrics alignment orders reduced non-grid rationals exactly and uses deterministic independent-event ties",
+        "status": "passed",
+        "durationMs": 75.43309999999997
+      },
+      {
+        "title": "production lyrics alignment deduplicates selected chord tones by event ID but keeps simultaneous events separate",
+        "status": "passed",
+        "durationMs": 49.05139999999983
+      },
+      {
+        "title": "production lyrics alignment uses selected measures before whole-track fallback; excludes rests",
+        "status": "passed",
+        "durationMs": 58.40120000000002
+      },
+      {
+        "title": "production lyrics alignment rejects foreign tracks, measures, sections and lyric lines",
+        "status": "passed",
+        "durationMs": 109.4217000000001
+      },
+      {
+        "title": "production lyrics alignment binds and advances both cursors without touching source data",
+        "status": "passed",
+        "durationMs": 56.66129999999998
+      },
+      {
+        "title": "production lyrics alignment aligns a whole six-syllable line with six Enter-equivalent actions",
+        "status": "passed",
+        "durationMs": 49.234300000000076
+      },
+      {
+        "title": "production lyrics alignment extends one syllable across bar boundaries without changing note durations",
+        "status": "passed",
+        "durationMs": 76.86550000000011
+      },
+      {
+        "title": "production lyrics alignment corrects one melisma note and clears a syllable independently",
+        "status": "passed",
+        "durationMs": 29.302099999999882
+      },
+      {
+        "title": "production lyrics alignment keeps sustain in link presentation only",
+        "status": "passed",
+        "durationMs": 17.735999999999876
+      },
+      {
+        "title": "production lyrics alignment skips without creating or deleting a stored link",
+        "status": "passed",
+        "durationMs": 28.983400000000074
+      },
+      {
+        "title": "production lyrics alignment undo/redo preserves cursors and clears a divergent redo branch",
+        "status": "passed",
+        "durationMs": 19.934900000000198
+      },
+      {
+        "title": "production lyrics alignment proposes equal counts one-to-one without inventing events or syllables",
+        "status": "passed",
+        "durationMs": 40.36409999999978
+      },
+      {
+        "title": "production lyrics alignment reports unequal counts and pairs only min(notes, syllables)",
+        "status": "passed",
+        "durationMs": 61.83719999999994
+      },
+      {
+        "title": "production lyrics alignment cancelled proposal restores an existing draft and both history stacks exactly",
+        "status": "passed",
+        "durationMs": 59.73239999999987
+      },
+      {
+        "title": "production lyrics alignment keeps unchanged links and their timestamps/identities",
+        "status": "passed",
+        "durationMs": 18.61740000000009
+      },
+      {
+        "title": "production lyrics alignment blocks editing existing syllables until an explicit decision",
+        "status": "passed",
+        "durationMs": 48.52419999999984
+      },
+      {
+        "title": "production lyrics alignment recognizes note ownership conflicts and keep preserves original links",
+        "status": "passed",
+        "durationMs": 15.50189999999975
+      },
+      {
+        "title": "production lyrics alignment explicit replacement trims only the claimed note from another melisma",
+        "status": "passed",
+        "durationMs": 33.572400000000016
+      },
+      {
+        "title": "production lyrics alignment a protected keep decision cannot be overridden by another replacement",
+        "status": "passed",
+        "durationMs": 28.628900000000158
+      },
+      {
+        "title": "production lyrics alignment duplicate concept claims remain blocked if injected into a plan",
+        "status": "passed",
+        "durationMs": 17.373399999999947
+      },
+      {
+        "title": "production lyrics alignment validates missing/foreign syllables, events, duplicate IDs and track references",
+        "status": "passed",
+        "durationMs": 20.438000000000102
+      },
+      {
+        "title": "production lyrics alignment only writes intended lyricsLinks, preserving other tracks, imports, words, chords and notes",
+        "status": "passed",
+        "durationMs": 38.473799999999756
+      },
+      {
+        "title": "production lyrics alignment rejects structural source changes and fabricated source snapshots",
+        "status": "passed",
+        "durationMs": 25.588500000000295
+      },
+      {
+        "title": "production lyrics alignment distinguishes repeated word/syllable identities in read order",
+        "status": "passed",
+        "durationMs": 21.27430000000004
+      },
+      {
+        "title": "production lyrics alignment can correct an existing cross-bar link in a smaller selected passage without discarding the other notes",
+        "status": "passed",
+        "durationMs": 27.385800000000017
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters losslessly round-trips representative legacy fixture 0, deterministic conversion and no source mutation",
+        "status": "passed",
+        "durationMs": 117.99369999999999
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters losslessly round-trips representative legacy fixture 1, deterministic conversion and no source mutation",
+        "status": "passed",
+        "durationMs": 52.56880000000001
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters losslessly round-trips representative legacy fixture 2, deterministic conversion and no source mutation",
+        "status": "passed",
+        "durationMs": 94.96289999999999
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters losslessly round-trips representative legacy fixture 3, deterministic conversion and no source mutation",
+        "status": "passed",
+        "durationMs": 44.47240000000011
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters losslessly round-trips representative legacy fixture 4, deterministic conversion and no source mutation",
+        "status": "passed",
+        "durationMs": 42.6889000000001
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters losslessly round-trips representative legacy fixture 5, deterministic conversion and no source mutation",
+        "status": "passed",
+        "durationMs": 86.21439999999984
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters keeps independent simultaneous events and chord tones, rests/durations/techniques through position adapter",
+        "status": "passed",
+        "durationMs": 14.553499999999985
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters clones all song, track, word, syllable and event references without sharing identities",
+        "status": "passed",
+        "durationMs": 47.19919999999979
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters refuses unsupported legacy frets without modifying or truncating the source",
+        "status": "passed",
+        "durationMs": 6.770499999999856
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters normalizes unreduced legacy fractions without changing musical value",
+        "status": "passed",
+        "durationMs": 13.995300000000043
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters adds, updates, reorders, selects, hides and collapses independent tracks without content loss",
+        "status": "passed",
+        "durationMs": 56.21809999999982
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters duplicates every event/link ID and preserves original syllable targets and simultaneity",
+        "status": "passed",
+        "durationMs": 51.72809999999981
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters deletes only confirmed target track/events, prunes links and refuses last track",
+        "status": "passed",
+        "durationMs": 62.249700000000075
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid negative without mutating input",
+        "status": "passed",
+        "durationMs": 20.917900000000145
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid zero without mutating input",
+        "status": "passed",
+        "durationMs": 23.779399999999896
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid overflow without mutating input",
+        "status": "passed",
+        "durationMs": 18.723200000000134
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid same-string without mutating input",
+        "status": "passed",
+        "durationMs": 21.504699999999957
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid fret without mutating input",
+        "status": "passed",
+        "durationMs": 21.00799999999981
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid pitch without mutating input",
+        "status": "passed",
+        "durationMs": 22.133199999999988
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid measure without mutating input",
+        "status": "passed",
+        "durationMs": 12.41210000000001
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters rejects invalid unreduced without mutating input",
+        "status": "passed",
+        "durationMs": 40.782900000000154
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters validates 6/8, shared timing and safe meter/capo changes on every track",
+        "status": "passed",
+        "durationMs": 34.95990000000006
+      },
+      {
+        "title": "versioned multi-track domain and legacy adapters preserves invisible tracks in v1 saves and refuses hidden measure or linked word loss",
+        "status": "passed",
+        "durationMs": 82.9969000000001
+      },
+      {
+        "title": "explicit syllable links and safe text editing splits words by hand, links one/multiple notes across measures with sustain and replaces/unlinks without deleting notes",
+        "status": "passed",
+        "durationMs": 50.69800000000032
+      },
+      {
+        "title": "explicit syllable links and safe text editing rejects invalid link syllable",
+        "status": "passed",
+        "durationMs": 14.56919999999991
+      },
+      {
+        "title": "explicit syllable links and safe text editing rejects invalid link track",
+        "status": "passed",
+        "durationMs": 21.242699999999786
+      },
+      {
+        "title": "explicit syllable links and safe text editing rejects invalid link event",
+        "status": "passed",
+        "durationMs": 28.0920000000001
+      },
+      {
+        "title": "explicit syllable links and safe text editing rejects invalid link cross-track",
+        "status": "passed",
+        "durationMs": 11.038300000000163
+      },
+      {
+        "title": "explicit syllable links and safe text editing rejects invalid link duplicate",
+        "status": "passed",
+        "durationMs": 18.892499999999927
+      },
+      {
+        "title": "explicit syllable links and safe text editing rejects invalid link rest",
+        "status": "passed",
+        "durationMs": 17.872199999999793
+      },
+      {
+        "title": "explicit syllable links and safe text editing keeps unambiguous word IDs, flags repeated tokens and requires confirmation before removing linked text",
+        "status": "passed",
+        "durationMs": 43.434099999999944
+      },
+      {
+        "title": "explicit syllable links and safe text editing moves repeated words by explicit identity and preserves link targets",
+        "status": "passed",
+        "durationMs": 11.016700000000128
+      },
+      {
+        "title": "explicit syllable links and safe text editing requires review before discarding unlinked manual syllable divisions",
+        "status": "passed",
+        "durationMs": 45.049299999999675
+      },
+      {
+        "title": "explicit syllable links and safe text editing keeps existing syllable IDs only with explicit identical parts; deletion needs confirmation when linked",
+        "status": "passed",
+        "durationMs": 54.45759999999973
+      },
+      {
+        "title": "import and Practice seams reuse normalized contracts attaches untimed import source without fabricated events and requires confirmation for replacement",
+        "status": "passed",
+        "durationMs": 46.965400000000045
+      },
+      {
+        "title": "import and Practice seams reuse normalized contracts captures selected tracks/range/events/return cursor and falls back on deleted/changed sources",
+        "status": "passed",
+        "durationMs": 103.8451
+      },
+      {
+        "title": "keeps 18 original versioned exercises and omits fictional prototype achievements",
+        "status": "passed",
+        "durationMs": 11.744799999999941
+      },
+      {
+        "title": "uses semantic configuration identities, independent of IDs/key order and separated by tempo/position/key/version",
+        "status": "passed",
+        "durationMs": 6.369200000000092
+      },
+      {
+        "title": "requires explicit mastery confirmation and valid session time snapshots",
+        "status": "passed",
+        "durationMs": 15.07400000000007
+      },
+      {
+        "title": "restores stable song IDs across reordering and preserves full passage data and a clear deletion fallback",
+        "status": "passed",
+        "durationMs": 31.12259999999992
+      },
+      {
+        "title": "rejects unplayable exercise ranges and technique steps for the selected instrument",
+        "status": "passed",
+        "durationMs": 1.2131999999999152
+      },
+      {
+        "title": "migrates original prototype data without losing notes, arrangements or shared text",
+        "status": "passed",
+        "durationMs": 76.55459999999994
+      },
+      {
+        "title": "places every required duration with rational whole-note values and exact measure boundaries",
+        "status": "passed",
+        "durationMs": 14.65020000000004
+      },
+      {
+        "title": "rejects overlap without mutation and replaces only the chosen event while preserving identity",
+        "status": "passed",
+        "durationMs": 7.81919999999991
+      },
+      {
+        "title": "rejects invalid duration/grid and events beyond all supported meters without changing meter",
+        "status": "passed",
+        "durationMs": 4.5572000000001935
+      },
+      {
+        "title": "supports an offbeat syncopated accented stroke and explicit silence",
+        "status": "passed",
+        "durationMs": 2.062900000000127
+      },
+      {
+        "title": "accounts only active audio time and completed bars across pause, stop and resume",
+        "status": "passed",
+        "durationMs": 1.384900000000016
+      },
+      {
+        "title": "accepts optional persisted transport without altering legacy catalog and validates goals and ramp",
+        "status": "passed",
+        "durationMs": 9.655299999999897
+      },
+      {
+        "title": "preserves legacy configuration hashes when the new playback options are only defaults",
+        "status": "passed",
+        "durationMs": 15.156400000000076
+      },
+      {
+        "title": "loss-aware user import preserves original Unicode, CRLF, blank lines and repetition text with metadata/sections",
+        "status": "passed",
+        "durationMs": 39.06840000000011
+      },
+      {
+        "title": "loss-aware user import recognizes transposeable accidentals/slash chords without inventing fingerings",
+        "status": "passed",
+        "durationMs": 18.19329999999991
+      },
+      {
+        "title": "loss-aware user import handles ChordPro aliases, sections, metadata and keeps unknown/invalid directives",
+        "status": "passed",
+        "durationMs": 42.419999999999845
+      },
+      {
+        "title": "loss-aware user import parses simultaneous open/double-digit frets, multiple blocks and bar columns without timing",
+        "status": "passed",
+        "durationMs": 25.226899999999887
+      },
+      {
+        "title": "loss-aware user import preserves techniques and ambiguous rests/repeats, requires correction for fret/order/alignment",
+        "status": "passed",
+        "durationMs": 17.04989999999998
+      },
+      {
+        "title": "loss-aware user import appends only new entities and preserves original arrangements, rejects conflicting metadata",
+        "status": "passed",
+        "durationMs": 16.970000000000027
+      },
+      {
+        "title": "loss-aware user import rejects binary, overlarge and malformed input contracts",
+        "status": "passed",
+        "durationMs": 8.538299999999936
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events keeps repeated stamps, fractions, blank/unmarked/invalid lines and original LRC",
+        "status": "passed",
+        "durationMs": 3.925999999999931
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events safely parses Lyricsfile word timing without inferred end times",
+        "status": "passed",
+        "durationMs": 64.66699999999992
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events rejects unsafe/invalid YAML: version: '1.0'\nmetadata: &x {title: T, artist: A}\nplain: *x",
+        "status": "passed",
+        "durationMs": 3.852300000000014
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events rejects unsafe/invalid YAML: version: '1.0'\nversion: '1.0'",
+        "status": "passed",
+        "durationMs": 2.029800000000023
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events rejects unsafe/invalid YAML: !!js/function bad",
+        "status": "passed",
+        "durationMs": 1.5670999999999822
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events rejects unsafe/invalid YAML: version: '9.0'\nmetadata: {title: T, artist: A}",
+        "status": "passed",
+        "durationMs": 1.6631999999999607
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events rejects unsafe/invalid YAML: version: '1.0'\nmetadata: {title: T, artist: A}\nlines: [{text: x, start_ms: 20, end_ms: 10}]",
+        "status": "passed",
+        "durationMs": 3.5278999999998177
+      },
+      {
+        "title": "real-time lyrics synchronization remains separate from musical events rejects unsafe/invalid YAML: version: '1.0'\nmetadata: {title: T, artist: A}\nlines: [{text: x, start_ms: 20, words: [{text: y, start_ms: 20}]}]",
+        "status": "passed",
+        "durationMs": 5.110800000000154
+      },
+      {
+        "title": "calculates all 48 scales and correct I/III/V intervals, including pentatonic degrees",
+        "status": "passed",
+        "durationMs": 18.428800000000024
+      },
+      {
+        "title": "harmonizes all 36 progressions using triad intervals and diatonic note spelling",
+        "status": "passed",
+        "durationMs": 16.791600000000017
+      },
+      {
+        "title": "reuses physical pitch calculations over every string/fret for standard, Drop D and capo",
+        "status": "passed",
+        "durationMs": 160.68489999999997
+      },
+      {
+        "title": "models meters, strokes, syncopations and rests with rational bounds independent of pixels",
+        "status": "passed",
+        "durationMs": 26.855399999999918
+      },
+      {
+        "title": "production Workspace v3 editing and score layout lays out all measures in section systems, with shared rational positions independent of text/track lengths",
+        "status": "passed",
+        "durationMs": 107.12739999999997
+      },
+      {
+        "title": "production Workspace v3 editing and score layout keeps an explicit 12/24 buffer without a timeout or document mutation until commit",
+        "status": "passed",
+        "durationMs": 114.48049999999989
+      },
+      {
+        "title": "production Workspace v3 editing and score layout preserves chord groups and independent polyphony, technique metadata and other tracks",
+        "status": "passed",
+        "durationMs": 74.63560000000007
+      },
+      {
+        "title": "production Workspace v3 editing and score layout deletes a selected chord tone while retaining other tones and valid group links",
+        "status": "passed",
+        "durationMs": 64.54610000000002
+      },
+      {
+        "title": "production Workspace v3 editing and score layout uses physical frets with capo and Drop D, refusing under-capo or out-of-range inputs",
+        "status": "passed",
+        "durationMs": 42.11680000000001
+      },
+      {
+        "title": "production Workspace v3 editing and score layout refuses boundary/overlap/duration errors without partial changes",
+        "status": "passed",
+        "durationMs": 32.80989999999997
+      },
+      {
+        "title": "production Workspace v3 editing and score layout navigates strings and measure boundaries exactly, and handles the first/last measure",
+        "status": "passed",
+        "durationMs": 28.936899999999923
+      },
+      {
+        "title": "production Workspace v3 editing and score layout duplicates an arrangement with independent tracks/events/links and keeps shared lyric identities",
+        "status": "passed",
+        "durationMs": 33.7963000000002
+      },
+      {
+        "title": "production Workspace v3 editing and score layout inserts rests and prunes only replaced links, never other-track notes",
+        "status": "passed",
+        "durationMs": 105.00350000000003
+      },
+      {
+        "title": "production Workspace v3 editing and score layout undo/redo restores full track/link documents and clears the redo branch after a new edit",
+        "status": "passed",
+        "durationMs": 21.900300000000016
+      },
+      {
+        "title": "production Workspace v3 editing and score layout filters Practice roles and linked tracks without changing musical content",
+        "status": "passed",
+        "durationMs": 38.09960000000001
+      },
+      {
+        "title": "production Workspace v3 editing and score layout keeps independent articulations when adding a simultaneous tone or editing an existing fret",
+        "status": "passed",
+        "durationMs": 32.88310000000001
+      },
+      {
+        "title": "production Workspace v3 editing and score layout respects the canonical track order in Practice without sorting the stored track array",
+        "status": "passed",
+        "durationMs": 84.74250000000006
+      },
+      {
+        "title": "preserves chord IDs through insertion and spelling edits, flags ambiguous anchors without deletion",
+        "status": "passed",
+        "durationMs": 38.34870000000001
+      },
+      {
+        "title": "does not create sections on blank lines and supports a song without lyrics",
+        "status": "passed",
+        "durationMs": 2.422900000000027
+      },
+      {
+        "title": "supports 6/8, sixteenths, triplets and simultaneous notes with measure bounds",
+        "status": "passed",
+        "durationMs": 10.363100000000031
+      },
+      {
+        "title": "clones arrangements with independent events and chord references and validates JSON version",
+        "status": "passed",
+        "durationMs": 12.294800000000123
+      },
+      {
+        "title": "preserves absolute frets when retuning and refuses notes below a capo",
+        "status": "passed",
+        "durationMs": 1.789600000000064
+      },
+      {
+        "title": "rejects corrupt references, collisions, unsupported profiles and duplicate IDs",
+        "status": "passed",
+        "durationMs": 18.086000000000013
+      },
+      {
+        "title": "checks every supported duration against each explicit meter without quantization",
+        "status": "passed",
+        "durationMs": 13.971900000000005
+      },
+      {
+        "title": "schedules exact quarter beats and measure accents with one context/timer despite repeated start",
+        "status": "passed",
+        "durationMs": 30.909599999999955
+      },
+      {
+        "title": "preserves the pending fraction on pause/resume and cancels stopped/late sounds",
+        "status": "passed",
+        "durationMs": 7.198000000000093
+      },
+      {
+        "title": "cancels an in-flight start when immediately stopped or paused",
+        "status": "passed",
+        "durationMs": 1.5778000000000247
+      },
+      {
+        "title": "rephases tempo, supports tap tempo, volume/mute without stopping the clock and resets meter safely",
+        "status": "passed",
+        "durationMs": 36.87169999999992
+      },
+      {
+        "title": "treats 6/8 BPM as dotted quarters with two pulses and optional eighth subdivisions",
+        "status": "passed",
+        "durationMs": 18.62239999999997
+      },
+      {
+        "title": "ramps once per requested measure interval, including rescheduling near a bar boundary",
+        "status": "passed",
+        "durationMs": 21.0458000000001
+      },
+      {
+        "title": "surfaces AudioContext and graph failures without orphaned schedulers",
+        "status": "passed",
+        "durationMs": 13.357600000000048
+      },
+      {
+        "title": "pauses hidden pages, stops on navigation and disposes/unbinds page lifecycle",
+        "status": "passed",
+        "durationMs": 6.291899999999941
+      },
+      {
+        "title": "cancels a native resume promise that has not settled, without leaking a scheduler",
+        "status": "passed",
+        "durationMs": 1.9842000000001008
+      },
+      {
+        "title": "retains the actual played position while paused for the shared UI and background accounting",
+        "status": "passed",
+        "durationMs": 15.98350000000005
+      },
+      {
+        "title": "reuses an injected request transport and encodes filters/IDs without accepting owner selectors",
+        "status": "passed",
+        "durationMs": 9.147699999999986
+      }
+    ]
+  },
+  "integration": {
+    "passed": 50,
+    "failed": 0,
+    "tests": [
+      {
+        "title": "connects to migrated test PostgreSQL through the HTTP API",
+        "status": "passed",
+        "durationMs": 359.0496999999999
+      },
+      {
+        "title": "transactional owner-isolated import previews without writes, persists provenance/original source and recovers duplicated requests",
+        "status": "passed",
+        "durationMs": 133.41790000000003
+      },
+      {
+        "title": "transactional owner-isolated import creates arrangement and appends sections without overwriting existing entities; rejects stale writes",
+        "status": "passed",
+        "durationMs": 93.60809999999992
+      },
+      {
+        "title": "transactional owner-isolated import isolates new and existing song lists, history, writes, deletion, target and request IDs by trusted owner",
+        "status": "passed",
+        "durationMs": 61.593399999999974
+      },
+      {
+        "title": "transactional owner-isolated import rejects missing rights/confirmation, malformed tabs and client-supplied external policy; never stores previews",
+        "status": "passed",
+        "durationMs": 29.997100000000046
+      },
+      {
+        "title": "transactional owner-isolated import rolls back song/history when provenance insert fails after document write",
+        "status": "passed",
+        "durationMs": 14.746700000000146
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions commits a complete line in one revision and one history entry, preserving every non-link field",
+        "status": "passed",
+        "durationMs": 212.40689999999995
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions cancel and proposal cancellation never write current, revision or history",
+        "status": "passed",
+        "durationMs": 51.993200000000115
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions rejects an actual second-session revision conflict and leaves both the winner and draft intact",
+        "status": "passed",
+        "durationMs": 88.14849999999979
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions owner isolation rejects commits/history reads without leaking the source",
+        "status": "passed",
+        "durationMs": 52.8282999999999
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions server-side validation rejects foreign event references without partial writes",
+        "status": "passed",
+        "durationMs": 54.09349999999995
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions rolls back current and history on storage failure, retains draft, then retries successfully",
+        "status": "passed",
+        "durationMs": 101.55349999999999
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions reopens stored links through a fresh API instance and can restore/undo them as one new version",
+        "status": "passed",
+        "durationMs": 93.33799999999997
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions aligns an imported v2 document without changing source lyrics, chord anchors or LRC milliseconds",
+        "status": "passed",
+        "durationMs": 49.802700000000186
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions rejects an old alignment after changed-note without resurrecting removed source IDs",
+        "status": "passed",
+        "durationMs": 75.57889999999998
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions rejects an old alignment after deleted-note without resurrecting removed source IDs",
+        "status": "passed",
+        "durationMs": 68.76159999999982
+      },
+      {
+        "title": "alignment commits through canonical PostgreSQL transactions rejects an old alignment after deleted-word without resurrecting removed source IDs",
+        "status": "passed",
+        "durationMs": 67.3757999999998
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts previews, backs up and losslessly upgrades legacy fixture 0 including historical versions",
+        "status": "passed",
+        "durationMs": 216.42540000000008
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts previews, backs up and losslessly upgrades legacy fixture 1 including historical versions",
+        "status": "passed",
+        "durationMs": 107.50789999999984
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts previews, backs up and losslessly upgrades legacy fixture 2 including historical versions",
+        "status": "passed",
+        "durationMs": 112.35939999999982
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts previews, backs up and losslessly upgrades legacy fixture 3 including historical versions",
+        "status": "passed",
+        "durationMs": 108.9212
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts previews, backs up and losslessly upgrades legacy fixture 4 including historical versions",
+        "status": "passed",
+        "durationMs": 132.8494999999998
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts previews, backs up and losslessly upgrades legacy fixture 5 including historical versions",
+        "status": "passed",
+        "durationMs": 125.51389999999992
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts runs track CRUD/selection/reorder, independent events and multi-event syllable links atomically",
+        "status": "passed",
+        "durationMs": 208.19949999999994
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts rejects stale concurrent writes with currentRevision and no partial overwrite",
+        "status": "passed",
+        "durationMs": 49.171400000000176
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts isolates canonical, legacy, history, backup, restore and Practice access by trusted owner",
+        "status": "passed",
+        "durationMs": 44.80380000000014
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts keeps the current Workspace writable while preserving additional tracks/links, rejecting destructive legacy changes",
+        "status": "passed",
+        "durationMs": 153.00099999999975
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts requires explicit destructive/upgrade confirmation and rejects malformed ownership/timing/references",
+        "status": "passed",
+        "durationMs": 90.21239999999989
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts retains all historical versions, restores a checksummed original backup and backs up the replaced canonical state",
+        "status": "passed",
+        "durationMs": 503.5882999999999
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts rolls back upgrade, history and backup together when the history insert fails",
+        "status": "passed",
+        "durationMs": 37.99969999999985
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts persists a bounded large arrangement with 12 independent tracks and 80 shared measures",
+        "status": "passed",
+        "durationMs": 452.2649999999999
+      },
+      {
+        "title": "multi-track JSONB/version/backup/owner contracts keeps normalized import and extended Practice context compatible with canonical storage",
+        "status": "passed",
+        "durationMs": 155.91899999999987
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts persists source 900001, corrections, provenance/timing and subsequent legacy/canonical saves",
+        "status": "passed",
+        "durationMs": 192.49829999999986
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts persists source 900002, corrections, provenance/timing and subsequent legacy/canonical saves",
+        "status": "passed",
+        "durationMs": 51.22250000000008
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts persists source 900003, corrections, provenance/timing and subsequent legacy/canonical saves",
+        "status": "passed",
+        "durationMs": 60.68380000000002
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts replays concurrent/restarted requests without duplicates, even after the transient signing key changed",
+        "status": "passed",
+        "durationMs": 58.26779999999985
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts binds preview to owner, requires personal confirmation and exposes no public lyrics route",
+        "status": "passed",
+        "durationMs": 50.232099999999946
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts appends/new-arrangement imports preserve all existing multi-track content and reject stale revisions",
+        "status": "passed",
+        "durationMs": 145.85950000000003
+      },
+      {
+        "title": "personal LRCLIB PostgreSQL transactions and existing contracts rolls back Song/history/provenance on post-write failure and keeps lyrics out of error logs",
+        "status": "passed",
+        "durationMs": 32.544399999999996
+      },
+      {
+        "title": "seeds all 18 original exercises idempotently, filters latest versions and returns structured errors",
+        "status": "passed",
+        "durationMs": 538.7154
+      },
+      {
+        "title": "persists revision-checked settings, immutable snapshots, paginated sessions and correct chronological progress",
+        "status": "passed",
+        "durationMs": 303.1558
+      },
+      {
+        "title": "awards mastery only explicitly and independently by configuration, with explicit overall award/revocation",
+        "status": "passed",
+        "durationMs": 173.0537999999999
+      },
+      {
+        "title": "isolates all private resources by the trusted owner boundary and enforces composite foreign keys",
+        "status": "passed",
+        "durationMs": 160.05179999999996
+      },
+      {
+        "title": "captures immutable song origins for all four labs, restores IDs after edits and offers a deletion fallback",
+        "status": "passed",
+        "durationMs": 222.69860000000017
+      },
+      {
+        "title": "refuses edits to immutable seed versions and preserves existing song data",
+        "status": "passed",
+        "durationMs": 35.678499999999985
+      },
+      {
+        "title": "retains historical sessions/settings/mastery when a new catalog version is seeded",
+        "status": "passed",
+        "durationMs": 106.12930000000006
+      },
+      {
+        "title": "persists revision-checked personal goals and last exercise behind the existing trusted owner boundary",
+        "status": "passed",
+        "durationMs": 73.73909999999978
+      },
+      {
+        "title": "persists 6/8 pattern, transport and ramp snapshots and validates the same rhythm bounds on API writes",
+        "status": "passed",
+        "durationMs": 119.33060000000023
+      },
+      {
+        "title": "retains pre-2C configuration identity and explicit mastery when adding only default playback controls",
+        "status": "passed",
+        "durationMs": 127.1253999999999
+      },
+      {
+        "title": "atomically persists songs, rejects stale writes, keeps revisions and isolates deletion",
+        "status": "passed",
+        "durationMs": 459.8678000000001
+      }
+    ]
+  },
+  "chrome": {
+    "uniquePassed": 60,
+    "existingRegressionCases": 49,
+    "alignmentCases": 11,
+    "runs": [
+      {
+        "run": "browser-results",
+        "startTime": "2026-11-15T13:11:20.124Z",
+        "duration": 936057.878,
+        "expected": 59,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      {
+        "run": "alignment-browser-results",
+        "startTime": "2026-11-15T13:28:23.648Z",
+        "duration": 128739.087,
+        "expected": 11,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      {
+        "run": "final-regression-results",
+        "startTime": "2026-11-15T13:31:53.361Z",
+        "duration": 20841.954,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    ],
+    "tests": [
+      {
+        "file": "design-system.spec.ts",
+        "title": "v2 themes, landmarks, keyboard, axe and visual screens 1440",
+        "status": "passed",
+        "durationMs": 52611,
+        "run": "browser-results"
+      },
+      {
+        "file": "design-system.spec.ts",
+        "title": "v2 themes, landmarks, keyboard, axe and visual screens 1280",
+        "status": "passed",
+        "durationMs": 41729,
+        "run": "browser-results"
+      },
+      {
+        "file": "design-system.spec.ts",
+        "title": "v2 themes, landmarks, keyboard, axe and visual screens 1024",
+        "status": "passed",
+        "durationMs": 38843,
+        "run": "browser-results"
+      },
+      {
+        "file": "design-system.spec.ts",
+        "title": "v2 themes, landmarks, keyboard, axe and visual screens 390",
+        "status": "passed",
+        "durationMs": 44592,
+        "run": "browser-results"
+      },
+      {
+        "file": "design-system.spec.ts",
+        "title": "full-width score retains panels, dialog focus and internal fret scroll",
+        "status": "passed",
+        "durationMs": 2789,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "import formats, manual correction, loss-response recovery, safe destinations and persistence",
+        "status": "passed",
+        "durationMs": 8618,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "real discovery UI supports metadata, selection, formats, instrumental, errors, cancellation and rights restrictions",
+        "status": "passed",
+        "durationMs": 3293,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "content validation, correction and supported UTF-8 file extensions without cancel writes",
+        "status": "passed",
+        "durationMs": 7056,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "import/discovery responsive themes, keyboard and axe 1440",
+        "status": "passed",
+        "durationMs": 13593,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "import/discovery responsive themes, keyboard and axe 1280",
+        "status": "passed",
+        "durationMs": 14001,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "import/discovery responsive themes, keyboard and axe 1024",
+        "status": "passed",
+        "durationMs": 13756,
+        "run": "browser-results"
+      },
+      {
+        "file": "discovery-import.spec.ts",
+        "title": "import/discovery responsive themes, keyboard and axe 390",
+        "status": "passed",
+        "durationMs": 12586,
+        "run": "browser-results"
+      },
+      {
+        "file": "library.spec.ts",
+        "title": "database-driven library metadata, favorite, filtering, list view, duplication and rejected JSON version",
+        "status": "passed",
+        "durationMs": 2881,
+        "run": "browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "01–15, 27–31, 35: real full-line keyboard workflow, navigation, draft history, atomic commit and reopen",
+        "status": "passed",
+        "durationMs": 8513,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "04–05 selected passage and lyrics-line entries; multi-tone event deduplication and line selection",
+        "status": "passed",
+        "durationMs": 3003,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "16–18, 23–28: cross-bar melisma, correction, sustain and proposal checkpoint restoration",
+        "status": "passed",
+        "durationMs": 6725,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "19–22: existing links, blocked conflict, explicit keep/new, preserving other melisma notes",
+        "status": "passed",
+        "durationMs": 4819,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "32–35: saved selection in both directions, safe track choices, native keyboard and focus",
+        "status": "passed",
+        "durationMs": 5639,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "real 409 from second session and retry after server error retain draft; ordinary Undo reverts one commit",
+        "status": "passed",
+        "durationMs": 11351,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "36–38: themes, responsive visibility, axe toolbar/preview/exit and screenshots 1440",
+        "status": "passed",
+        "durationMs": 24351,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "36–38: themes, responsive visibility, axe toolbar/preview/exit and screenshots 1280",
+        "status": "passed",
+        "durationMs": 22149,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "36–38: themes, responsive visibility, axe toolbar/preview/exit and screenshots 1024",
+        "status": "passed",
+        "durationMs": 16062,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "36–38: themes, responsive visibility, axe toolbar/preview/exit and screenshots 390",
+        "status": "passed",
+        "durationMs": 15907,
+        "run": "alignment-browser-results"
+      },
+      {
+        "file": "metronome.spec.ts",
+        "title": "real Web Audio graph, single context, mute, pause, navigation and disposal without microphone",
+        "status": "passed",
+        "durationMs": 2342,
+        "run": "browser-results"
+      },
+      {
+        "file": "multitrack.spec.ts",
+        "title": "canonical v3 editor saves, undo/redo and complete multi-track JSON transfer preserve hidden tracks and links",
+        "status": "passed",
+        "durationMs": 8968,
+        "run": "browser-results"
+      },
+      {
+        "file": "multitrack.spec.ts",
+        "title": "existing fixture in v3, themes, keyboard and axe 1440",
+        "status": "passed",
+        "durationMs": 11886,
+        "run": "browser-results"
+      },
+      {
+        "file": "multitrack.spec.ts",
+        "title": "existing fixture in v3, themes, keyboard and axe 1280",
+        "status": "passed",
+        "durationMs": 12890,
+        "run": "browser-results"
+      },
+      {
+        "file": "multitrack.spec.ts",
+        "title": "existing fixture in v3, themes, keyboard and axe 1024",
+        "status": "passed",
+        "durationMs": 13037,
+        "run": "browser-results"
+      },
+      {
+        "file": "multitrack.spec.ts",
+        "title": "existing fixture in v3, themes, keyboard and axe 390",
+        "status": "passed",
+        "durationMs": 11591,
+        "run": "browser-results"
+      },
+      {
+        "file": "personal-lyrics.spec.ts",
+        "title": "personal search/correction/persistence/replay, source after edits, fresh browser process and safe destinations",
+        "status": "passed",
+        "durationMs": 17756,
+        "run": "browser-results"
+      },
+      {
+        "file": "personal-lyrics.spec.ts",
+        "title": "personal import themes/keyboard/axe 1440",
+        "status": "passed",
+        "durationMs": 8504,
+        "run": "browser-results"
+      },
+      {
+        "file": "personal-lyrics.spec.ts",
+        "title": "personal import themes/keyboard/axe 1280",
+        "status": "passed",
+        "durationMs": 8330,
+        "run": "browser-results"
+      },
+      {
+        "file": "personal-lyrics.spec.ts",
+        "title": "personal import themes/keyboard/axe 1024",
+        "status": "passed",
+        "durationMs": 8214,
+        "run": "browser-results"
+      },
+      {
+        "file": "personal-lyrics.spec.ts",
+        "title": "personal import themes/keyboard/axe 390",
+        "status": "passed",
+        "durationMs": 7963,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Practice Room real audio, rhythm editing, sessions, explicit mastery, goals and persistent resume",
+        "status": "passed",
+        "durationMs": 16615,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Practice Room semantic dark/light screens and responsive layout 1440",
+        "status": "passed",
+        "durationMs": 18766,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Practice Room semantic dark/light screens and responsive layout 1280",
+        "status": "passed",
+        "durationMs": 18032,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Practice Room semantic dark/light screens and responsive layout 1024",
+        "status": "passed",
+        "durationMs": 17624,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Practice Room semantic dark/light screens and responsive layout 390",
+        "status": "passed",
+        "durationMs": 15969,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Practice API retry and rejected AudioContext leave recoverable UI with no orphan context",
+        "status": "passed",
+        "durationMs": 2923,
+        "run": "browser-results"
+      },
+      {
+        "file": "practice-room.spec.ts",
+        "title": "Stop cancels a start waiting for settings persistence, including navigation before its response",
+        "status": "passed",
+        "durationMs": 2536,
+        "run": "browser-results"
+      },
+      {
+        "file": "settings.spec.ts",
+        "title": "file import, explicit rights, retained/ambiguous chords, meter, profiles, physical fret input and canonical history recovery",
+        "status": "passed",
+        "durationMs": 8589,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "01–07: opening, arrangements, safe text, chords, full-width aligned systems and layout",
+        "status": "passed",
+        "durationMs": 6489,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "08–15: complete track management without cross-track edits",
+        "status": "passed",
+        "durationMs": 10222,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "16–23, 33: explicit fret buffer, note/chord editing, selections, undo and independent vocal track",
+        "status": "passed",
+        "durationMs": 10323,
+        "run": "final-regression-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "24–30: explicit syllable linking, cross-bar melisma, replacement, unlinking and reciprocal highlight",
+        "status": "passed",
+        "durationMs": 8370,
+        "run": "final-regression-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "31–32, 34–35, 37: neck states, physical insertion, Practice views and durable reopen",
+        "status": "passed",
+        "durationMs": 8232,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "38: existing version-one song converts safely with original source, physical frets and history intact",
+        "status": "passed",
+        "durationMs": 4314,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "manual syllables and explicit text-anchor review preserve every note",
+        "status": "passed",
+        "durationMs": 6401,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "Practice Room receives the exact track/range/cursor snapshot and returns safely after source changes",
+        "status": "passed",
+        "durationMs": 4377,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "36: dark/light, keyboard, overflow and axe on seven surfaces at 1440",
+        "status": "passed",
+        "durationMs": 73827,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "36: dark/light, keyboard, overflow and axe on seven surfaces at 1280",
+        "status": "passed",
+        "durationMs": 68273,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "36: dark/light, keyboard, overflow and axe on seven surfaces at 1024",
+        "status": "passed",
+        "durationMs": 66830,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace-v3.spec.ts",
+        "title": "36: dark/light, keyboard, overflow and axe on seven surfaces at 390",
+        "status": "passed",
+        "durationMs": 64000,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace.spec.ts",
+        "title": "integrated authoring, chords, sections, arrangements and complete JSON transfer",
+        "status": "passed",
+        "durationMs": 4798,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace.spec.ts",
+        "title": "responsive physical neck and score 1440",
+        "status": "passed",
+        "durationMs": 2744,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace.spec.ts",
+        "title": "responsive physical neck and score 1024",
+        "status": "passed",
+        "durationMs": 2824,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace.spec.ts",
+        "title": "responsive physical neck and score 390",
+        "status": "passed",
+        "durationMs": 2699,
+        "run": "browser-results"
+      },
+      {
+        "file": "workspace.spec.ts",
+        "title": "storage outage retains draft; stale revisions cannot overwrite; archive, history and deletion remain isolated",
+        "status": "passed",
+        "durationMs": 6172,
+        "run": "browser-results"
+      },
+      {
+        "file": "lyrics-alignment.spec.ts",
+        "title": "production edge: explicit measure passage includes pitch-only notes, collapsed active track remains reachable, locked edits stay outside draft",
+        "status": "passed",
+        "durationMs": 7156,
+        "run": "alignment-browser-results"
+      }
+    ],
+    "note": "The complete 59-case run preceded final alignment-only hardening. The 11 final alignment cases and two ordinary fret/manual-link cases were then rerun; unchanged ordinary paths retain their full-run results."
+  },
+  "accessibility": {
+    "audits": 24,
+    "violations": 0,
+    "tags": ["wcag2a", "wcag2aa", "wcag21aa"],
+    "results": [
+      {
+        "theme": "dark",
+        "state": "active",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "exit",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "active",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "exit",
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "active",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "exit",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "active",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "exit",
+        "viewport": {
+          "width": 1280,
+          "height": 800
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "active",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "exit",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "active",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "exit",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "active",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "violations": []
+      },
+      {
+        "theme": "dark",
+        "state": "exit",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "active",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "conflict-preview",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "violations": []
+      },
+      {
+        "theme": "light",
+        "state": "exit",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "violations": []
+      }
+    ]
+  }
+}

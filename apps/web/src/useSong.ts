@@ -16,6 +16,12 @@ export function useSong(onSaved: (r: SongRecord) => void) {
     [status, setStatus] = useState('Opgeslagen'),
     [error, setError] = useState(''),
     [needsUpgrade, setNeedsUpgrade] = useState(false);
+  const [locked, setLockedState] = useState(false);
+  const lock = useRef(false);
+  function setLocked(value: boolean) {
+    lock.current = value;
+    setLockedState(value);
+  }
   const [history, setHistory] = useState<{
     past: MultitrackSong[];
     future: MultitrackSong[];
@@ -107,7 +113,7 @@ export function useSong(onSaved: (r: SongRecord) => void) {
   }, [document, flush]);
   useEffect(() => {
     const leave = (e: BeforeUnloadEvent) => {
-      if (dirty()) {
+      if (dirty() || lock.current) {
         e.preventDefault();
         e.returnValue = '';
       }
@@ -133,6 +139,7 @@ export function useSong(onSaved: (r: SongRecord) => void) {
     setNeedsUpgrade(false);
   }
   function changeDocument(fn: (s: MultitrackSong) => void | MultitrackSong) {
+    if (lock.current) return false;
     const current = state.current.document;
     if (!current) return false;
     try {
@@ -150,6 +157,7 @@ export function useSong(onSaved: (r: SongRecord) => void) {
     }
   }
   function undo(redo = false) {
+    if (lock.current) return;
     const current = state.current.document;
     if (!current) return;
     const result = stepHistory(historyRef.current, current, redo);
@@ -165,7 +173,91 @@ export function useSong(onSaved: (r: SongRecord) => void) {
     setNeedsUpgrade(false);
     return flush();
   }
+  /** Explicit concept commit: keep the editor/history untouched until the transaction succeeds. */
+  async function commitDocument(
+    fn: (s: MultitrackSong) => MultitrackSong,
+    revision: number,
+  ) {
+    if (state.current.flight) await state.current.flight;
+    const before = state.current.document;
+    if (
+      !before ||
+      !lock.current ||
+      dirty() ||
+      revision !== state.current.revision
+    )
+      return {
+        ok: false,
+        error: 'De bron of revisie is gewijzigd. Je concept blijft behouden.',
+      };
+    let result: { ok: boolean; error?: string } = { ok: false };
+    const flight = (async () => {
+      try {
+        const next = MultitrackSongSchema.parse(fn(structuredClone(before)));
+        if (JSON.stringify(next) === state.current.saved) {
+          result = { ok: true };
+          return true;
+        }
+        setStatus('Opslaan…');
+        const saved = await request<MultitrackRecord>(
+          '/songs/' + next.id + '/multitrack',
+          {
+            method: 'PUT',
+            body: JSON.stringify({
+              document: next,
+              revision,
+              confirmedUpgrade: true,
+              confirmedDestructive: true,
+            }),
+          },
+        );
+        historyRef.current = pushHistory(historyRef.current, before);
+        setHistory(historyRef.current);
+        const canonical = MultitrackSongSchema.parse(saved.document);
+        state.current.document = canonical;
+        state.current.saved = JSON.stringify(canonical);
+        state.current.revision = saved.revision;
+        state.current.schema = 2;
+        state.current.upgrade = true;
+        setDocument(canonical);
+        setError('');
+        setNeedsUpgrade(false);
+        setStatus('Opgeslagen');
+        callback.current({
+          song: toLegacy(saved.document),
+          revision: saved.revision,
+          updatedAt: saved.updatedAt,
+          storageSchemaVersion: 2,
+        });
+        result = { ok: true };
+        return true;
+      } catch (e) {
+        const message =
+          e instanceof Error
+            ? e.message
+            : 'Opslaan mislukt; je concept blijft behouden.';
+        setError(message);
+        setStatus('Niet opgeslagen');
+        result = { ok: false, error: message };
+        return false;
+      }
+    })();
+    state.current.flight = flight;
+    try {
+      await flight;
+      return result;
+    } finally {
+      state.current.flight = null;
+    }
+  }
   return {
+    locked,
+    setLocked,
+    commitDocument,
+    current: () => ({
+      document: state.current.document,
+      revision: state.current.revision,
+    }),
     song: document ? toLegacy(document) : null,
     document,
     status,

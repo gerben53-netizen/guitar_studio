@@ -1,3 +1,4 @@
+import type { AlignmentSession } from '../../../../packages/music-domain/src/lyrics-alignment';
 import type { CSSProperties, KeyboardEvent, MouseEvent } from 'react';
 import type {
   MultitrackSong,
@@ -18,6 +19,7 @@ import {
   practiceTracks,
 } from '../../../../packages/music-domain/src/workspace-editor';
 interface Props {
+  alignment?: AlignmentSession | null;
   song: MultitrackSong;
   a: MultitrackArrangement;
   columns: number;
@@ -40,11 +42,16 @@ export function ScoreSystem(p: Props) {
   const { a, cursor, song } = p,
     ordered = a.trackOrder
       .map((id) => a.tracks.find((t) => t.id === id)!)
-      .filter((t) => t.visible),
+      .filter((t) => t.visible || t.id === p.alignment?.scope.trackId),
     allowed = p.practiceView ? practiceTracks(a, p.practiceView) : ordered;
   const highlighted = new Set(
     a.lyricsLinks
-      .filter((l) => l.syllableId === p.selectedSyllable)
+      .filter(
+        (l) =>
+          l.syllableId ===
+          (p.alignment?.syllables[p.alignment.current.syllableIndex]?.id ??
+            p.selectedSyllable),
+      )
       .flatMap((l) => l.eventIds),
   );
   const eventMap = new Map(a.tracks.map((t) => [t.id, t.events]));
@@ -80,17 +87,24 @@ export function ScoreSystem(p: Props) {
           </button>
           <button
             className="gs-button"
-            aria-expanded={!t.collapsed}
+            aria-expanded={!t.collapsed || t.id === p.alignment?.scope.trackId}
+            disabled={!!p.alignment}
             onClick={() => p.collapse(t.id)}
           >
             {t.collapsed ? 'Uitklappen' : 'Inklappen'}: {t.name}
           </button>
         </div>
       </header>
-      {!t.collapsed && (
+      {(!t.collapsed || t.id === p.alignment?.scope.trackId) && (
         <div
           className="measure-row"
-          style={{ '--measure-count': p.columns } as CSSProperties}
+          style={
+            {
+              '--measure-count': p.alignment
+                ? Math.min(p.columns, system.measures.length)
+                : p.columns,
+            } as CSSProperties
+          }
         >
           {system.measures.map((m) => {
             const events = eventMap
@@ -151,6 +165,7 @@ export function ScoreSystem(p: Props) {
                 <button
                   className="measure-heading"
                   aria-pressed={p.range.includes(m.id)}
+                  disabled={!!p.alignment}
                   onClick={(e) => p.measure(m.id, e.shiftKey)}
                 >
                   Maat {index} · {m.timeSignature.beats}/
@@ -239,12 +254,32 @@ export function ScoreSystem(p: Props) {
                               key={start.numerator + '/' + start.denominator}
                               className={
                                 'tab-position' +
+                                (event &&
+                                p.alignment?.notes[
+                                  p.alignment.current.noteIndex
+                                ]?.id === event.id
+                                  ? ' is-alignment-current'
+                                  : '') +
                                 (selected ? ' is-selected' : '') +
                                 (event && highlighted.has(event.id)
                                   ? ' is-linked'
                                   : '')
                               }
                               data-active={active}
+                              data-alignment-current={
+                                !!event &&
+                                p.alignment?.notes[
+                                  p.alignment.current.noteIndex
+                                ]?.id === event.id
+                              }
+                              aria-current={
+                                event &&
+                                p.alignment?.notes[
+                                  p.alignment.current.noteIndex
+                                ]?.id === event.id
+                                  ? 'true'
+                                  : undefined
+                              }
                               data-event-id={event?.id}
                               data-string={i + 1}
                               data-start={
@@ -316,6 +351,47 @@ export function ScoreSystem(p: Props) {
                     bewaard.
                   </p>
                 )}
+                {p.alignment &&
+                  t.id === p.alignment.scope.trackId &&
+                  events
+                    .filter(
+                      (e) =>
+                        e.kind === 'note' &&
+                        e.tones.every((tone) => !tone.position),
+                    )
+                    .map((event) => (
+                      <button
+                        key={event.id}
+                        className="gs-button unpositioned-alignment-note"
+                        data-event-id={event.id}
+                        data-alignment-current={
+                          p.alignment?.notes[p.alignment.current.noteIndex]
+                            ?.id === event.id
+                        }
+                        aria-current={
+                          p.alignment?.notes[p.alignment.current.noteIndex]
+                            ?.id === event.id
+                            ? 'true'
+                            : undefined
+                        }
+                        onClick={(e) =>
+                          p.choose(
+                            {
+                              trackId: t.id,
+                              measureId: m.id,
+                              start: event.start,
+                              string: 1,
+                            },
+                            event.id,
+                            e,
+                          )
+                        }
+                      >
+                        Noot zonder snaarpositie · {event.start.numerator}/
+                        {event.start.denominator} · MIDI{' '}
+                        {event.tones.map((tone) => tone.pitch).join(' / ')}
+                      </button>
+                    ))}
                 <div
                   className="duration-lane"
                   role="group"
@@ -411,6 +487,49 @@ export function ScoreSystem(p: Props) {
                               —
                             </span>
                           )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {p.alignment?.scope.trackId === t.id && (
+                  <div
+                    className="alignment-draft-lane"
+                    role="group"
+                    aria-label={'Concept onder ' + t.name + ' maat ' + index}
+                  >
+                    {p.alignment.current.drafts.map((d) => {
+                      const linked = events.filter((e) =>
+                        d.eventIds.includes(e.id),
+                      );
+                      if (!linked.length) return null;
+                      const first = [...linked].sort(
+                        (a, b) => value(a.start) - value(b.start),
+                      )[0]!;
+                      const sy = p.alignment!.syllables.find(
+                        (s) => s.id === d.syllableId,
+                      )!;
+                      return (
+                        <button
+                          key={d.syllableId}
+                          className="alignment-draft-anchor"
+                          style={{
+                            left:
+                              positionPercent(first.start, m.timeSignature) +
+                              '%',
+                          }}
+                          onClick={() => p.chooseSyllable(sy.id)}
+                          title={
+                            sy.text +
+                            ' · ' +
+                            d.eventIds.length +
+                            ' noten' +
+                            (d.sustain ? ' · aangehouden' : '')
+                          }
+                        >
+                          ◇ {sy.text}
+                          {d.eventIds.length > 1 ? ' ⌢' : ''}
+                          {d.sustain ? ' —' : ''}
                         </button>
                       );
                     })}
